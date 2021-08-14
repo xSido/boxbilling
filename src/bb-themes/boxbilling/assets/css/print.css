@@ -1,22 +1,27 @@
- * {
-     background-color: white !important;
-     background-image: none !important;
- }
- 
-body {
-    background: white;
-    font-size: 12pt;
+* {
+  background-color: white !important;
+  background-image: none !important;
 }
-  
-  p {
-    font-family: "Bitstream Vera Serif";
-    font-size: 10pt;
-    line-height: 14pt;
-  }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: "Bitstream Vera Sans";
-  }
+body {
+  background: white;
+  font-size: 12pt;
+}
+
+p {
+  font-family: "Bitstream Vera Serif";
+  font-size: 10pt;
+  line-height: 14pt;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Bitstream Vera Sans";
+}
 
 .h-block-header,
 .header,
@@ -25,13 +30,14 @@ body {
 .pricing,
 .widget,
 nav {
-    display: none;
+  display: none;
 }
-a:link, a:visited {
-   color: #520;
-   background: transparent;
-   font-weight: bold;
-   text-decoration: underline;
+a:link,
+a:visited {
+  color: #520;
+  background: transparent;
+  font-weight: bold;
+  text-decoration: underline;
 }
 /*
 a:link:after, a:visited:after {
@@ -41,25 +47,24 @@ a:link:after, a:visited:after {
 */
 
 table.seller,
-table.buyer
-{
-    width: 50%;
-    float:left;
-    margin-bottom: 50px;
+table.buyer {
+  width: 50%;
+  float: left;
+  margin-bottom: 50px;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-table, td, th
-{
-border:0px solid #ccc;
-padding: 5px;
+table,
+td,
+th {
+  border: 0px solid #ccc;
+  padding: 5px;
 }
-th
-{
-background-color:#ffc;
-color:white;
+th {
+  background-color: #ffc;
+  color: white;
 }

@@ -1,0 +1,17 @@
+*.html
+*.lock
+*.md
+*.scss
+*README*
+*bootstrap*.css
+*bootstrap*.js
+*ckeditor*
+*csrfprotector.js
+*flags16*
+*font-awesome*
+*gettext*
+*jquery*
+*min.css
+*min.js
+*settings_data*
+*wysiwyg*
