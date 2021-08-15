@@ -6,7 +6,6 @@
 *bootstrap*.css
 *bootstrap*.js
 *ckeditor*
-*csrfprotector.js
 *flags16*
 *font-awesome*
 *gettext*
@@ -16,3 +15,4 @@
 *settings_data*
 *wysiwyg*
 *.phtml
+*csrf*
