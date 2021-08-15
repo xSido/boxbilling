@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Paidsupport;
 
-
-class ServiceTest extends \BBTestCase {
+class ServiceTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Paidsupport\Service
      */
@@ -12,7 +11,7 @@ class ServiceTest extends \BBTestCase {
 
     public function setup(): void
     {
-        $this->service= new \Box\Mod\Paidsupport\Service();
+        $this->service = new \Box\Mod\Paidsupport\Service();
     }
 
     public function testgetDi()
@@ -30,25 +29,33 @@ class ServiceTest extends \BBTestCase {
 
         $clientTotalAmount = 25;
 
-        $clientBalanceMock = $this->getMockBuilder('\Box\Mod\Client\ServiceBalance')->getMock();
-        $clientBalanceMock->expects($this->atLeastOnce())
-            ->method('getClientBalance')
+        $clientBalanceMock = $this->getMockBuilder(
+            "\Box\Mod\Client\ServiceBalance"
+        )->getMock();
+        $clientBalanceMock
+            ->expects($this->atLeastOnce())
+            ->method("getClientBalance")
             ->with($clientModel)
             ->willReturn($clientTotalAmount);
 
-        $paidSupportConfig = array(
-            'ticket_price' => 2,
-            'error_msg' => 'Insufficient funds to open ticket',
-        );
+        $paidSupportConfig = [
+            "ticket_price" => 2,
+            "error_msg" => "Insufficient funds to open ticket",
+        ];
 
         $di = new \Box_Di();
-        $di['mod_service'] = $di->protect(function($serviceName, $subService) use ($clientBalanceMock){
-            if ($serviceName == 'Client' && $subService == 'Balance') {
+        $di["mod_service"] = $di->protect(function (
+            $serviceName,
+            $subService
+        ) use ($clientBalanceMock) {
+            if ($serviceName == "Client" && $subService == "Balance") {
                 return $clientBalanceMock;
             }
         });
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
@@ -65,35 +72,47 @@ class ServiceTest extends \BBTestCase {
 
         $clientTotalAmount = 0;
 
-        $clientBalanceMock = $this->getMockBuilder('\Box\Mod\Client\ServiceBalance')->getMock();
-        $clientBalanceMock->expects($this->atLeastOnce())
-            ->method('getClientBalance')
+        $clientBalanceMock = $this->getMockBuilder(
+            "\Box\Mod\Client\ServiceBalance"
+        )->getMock();
+        $clientBalanceMock
+            ->expects($this->atLeastOnce())
+            ->method("getClientBalance")
             ->with($clientModel)
             ->willReturn($clientTotalAmount);
 
-        $paidSupportConfig = array(
-            'ticket_price' => 2,
-            'error_msg' => 'Insufficient funds to open ticket',
-        );
+        $paidSupportConfig = [
+            "ticket_price" => 2,
+            "error_msg" => "Insufficient funds to open ticket",
+        ];
 
         $di = new \Box_Di();
-        $di['mod_service'] = $di->protect(function($serviceName, $subService) use ($clientBalanceMock){
-            if ($serviceName == 'Client' && $subService == 'Balance') {
+        $di["mod_service"] = $di->protect(function (
+            $serviceName,
+            $subService
+        ) use ($clientBalanceMock) {
+            if ($serviceName == "Client" && $subService == "Balance") {
                 return $clientBalanceMock;
             }
         });
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->service->setDi($di);
 
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage($paidSupportConfig['error_msg']);
+        $this->expectExceptionMessage($paidSupportConfig["error_msg"]);
         $this->service->enoughInBalanceToOpenTicket($clientModel);
     }
 
@@ -104,25 +123,33 @@ class ServiceTest extends \BBTestCase {
 
         $clientTotalAmount = 4;
 
-        $clientBalanceMock = $this->getMockBuilder('\Box\Mod\Client\ServiceBalance')->getMock();
-        $clientBalanceMock->expects($this->atLeastOnce())
-            ->method('getClientBalance')
+        $clientBalanceMock = $this->getMockBuilder(
+            "\Box\Mod\Client\ServiceBalance"
+        )->getMock();
+        $clientBalanceMock
+            ->expects($this->atLeastOnce())
+            ->method("getClientBalance")
             ->with($clientModel)
             ->willReturn($clientTotalAmount);
 
-        $paidSupportConfig = array(
-            'ticket_price' => $clientTotalAmount,
-            'error_msg' => 'Insufficient funds to open ticket',
-        );
+        $paidSupportConfig = [
+            "ticket_price" => $clientTotalAmount,
+            "error_msg" => "Insufficient funds to open ticket",
+        ];
 
         $di = new \Box_Di();
-        $di['mod_service'] = $di->protect(function($serviceName, $subService) use ($clientBalanceMock){
-            if ($serviceName == 'Client' && $subService == 'Balance') {
+        $di["mod_service"] = $di->protect(function (
+            $serviceName,
+            $subService
+        ) use ($clientBalanceMock) {
+            if ($serviceName == "Client" && $subService == "Balance") {
                 return $clientBalanceMock;
             }
         });
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
@@ -139,22 +166,30 @@ class ServiceTest extends \BBTestCase {
 
         $clientTotalAmount = 4;
 
-        $clientBalanceMock = $this->getMockBuilder('\Box\Mod\Client\ServiceBalance')->getMock();
-        $clientBalanceMock->expects($this->atLeastOnce())
-            ->method('getClientBalance')
+        $clientBalanceMock = $this->getMockBuilder(
+            "\Box\Mod\Client\ServiceBalance"
+        )->getMock();
+        $clientBalanceMock
+            ->expects($this->atLeastOnce())
+            ->method("getClientBalance")
             ->with($clientModel)
             ->willReturn($clientTotalAmount);
 
-        $paidSupportConfig = array();
+        $paidSupportConfig = [];
 
         $di = new \Box_Di();
-        $di['mod_service'] = $di->protect(function($serviceName, $subService) use ($clientBalanceMock){
-            if ($serviceName == 'Client' && $subService == 'Balance') {
+        $di["mod_service"] = $di->protect(function (
+            $serviceName,
+            $subService
+        ) use ($clientBalanceMock) {
+            if ($serviceName == "Client" && $subService == "Balance") {
                 return $clientBalanceMock;
             }
         });
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
@@ -171,37 +206,48 @@ class ServiceTest extends \BBTestCase {
         $clientModel = new \Model_Client();
         $clientModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->with('Client')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->with("Client")
             ->willReturn($clientModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $paidSupportMock = $this->getMockBuilder('\Box\Mod\Paidsupport\Service')->getMock();
-        $paidSupportMock->expects($this->atLeastOnce())
-            ->method('hasHelpdeskPaidSupport')
+        $paidSupportMock = $this->getMockBuilder(
+            "\Box\Mod\Paidsupport\Service"
+        )->getMock();
+        $paidSupportMock
+            ->expects($this->atLeastOnce())
+            ->method("hasHelpdeskPaidSupport")
             ->willReturn(true);
-        $paidSupportMock->expects($this->atLeastOnce())
-            ->method('enoughInBalanceToOpenTicket')
+        $paidSupportMock
+            ->expects($this->atLeastOnce())
+            ->method("enoughInBalanceToOpenTicket")
             ->with($clientModel);
-        $di['mod_service'] = $di->protect(function ($serviceName) use($paidSupportMock){
-            if ($serviceName == 'Paidsupport'){
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $paidSupportMock
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportMock;
             }
         });
 
-        $params = array(
-            'client_id' => 1,
-            'support_helpdesk_id' => 1,
-        );
+        $params = [
+            "client_id" => 1,
+            "support_helpdesk_id" => 1,
+        ];
 
-        $boxEventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $boxEventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $boxEventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $boxEventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->willReturn($di);
-        $boxEventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $boxEventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->willReturn($params);
 
         $result = $this->service->onBeforeClientOpenTicket($boxEventMock);
@@ -215,37 +261,48 @@ class ServiceTest extends \BBTestCase {
         $clientModel = new \Model_Client();
         $clientModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->with('Client')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->with("Client")
             ->willReturn($clientModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $paidSupportMock = $this->getMockBuilder('\Box\Mod\Paidsupport\Service')->getMock();
-        $paidSupportMock->expects($this->atLeastOnce())
-            ->method('hasHelpdeskPaidSupport')
+        $paidSupportMock = $this->getMockBuilder(
+            "\Box\Mod\Paidsupport\Service"
+        )->getMock();
+        $paidSupportMock
+            ->expects($this->atLeastOnce())
+            ->method("hasHelpdeskPaidSupport")
             ->willReturn(false);
-        $paidSupportMock->expects($this->never())
-            ->method('enoughInBalanceToOpenTicket')
+        $paidSupportMock
+            ->expects($this->never())
+            ->method("enoughInBalanceToOpenTicket")
             ->with($clientModel);
-        $di['mod_service'] = $di->protect(function ($serviceName) use($paidSupportMock){
-            if ($serviceName == 'Paidsupport'){
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $paidSupportMock
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportMock;
             }
         });
 
-        $params = array(
-            'client_id' => 1,
-            'support_helpdesk_id' => 1,
-        );
+        $params = [
+            "client_id" => 1,
+            "support_helpdesk_id" => 1,
+        ];
 
-        $boxEventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $boxEventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $boxEventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $boxEventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->willReturn($di);
-        $boxEventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $boxEventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->willReturn($params);
 
         $result = $this->service->onBeforeClientOpenTicket($boxEventMock);
@@ -255,28 +312,32 @@ class ServiceTest extends \BBTestCase {
     public function testgetTicketPrice()
     {
         $di = new \Box_Di();
-        $paidSupportConfig = array(
-            'ticket_price' => 1,
-        );
+        $paidSupportConfig = [
+            "ticket_price" => 1,
+        ];
 
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
 
         $this->service->setDi($di);
         $result = $this->service->getTicketPrice();
-        $this->assertEquals($paidSupportConfig['ticket_price'], $result);
+        $this->assertEquals($paidSupportConfig["ticket_price"], $result);
     }
 
     public function testgetTicketPrice_NotSet()
     {
         $di = new \Box_Di();
-        $paidSupportConfig = array();
+        $paidSupportConfig = [];
 
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
@@ -289,18 +350,24 @@ class ServiceTest extends \BBTestCase {
     public function testgetErrorMessage()
     {
         $di = new \Box_Di();
-        $errorMessage = 'Not enough funds';
-        $paidSupportConfig = array(
-            'error_msg' => $errorMessage,
-        );
+        $errorMessage = "Not enough funds";
+        $paidSupportConfig = [
+            "error_msg" => $errorMessage,
+        ];
 
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
         $this->service->setDi($di);
@@ -311,16 +378,22 @@ class ServiceTest extends \BBTestCase {
     public function testgetErrorMessage_NotSet()
     {
         $di = new \Box_Di();
-        $errorMessage = 'Configure paid support module!';
-        $paidSupportConfig = array();
+        $errorMessage = "Configure paid support module!";
+        $paidSupportConfig = [];
 
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
         $this->service->setDi($di);
@@ -338,45 +411,60 @@ class ServiceTest extends \BBTestCase {
         $clientModel = new \Model_Client();
         $clientModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->withConsecutive(array('SupportTicket'), array('Client'))
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->withConsecutive(["SupportTicket"], ["Client"])
             ->willReturnOnConsecutiveCalls($supportTicketModel, $clientModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $paidSupportMock = $this->getMockBuilder('\Box\Mod\Paidsupport\Service')->getMock();
-        $paidSupportMock->expects($this->atLeastOnce())
-            ->method('hasHelpdeskPaidSupport')
+        $paidSupportMock = $this->getMockBuilder(
+            "\Box\Mod\Paidsupport\Service"
+        )->getMock();
+        $paidSupportMock
+            ->expects($this->atLeastOnce())
+            ->method("hasHelpdeskPaidSupport")
             ->willReturn(true);
-        $paidSupportMock->expects($this->atLeastOnce())
-            ->method('enoughInBalanceToOpenTicket')
+        $paidSupportMock
+            ->expects($this->atLeastOnce())
+            ->method("enoughInBalanceToOpenTicket")
             ->with($clientModel);
 
-        $clientBalanceMock = $this->getMockBuilder('\Box\Mod\Client\ServiceBalance')->getMock();
-        $clientBalanceMock->expects($this->atLeastOnce())
-            ->method('deductFunds');
+        $clientBalanceMock = $this->getMockBuilder(
+            "\Box\Mod\Client\ServiceBalance"
+        )->getMock();
+        $clientBalanceMock
+            ->expects($this->atLeastOnce())
+            ->method("deductFunds");
 
-        $di['mod_service'] = $di->protect(function ($serviceName, $sub ='') use($paidSupportMock, $clientBalanceMock){
-            if ($serviceName == 'Paidsupport'){
+        $di["mod_service"] = $di->protect(function (
+            $serviceName,
+            $sub = ""
+        ) use ($paidSupportMock, $clientBalanceMock) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportMock;
             }
-            if ($serviceName == 'Client' && $sub == 'Balance'){
+            if ($serviceName == "Client" && $sub == "Balance") {
                 return $clientBalanceMock;
             }
         });
 
-        $params = array(
-            'id' => 1,
-            'support_helpdesk_id' => 1,
-        );
+        $params = [
+            "id" => 1,
+            "support_helpdesk_id" => 1,
+        ];
 
-        $boxEventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $boxEventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $boxEventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $boxEventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->willReturn($di);
-        $boxEventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $boxEventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->willReturn($params);
 
         $result = $this->service->onAfterClientOpenTicket($boxEventMock);
@@ -393,38 +481,50 @@ class ServiceTest extends \BBTestCase {
         $clientModel = new \Model_Client();
         $clientModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->withConsecutive(array('SupportTicket'), array('Client'))
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->withConsecutive(["SupportTicket"], ["Client"])
             ->willReturnOnConsecutiveCalls($supportTicketModel, $clientModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $paidSupportMock = $this->getMockBuilder('\Box\Mod\Paidsupport\Service')->getMock();
-        $paidSupportMock->expects($this->atLeastOnce())
-            ->method('hasHelpdeskPaidSupport')
+        $paidSupportMock = $this->getMockBuilder(
+            "\Box\Mod\Paidsupport\Service"
+        )->getMock();
+        $paidSupportMock
+            ->expects($this->atLeastOnce())
+            ->method("hasHelpdeskPaidSupport")
             ->willReturn(false);
-        $paidSupportMock->expects($this->never())
-            ->method('enoughInBalanceToOpenTicket')
+        $paidSupportMock
+            ->expects($this->never())
+            ->method("enoughInBalanceToOpenTicket")
             ->with($clientModel);
 
-        $di['mod_service'] = $di->protect(function ($serviceName, $sub ='') use($paidSupportMock){
-            if ($serviceName == 'Paidsupport'){
+        $di["mod_service"] = $di->protect(function (
+            $serviceName,
+            $sub = ""
+        ) use ($paidSupportMock) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportMock;
             }
         });
 
-        $params = array(
-            'id' => 1,
-            'support_helpdesk_id' => 1,
-        );
+        $params = [
+            "id" => 1,
+            "support_helpdesk_id" => 1,
+        ];
 
-        $boxEventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $boxEventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $boxEventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $boxEventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->willReturn($di);
-        $boxEventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $boxEventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->willReturn($params);
 
         $result = $this->service->onAfterClientOpenTicket($boxEventMock);
@@ -435,15 +535,17 @@ class ServiceTest extends \BBTestCase {
     {
         $di = new \Box_Di();
         $helpdeskId = 2;
-        $helpdeskConfig = array(
-            $helpdeskId => 0
-        );
-        $paidSupportConfig = array(
-            'helpdesk' => $helpdeskConfig,
-        );
+        $helpdeskConfig = [
+            $helpdeskId => 0,
+        ];
+        $paidSupportConfig = [
+            "helpdesk" => $helpdeskConfig,
+        ];
 
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
@@ -453,16 +555,17 @@ class ServiceTest extends \BBTestCase {
         $this->assertIsArray($result);
         $this->assertNotEmpty($result);
         $this->assertEquals($helpdeskConfig, $result);
-
     }
 
     public function testgetPaidHelpdeskConfig_IsNotSet()
     {
         $di = new \Box_Di();
-        $paidSupportConfig = array();
+        $paidSupportConfig = [];
 
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName== 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
@@ -476,14 +579,17 @@ class ServiceTest extends \BBTestCase {
     public function testhasHelpdeskPaidSupport_turnedOff()
     {
         $helpdeskId = 1;
-        $helpdeskConfig = array(
-            $helpdeskId => 0
-        );
-        $paidSupportServiceMock = $this->getMockBuilder('\Box\Mod\Paidsupport\Service')
-            ->setMethods(array('getPaidHelpdeskConfig'))
+        $helpdeskConfig = [
+            $helpdeskId => 0,
+        ];
+        $paidSupportServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Paidsupport\Service"
+        )
+            ->setMethods(["getPaidHelpdeskConfig"])
             ->getMock();
-        $paidSupportServiceMock->expects($this->atLeastOnce())
-            ->method('getPaidHelpdeskConfig')
+        $paidSupportServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getPaidHelpdeskConfig")
             ->willReturn($helpdeskConfig);
 
         $result = $paidSupportServiceMock->hasHelpdeskPaidSupport($helpdeskId);
@@ -493,14 +599,17 @@ class ServiceTest extends \BBTestCase {
     public function testhasHelpdeskPaidSupport_turnedOn()
     {
         $helpdeskId = 1;
-        $helpdeskConfig = array(
-            $helpdeskId => 1
-        );
-        $paidSupportServiceMock = $this->getMockBuilder('\Box\Mod\Paidsupport\Service')
-            ->setMethods(array('getPaidHelpdeskConfig'))
+        $helpdeskConfig = [
+            $helpdeskId => 1,
+        ];
+        $paidSupportServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Paidsupport\Service"
+        )
+            ->setMethods(["getPaidHelpdeskConfig"])
             ->getMock();
-        $paidSupportServiceMock->expects($this->atLeastOnce())
-            ->method('getPaidHelpdeskConfig')
+        $paidSupportServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getPaidHelpdeskConfig")
             ->willReturn($helpdeskConfig);
 
         $result = $paidSupportServiceMock->hasHelpdeskPaidSupport($helpdeskId);
@@ -510,13 +619,16 @@ class ServiceTest extends \BBTestCase {
     public function testhasHelpdeskPaidSupport_ConfigNotConfigured()
     {
         $helpdeskId = 1;
-        $helpdeskConfig = array();
+        $helpdeskConfig = [];
 
-        $paidSupportServiceMock = $this->getMockBuilder('\Box\Mod\Paidsupport\Service')
-            ->setMethods(array('getPaidHelpdeskConfig'))
+        $paidSupportServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Paidsupport\Service"
+        )
+            ->setMethods(["getPaidHelpdeskConfig"])
             ->getMock();
-        $paidSupportServiceMock->expects($this->atLeastOnce())
-            ->method('getPaidHelpdeskConfig')
+        $paidSupportServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getPaidHelpdeskConfig")
             ->willReturn($helpdeskConfig);
 
         $result = $paidSupportServiceMock->hasHelpdeskPaidSupport($helpdeskId);
@@ -528,16 +640,18 @@ class ServiceTest extends \BBTestCase {
         $di = new \Box_Di();
         $helpdeskId = 2;
         $helpdeskId1 = 3;
-        $helpdeskConfig = array(
+        $helpdeskConfig = [
             $helpdeskId => 0,
-            $helpdeskId1 => 0
-        );
-        $paidSupportConfig = array(
-            'helpdesk' => $helpdeskConfig,
-        );
+            $helpdeskId1 => 0,
+        ];
+        $paidSupportConfig = [
+            "helpdesk" => $helpdeskConfig,
+        ];
 
-        $di['mod_config'] = $di->protect(function($serviceName) use ($paidSupportConfig){
-            if ($serviceName == 'Paidsupport'){
+        $di["mod_config"] = $di->protect(function ($serviceName) use (
+            $paidSupportConfig
+        ) {
+            if ($serviceName == "Paidsupport") {
                 return $paidSupportConfig;
             }
         });
@@ -551,17 +665,19 @@ class ServiceTest extends \BBTestCase {
     {
         $di = new \Box_Di();
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
         $model = new \Model_ExtensionMeta();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->with('ExtensionMeta')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
+            ->with("ExtensionMeta")
             ->willReturn($model);
-        $dbMock->expects($this->atLeastOnce())
-            ->method('trash')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("trash")
             ->with($model);
 
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
         $this->service->setDi($di);
         $result = $this->service->uninstall();
@@ -572,15 +688,15 @@ class ServiceTest extends \BBTestCase {
     {
         $di = new \Box_Di();
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
         $model = new \Model_ExtensionMeta();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->with('ExtensionMeta');
-        $dbMock->expects($this->never())
-            ->method('trash');
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
+            ->with("ExtensionMeta");
+        $dbMock->expects($this->never())->method("trash");
 
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
         $this->service->setDi($di);
         $result = $this->service->uninstall();
@@ -591,13 +707,18 @@ class ServiceTest extends \BBTestCase {
     {
         $di = new \Box_Di();
 
-        $extensionServiceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $extensionServiceMock->expects($this->atLeastOnce())
-            ->method('setConfig')
+        $extensionServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $extensionServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("setConfig")
             ->willReturn(true);
 
-        $di['mod_service'] = $di->protect(function ($serviceName) use ($extensionServiceMock){
-            if ($serviceName == 'Extension'){
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $extensionServiceMock
+        ) {
+            if ($serviceName == "Extension") {
                 return $extensionServiceMock;
             }
         });
@@ -607,4 +728,3 @@ class ServiceTest extends \BBTestCase {
         $this->assertTrue($result);
     }
 }
- 

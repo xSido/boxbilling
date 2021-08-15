@@ -22,7 +22,7 @@
 /**
  * @see Zend_Reflection_Parameter
  */
-require_once 'Zend/Reflection/Parameter.php';
+require_once "Zend/Reflection/Parameter.php";
 
 /**
  * @category   Zend
@@ -38,16 +38,20 @@ class Zend_Reflection_Function extends ReflectionFunction
      * @param  string $reflectionClass Name of reflection class to use
      * @return Zend_Reflection_Docblock
      */
-    public function getDocblock($reflectionClass = 'Zend_Reflection_Docblock')
+    public function getDocblock($reflectionClass = "Zend_Reflection_Docblock")
     {
-        if ('' == ($comment = $this->getDocComment())) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception($this->getName() . ' does not have a docblock');
+        if ("" == ($comment = $this->getDocComment())) {
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                $this->getName() . " does not have a docblock"
+            );
         }
         $instance = new $reflectionClass($comment);
         if (!$instance instanceof Zend_Reflection_Docblock) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Docblock');
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Invalid reflection class provided; must extend Zend_Reflection_Docblock"
+            );
         }
         return $instance;
     }
@@ -61,7 +65,7 @@ class Zend_Reflection_Function extends ReflectionFunction
     public function getStartLine($includeDocComment = false)
     {
         if ($includeDocComment) {
-            if ($this->getDocComment() != '') {
+            if ($this->getDocComment() != "") {
                 return $this->getDocblock()->getStartLine();
             }
         }
@@ -77,14 +81,15 @@ class Zend_Reflection_Function extends ReflectionFunction
      */
     public function getContents($includeDocblock = true)
     {
-        return implode("\n",
+        return implode(
+            "\n",
             array_splice(
                 file($this->getFileName()),
                 $this->getStartLine($includeDocblock),
-                ($this->getEndLine() - $this->getStartLine()),
+                $this->getEndLine() - $this->getStartLine(),
                 true
-                )
-            );
+            )
+        );
     }
 
     /**
@@ -93,15 +98,24 @@ class Zend_Reflection_Function extends ReflectionFunction
      * @param  string $reflectionClass Name of reflection class to use
      * @return array Array of Zend_Reflection_Parameter
      */
-    public function getParameters($reflectionClass = 'Zend_Reflection_Parameter')
-    {
-        $phpReflections  = parent::getParameters();
-        $zendReflections = array();
-        while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
-            $instance = new $reflectionClass($this->getName(), $phpReflection->getName());
+    public function getParameters(
+        $reflectionClass = "Zend_Reflection_Parameter"
+    ) {
+        $phpReflections = parent::getParameters();
+        $zendReflections = [];
+        while (
+            $phpReflections &&
+            ($phpReflection = array_shift($phpReflections))
+        ) {
+            $instance = new $reflectionClass(
+                $this->getName(),
+                $phpReflection->getName()
+            );
             if (!$instance instanceof Zend_Reflection_Parameter) {
-                require_once 'Zend/Reflection/Exception.php';
-                throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Parameter');
+                require_once "Zend/Reflection/Exception.php";
+                throw new Zend_Reflection_Exception(
+                    "Invalid reflection class provided; must extend Zend_Reflection_Parameter"
+                );
             }
             $zendReflections[] = $instance;
             unset($phpReflection);
@@ -118,12 +132,16 @@ class Zend_Reflection_Function extends ReflectionFunction
     public function getReturn()
     {
         $docblock = $this->getDocblock();
-        if (!$docblock->hasTag('return')) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Function does not specify an @return annotation tag; cannot determine return type');
+        if (!$docblock->hasTag("return")) {
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Function does not specify an @return annotation tag; cannot determine return type"
+            );
         }
-        $tag    = $docblock->getTag('return');
-        $return = Zend_Reflection_Docblock_Tag::factory('@return ' . $tag->getDescription());
+        $tag = $docblock->getTag("return");
+        $return = Zend_Reflection_Docblock_Tag::factory(
+            "@return " . $tag->getDescription()
+        );
         return $return;
     }
 }

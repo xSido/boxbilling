@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_Authorization
 {
     private $di = null;
@@ -19,26 +18,26 @@ class Box_Authorization
     public function __construct(Box_Di $di)
     {
         $this->di = $di;
-        $this->session = $di['session'];
+        $this->session = $di["session"];
     }
 
     public function isClientLoggedIn()
     {
-        return (bool)($this->session->get('client_id'));
+        return (bool) $this->session->get("client_id");
     }
 
     public function isAdminLoggedIn()
     {
-        return (bool)($this->session->get('admin'));
+        return (bool) $this->session->get("admin");
     }
 
     public function authorizeUser($user, $plainTextPassword)
     {
         $user = $this->passwordBackwardCompatibility($user, $plainTextPassword);
-        if ($this->di['password']->verify($plainTextPassword, $user->pass)){
-            if ($this->di['password']->needsRehash($user->pass)){
-                $user->pass = $this->di['password']->hashIt($plainTextPassword);
-                $this->di['db']->store($user);
+        if ($this->di["password"]->verify($plainTextPassword, $user->pass)) {
+            if ($this->di["password"]->needsRehash($user->pass)) {
+                $user->pass = $this->di["password"]->hashIt($plainTextPassword);
+                $this->di["db"]->store($user);
             }
             return $user;
         }
@@ -47,11 +46,10 @@ class Box_Authorization
 
     public function passwordBackwardCompatibility($user, $plainTextPassword)
     {
-        if (sha1($plainTextPassword) == $user->pass){
-            $user->pass = $this->di['password']->hashIt($plainTextPassword);
-            $this->di['db']->store($user);
+        if (sha1($plainTextPassword) == $user->pass) {
+            $user->pass = $this->di["password"]->hashIt($plainTextPassword);
+            $this->di["db"]->store($user);
         }
         return $user;
     }
-
 }

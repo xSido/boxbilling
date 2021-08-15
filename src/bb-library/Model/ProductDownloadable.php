@@ -10,8 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_ProductDownloadable extends \RedBean_SimpleModel
 {
-    
 }

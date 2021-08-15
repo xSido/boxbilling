@@ -22,31 +22,31 @@
  */
 class Box_Log
 {
-    const EMERG   = 0;  // Emergency: system is unusable
-    const ALERT   = 1;  // Alert: action must be taken immediately
-    const CRIT    = 2;  // Critical: critical conditions
-    const ERR     = 3;  // Error: error conditions
-    const WARN    = 4;  // Warning: warning conditions
-    const NOTICE  = 5;  // Notice: normal but significant condition
-    const INFO    = 6;  // Informational: informational messages
-    const DEBUG   = 7;  // Debug: debug messages
+    const EMERG = 0; // Emergency: system is unusable
+    const ALERT = 1; // Alert: action must be taken immediately
+    const CRIT = 2; // Critical: critical conditions
+    const ERR = 3; // Error: error conditions
+    const WARN = 4; // Warning: warning conditions
+    const NOTICE = 5; // Notice: normal but significant condition
+    const INFO = 6; // Informational: informational messages
+    const DEBUG = 7; // Debug: debug messages
 
-    protected $_priorities = array(
-         self::EMERG    => 'EMERG',
-         self::ALERT    => 'ALERT',
-         self::CRIT     => 'CRIT',
-         self::ERR      => 'ERR',
-         self::WARN     => 'WARN',
-         self::NOTICE   => 'NOTICE',
-         self::INFO     => 'INFO',
-         self::DEBUG    => 'DEBUG',
-    );
+    protected $_priorities = [
+        self::EMERG => "EMERG",
+        self::ALERT => "ALERT",
+        self::CRIT => "CRIT",
+        self::ERR => "ERR",
+        self::WARN => "WARN",
+        self::NOTICE => "NOTICE",
+        self::INFO => "INFO",
+        self::DEBUG => "DEBUG",
+    ];
 
-    protected $_min_priority = NULL;
-    
-    protected $_writers = array();
+    protected $_min_priority = null;
 
-    protected $_extras = array();
+    protected $_writers = [];
+
+    protected $_extras = [];
 
     protected $di;
 
@@ -61,25 +61,29 @@ class Box_Log
     public function __call($method, $params)
     {
         $priority = strtoupper($method);
-        if (($priority = array_search($priority, $this->_priorities)) !== false) {
+        if (
+            ($priority = array_search($priority, $this->_priorities)) !== false
+        ) {
             switch (count($params)) {
                 case 0:
-                    throw new \Box_Exception('Missing log message');
+                    throw new \Box_Exception("Missing log message");
                 case 1:
                     $message = array_shift($params);
-                    $extras  = null;
+                    $extras = null;
                     break;
                 default:
                     $message = array_shift($params);
                     $message = vsprintf($message, array_values($params));
                     if (!$message) {
-                        throw new LogicException('Number of placeholders does not match number of variables');
+                        throw new LogicException(
+                            "Number of placeholders does not match number of variables"
+                        );
                     }
                     break;
             }
             $this->log($message, $priority);
         } else {
-            throw new \Box_Exception('Bad log priority');
+            throw new \Box_Exception("Bad log priority");
         }
     }
 
@@ -90,19 +94,19 @@ class Box_Log
             return;
         }
 
-        if (! isset($this->_priorities[$priority])) {
-            throw new \Box_Exception('Bad log priority');
+        if (!isset($this->_priorities[$priority])) {
+            throw new \Box_Exception("Bad log priority");
         }
-        
-        if($this->_min_priority && $priority > $this->_min_priority) {
+
+        if ($this->_min_priority && $priority > $this->_min_priority) {
             return;
         }
-        
+
         $event = $this->_packEvent($message, $priority);
 
         // Check to see if any extra information was passed
         if (!empty($extras)) {
-            $info = array();
+            $info = [];
             if (is_array($extras)) {
                 foreach ($extras as $key => $value) {
                     if (is_string($key)) {
@@ -115,14 +119,17 @@ class Box_Log
                 $info = $extras;
             }
             if (!empty($info)) {
-                $event['info'] = $info;
+                $event["info"] = $info;
             }
         }
 
         //do not log debug level messages if debug is OFF
 
-        if($this->di['config']['debug'] === FALSE && $event['priority'] > self::INFO) {
-            return ;
+        if (
+            $this->di["config"]["debug"] === false &&
+            $event["priority"] > self::INFO
+        ) {
+            return;
         }
 
         // send to each writer
@@ -133,12 +140,13 @@ class Box_Log
 
     protected function _packEvent($message, $priority)
     {
-        return array_merge(array(
-            'timestamp'    => date('Y-m-d H:i:s'),
-            'message'      => $message,
-            'priority'     => $priority,
-            'priorityName' => $this->_priorities[$priority]
-            ),
+        return array_merge(
+            [
+                "timestamp" => date("Y-m-d H:i:s"),
+                "message" => $message,
+                "priority" => $priority,
+                "priorityName" => $this->_priorities[$priority],
+            ],
             $this->_extras
         );
     }
@@ -154,10 +162,10 @@ class Box_Log
 
     public function setEventItem($name, $value)
     {
-        $this->_extras = array_merge($this->_extras, array($name => $value));
+        $this->_extras = array_merge($this->_extras, [$name => $value]);
         return $this;
     }
-    
+
     public function setMinPriority($priority)
     {
         $this->_min_priority = $priority;

@@ -10,11 +10,9 @@
  * with this source code in the file LICENSE
  */
 
-
 /**
  * Class Model_ModEmailQueue
  */
 class Model_ModEmailQueue extends \RedBean_SimpleModel
 {
-
 }

@@ -10,15 +10,14 @@
  * with this source code in the file LICENSE
  */
 
-
-class Box_Curl {
-
-    protected $_useragent = 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0';
+class Box_Curl
+{
+    protected $_useragent = "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0";
     protected $_url;
     protected $_followlocation;
     protected $_timeout;
     protected $_maxRedirects;
-    protected $_cookieFileLocation = './cookie.txt';
+    protected $_cookieFileLocation = "./cookie.txt";
     protected $_post;
     protected $_postFields;
     protected $_referer = "https://www.google.com";
@@ -29,8 +28,8 @@ class Box_Curl {
     protected $_status;
     protected $_binaryTransfer;
     public $authentication = 0;
-    public $auth_name = '';
-    public $auth_pass = '';
+    public $auth_name = "";
+    public $auth_pass = "";
 
     /**
      * @var \Box_Di
@@ -56,54 +55,71 @@ class Box_Curl {
     /**
      * @param string $url
      */
-    public function __construct($url, $timeOut = 30, $followlocation = true, $maxRedirecs = 4, $binaryTransfer = false, $includeHeader = false, $noBody = false) {
-        if (!extension_loaded('curl')) {
-            throw new \Box_Exception('CURL extension is not enabled');
+    public function __construct(
+        $url,
+        $timeOut = 30,
+        $followlocation = true,
+        $maxRedirecs = 4,
+        $binaryTransfer = false,
+        $includeHeader = false,
+        $noBody = false
+    ) {
+        if (!extension_loaded("curl")) {
+            throw new \Box_Exception("CURL extension is not enabled");
         }
 
         $this->_url = $url;
-        $this->_followlocation = (bool)$followlocation;
+        $this->_followlocation = (bool) $followlocation;
         $this->_timeout = $timeOut;
         $this->_maxRedirects = $maxRedirecs;
         $this->_noBody = $noBody;
         $this->_includeHeader = $includeHeader;
         $this->_binaryTransfer = $binaryTransfer;
 
-        $this->_cookieFileLocation = BB_PATH_CACHE . '/c.txt';
+        $this->_cookieFileLocation = BB_PATH_CACHE . "/c.txt";
     }
 
-    public function useAuth($use) {
+    public function useAuth($use)
+    {
         $this->authentication = 0;
-        if ($use == true)
+        if ($use == true) {
             $this->authentication = 1;
+        }
     }
 
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->auth_name = $name;
     }
 
-    public function setPass($pass) {
+    public function setPass($pass)
+    {
         $this->auth_pass = $pass;
     }
 
-    public function setReferer($referer) {
+    public function setReferer($referer)
+    {
         $this->_referer = $referer;
     }
 
-    public function setCookiFileLocation($path) {
+    public function setCookiFileLocation($path)
+    {
         $this->_cookieFileLocation = $path;
     }
 
-    public function setPost($postFields) {
+    public function setPost($postFields)
+    {
         $this->_post = true;
         $this->_postFields = $postFields;
     }
 
-    public function setUserAgent($userAgent) {
+    public function setUserAgent($userAgent)
+    {
         $this->_useragent = $userAgent;
     }
 
-    public function request($url = null) {
+    public function request($url = null)
+    {
         if (null !== $url) {
             $this->_url = $url;
         }
@@ -111,22 +127,26 @@ class Box_Curl {
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $this->_url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Expect:"]);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->_timeout);
         curl_setopt($ch, CURLOPT_MAXREDIRS, $this->_maxRedirects);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_COOKIEJAR, $this->_cookieFileLocation);
         curl_setopt($ch, CURLOPT_COOKIEFILE, $this->_cookieFileLocation);
-        
-        if (ini_get('open_basedir') == '' && ini_get('safe_mode') == 'Off'){
+
+        if (ini_get("open_basedir") == "" && ini_get("safe_mode") == "Off") {
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $this->_followlocation);
         }
-        
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+
         if ($this->authentication == 1) {
-            curl_setopt($ch, CURLOPT_USERPWD, $this->auth_name . ':' . $this->auth_pass);
+            curl_setopt(
+                $ch,
+                CURLOPT_USERPWD,
+                $this->auth_name . ":" . $this->auth_pass
+            );
         }
         if ($this->_post) {
             curl_setopt($ch, CURLOPT_POST, true);
@@ -150,37 +170,41 @@ class Box_Curl {
 
         return $this;
     }
-    
+
     public function getBody()
     {
         return $this->_webpage;
     }
 
-    public function getHttpStatus() {
+    public function getHttpStatus()
+    {
         return $this->_status;
     }
-    
+
     public function downloadTo($path)
     {
-        if(!file_exists($path)) {
+        if (!file_exists($path)) {
             touch($path);
         }
-        
+
         set_time_limit(0); // unlimited max execution time
-        
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->_url);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->_timeout);
-        curl_setopt($ch, CURLOPT_FILE, fopen($path, 'w'));
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_FILE, fopen($path, "w"));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_exec($ch);
-        if(curl_errno($ch)) {
-            throw new Exception(sprintf("curl Error %s: %s", curl_errno($ch), curl_error($ch)));
+        if (curl_errno($ch)) {
+            throw new Exception(
+                sprintf("curl Error %s: %s", curl_errno($ch), curl_error($ch))
+            );
         }
     }
 
-    public function __tostring() {
+    public function __toString()
+    {
         return $this->_webpage;
     }
 }

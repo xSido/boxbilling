@@ -27,12 +27,28 @@ class Admin extends \Api_Abstract
      */
     public function ticket_get_list($data)
     {
-        list($sql, $bindings) = $this->getService()->getSearchQuery($data);
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $pager =  $this->di['pager']->getAdvancedResultSet($sql, $bindings, $per_page);
-        foreach($pager['list'] as $key => $ticketArr){
-            $ticket = $this->di['db']->getExistingModelById('SupportTicket', $ticketArr['id'], 'Ticket not found');
-            $pager['list'][$key] = $this->getService()->toApiArray($ticket, true, $this->getIdentity());
+        [$sql, $bindings] = $this->getService()->getSearchQuery($data);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $pager = $this->di["pager"]->getAdvancedResultSet(
+            $sql,
+            $bindings,
+            $per_page
+        );
+        foreach ($pager["list"] as $key => $ticketArr) {
+            $ticket = $this->di["db"]->getExistingModelById(
+                "SupportTicket",
+                $ticketArr["id"],
+                "Ticket not found"
+            );
+            $pager["list"][$key] = $this->getService()->toApiArray(
+                $ticket,
+                true,
+                $this->getIdentity()
+            );
         }
 
         return $pager;
@@ -47,14 +63,22 @@ class Admin extends \Api_Abstract
      */
     public function ticket_get($data)
     {
-        $required = array(
-            'id' => 'Ticket id is missing'
+        $required = [
+            "id" => "Ticket id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportTicket",
+            $data["id"],
+            "Ticket not found"
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportTicket', $data['id'], 'Ticket not found');
-
-        return $this->getService()->toApiArray($model, true, $this->getIdentity());
+        return $this->getService()->toApiArray(
+            $model,
+            true,
+            $this->getIdentity()
+        );
     }
 
     /**
@@ -71,12 +95,16 @@ class Admin extends \Api_Abstract
      */
     public function ticket_update($data)
     {
-        $required = array(
-            'id' => 'Ticket id is missing'
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportTicket', $data['id'], 'Ticket not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportTicket",
+            $data["id"],
+            "Ticket not found"
+        );
 
         return $this->getService()->ticketUpdate($model, $data);
     }
@@ -91,15 +119,22 @@ class Admin extends \Api_Abstract
      */
     public function ticket_message_update($data)
     {
-        $required = array(
-            'id'      => 'Ticket message id is missing',
-            'content' => 'Ticket message content is missing'
+        $required = [
+            "id" => "Ticket message id is missing",
+            "content" => "Ticket message content is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportTicketMessage",
+            $data["id"],
+            "Ticket message not found"
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportTicketMessage', $data['id'], 'Ticket message not found');
-
-        return $this->getService()->ticketMessageUpdate($model, $data['content']);
+        return $this->getService()->ticketMessageUpdate(
+            $model,
+            $data["content"]
+        );
     }
 
     /**
@@ -111,12 +146,16 @@ class Admin extends \Api_Abstract
      */
     public function ticket_delete($data)
     {
-        $required = array(
-            'id' => 'Ticket id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportTicket', $data['id'], 'Ticket not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportTicket",
+            $data["id"],
+            "Ticket not found"
+        );
 
         return $this->getService()->rm($model);
     }
@@ -131,17 +170,29 @@ class Admin extends \Api_Abstract
      */
     public function ticket_reply($data)
     {
-        $required = array(
-            'id'      => 'Ticket id is missing',
-            'content' => 'Ticket message content is missing'
+        $required = [
+            "id" => "Ticket id is missing",
+            "content" => "Ticket message content is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $data["content"] = preg_replace(
+            "/javascript:\/\/|\%0(d|a)/i",
+            "",
+            $data["content"]
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $data['content'] = preg_replace('/javascript:\/\/|\%0(d|a)/i', '', $data['content']);
+        $ticket = $this->di["db"]->getExistingModelById(
+            "SupportTicket",
+            $data["id"],
+            "Ticket not found"
+        );
 
-        $ticket = $this->di['db']->getExistingModelById('SupportTicket', $data['id'], 'Ticket not found');
-
-        return $this->getService()->ticketReply($ticket, $this->getIdentity(), $data['content']);
+        return $this->getService()->ticketReply(
+            $ticket,
+            $this->getIdentity(),
+            $data["content"]
+        );
     }
 
     /**
@@ -153,12 +204,16 @@ class Admin extends \Api_Abstract
      */
     public function ticket_close($data)
     {
-        $required = array(
-            'id' => 'Ticket id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $ticket = $this->di['db']->getExistingModelById('SupportTicket', $data['id'], 'Ticket not found');
+        $ticket = $this->di["db"]->getExistingModelById(
+            "SupportTicket",
+            $data["id"],
+            "Ticket not found"
+        );
 
         if ($ticket->status == \Model_SupportTicket::CLOSED) {
             return true;
@@ -182,21 +237,37 @@ class Admin extends \Api_Abstract
      */
     public function ticket_create($data)
     {
-        $required = array(
-            'client_id'           => 'Client id is missing',
-            'content'             => 'Ticket content required',
-            'subject'             => 'Ticket subject required',
-            'support_helpdesk_id' => 'Ticket support_helpdesk_id is required'
+        $required = [
+            "client_id" => "Client id is missing",
+            "content" => "Ticket content required",
+            "subject" => "Ticket subject required",
+            "support_helpdesk_id" => "Ticket support_helpdesk_id is required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $data["content"] = preg_replace(
+            "/javascript:\/\/|\%0(d|a)/i",
+            "",
+            $data["content"]
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $data['content'] = preg_replace('/javascript:\/\/|\%0(d|a)/i', '', $data['content']);
+        $client = $this->di["db"]->getExistingModelById(
+            "Client",
+            $data["client_id"],
+            "Client not found"
+        );
+        $helpdesk = $this->di["db"]->getExistingModelById(
+            "SupportHelpdesk",
+            $data["support_helpdesk_id"],
+            "Helpdesk invalid"
+        );
 
-        $client   = $this->di['db']->getExistingModelById('Client', $data['client_id'], 'Client not found');
-        $helpdesk = $this->di['db']->getExistingModelById('SupportHelpdesk', $data['support_helpdesk_id'], 'Helpdesk invalid');
-
-        return $this->getService()->ticketCreateForAdmin($client, $helpdesk, $data, $this->getIdentity());
-
+        return $this->getService()->ticketCreateForAdmin(
+            $client,
+            $helpdesk,
+            $data,
+            $this->getIdentity()
+        );
     }
 
     /**
@@ -213,9 +284,16 @@ class Admin extends \Api_Abstract
         $expiredArr = $this->getService()->getExpired();
 
         foreach ($expiredArr as $ticketArr) {
-            $ticketModel =  $this->di['db']->getExistingModelById('SupportTicket', $ticketArr['id'], 'Ticket not found');
+            $ticketModel = $this->di["db"]->getExistingModelById(
+                "SupportTicket",
+                $ticketArr["id"],
+                "Ticket not found"
+            );
             if (!$this->getService()->autoClose($ticketModel)) {
-                $this->di['logger']->info('Ticket %s was not closed', $ticketModel->id);
+                $this->di["logger"]->info(
+                    "Ticket %s was not closed",
+                    $ticketModel->id
+                );
             }
         }
 
@@ -236,7 +314,10 @@ class Admin extends \Api_Abstract
         $expired = $this->getService()->publicGetExpired();
         foreach ($expired as $model) {
             if (!$this->getService()->publicAutoClose($model)) {
-                $this->di['logger']->info('Public Ticket %s was not closed', $model->id);
+                $this->di["logger"]->info(
+                    "Public Ticket %s was not closed",
+                    $model->id
+                );
             }
         }
 
@@ -249,7 +330,7 @@ class Admin extends \Api_Abstract
      */
     public function ticket_get_statuses($data)
     {
-        if (isset($data['titles'])) {
+        if (isset($data["titles"])) {
             return $this->getService()->getStatuses();
         }
 
@@ -263,13 +344,27 @@ class Admin extends \Api_Abstract
      */
     public function public_ticket_get_list($data)
     {
-        list($sql, $bindings) = $this->getService()->publicGetSearchQuery($data);
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $pager =  $this->di['pager']->getAdvancedResultSet($sql, $bindings, $per_page);
+        [$sql, $bindings] = $this->getService()->publicGetSearchQuery($data);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $pager = $this->di["pager"]->getAdvancedResultSet(
+            $sql,
+            $bindings,
+            $per_page
+        );
 
-        foreach($pager['list'] as $key => $ticketArr){
-            $ticket = $this->di['db']->getExistingModelById('SupportPTicket', $ticketArr['id'], 'Ticket not found');
-            $pager['list'][$key] = $this->getService()->publicToApiArray($ticket);
+        foreach ($pager["list"] as $key => $ticketArr) {
+            $ticket = $this->di["db"]->getExistingModelById(
+                "SupportPTicket",
+                $ticketArr["id"],
+                "Ticket not found"
+            );
+            $pager["list"][$key] = $this->getService()->publicToApiArray(
+                $ticket
+            );
         }
         return $pager;
     }
@@ -287,15 +382,18 @@ class Admin extends \Api_Abstract
      */
     public function public_ticket_create($data)
     {
-        $required = array(
-            'name'    => 'Client name parameter is missing',
-            'email'   => 'Client email parameter is missing',
-            'subject' => 'Subject parameter is missing',
-            'message' => 'Ticket message is missing'
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "name" => "Client name parameter is missing",
+            "email" => "Client email parameter is missing",
+            "subject" => "Subject parameter is missing",
+            "message" => "Ticket message is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        return $this->getService()->publicTicketCreate($data, $this->getIdentity());
+        return $this->getService()->publicTicketCreate(
+            $data,
+            $this->getIdentity()
+        );
     }
 
     /**
@@ -307,12 +405,16 @@ class Admin extends \Api_Abstract
      */
     public function public_ticket_get($data)
     {
-        $required = array(
-            'id' => 'Ticket id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportPTicket', $data['id'], 'Ticket not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportPTicket",
+            $data["id"],
+            "Ticket not found"
+        );
 
         return $this->getService()->publicToApiArray($model, true);
     }
@@ -326,12 +428,16 @@ class Admin extends \Api_Abstract
      */
     public function public_ticket_delete($data)
     {
-        $required = array(
-            'id' => 'Ticket id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportPTicket', $data['id'], 'Ticket not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportPTicket",
+            $data["id"],
+            "Ticket not found"
+        );
 
         return $this->getService()->publicRm($model);
     }
@@ -345,14 +451,21 @@ class Admin extends \Api_Abstract
      */
     public function public_ticket_close($data)
     {
-        $required = array(
-            'id' => 'Ticket id is missing',
+        $required = [
+            "id" => "Ticket id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $ticket = $this->di["db"]->getExistingModelById(
+            "SupportPTicket",
+            $data["id"],
+            "Ticket not found"
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $ticket = $this->di['db']->getExistingModelById('SupportPTicket', $data['id'], 'Ticket not found');
-
-        return $this->getService()->publicCloseTicket($ticket, $this->getIdentity());
+        return $this->getService()->publicCloseTicket(
+            $ticket,
+            $this->getIdentity()
+        );
     }
 
     /**
@@ -368,12 +481,16 @@ class Admin extends \Api_Abstract
      */
     public function public_ticket_update($data)
     {
-        $required = array(
-            'id' => 'Ticket id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportPTicket', $data['id'], 'Ticket not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportPTicket",
+            $data["id"],
+            "Ticket not found"
+        );
 
         return $this->getService()->publicTicketUpdate($model, $data);
     }
@@ -389,15 +506,23 @@ class Admin extends \Api_Abstract
      */
     public function public_ticket_reply($data)
     {
-        $required = array(
-            'id'      => 'Ticket id is missing',
-            'content' => 'Ticket content required',
+        $required = [
+            "id" => "Ticket id is missing",
+            "content" => "Ticket content required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $ticket = $this->di["db"]->getExistingModelById(
+            "SupportPTicket",
+            $data["id"],
+            "Ticket not found"
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $ticket = $this->di['db']->getExistingModelById('SupportPTicket', $data['id'], 'Ticket not found');
-
-        return $this->getService()->publicTicketReply($ticket, $this->getIdentity(), $data['content']);
+        return $this->getService()->publicTicketReply(
+            $ticket,
+            $this->getIdentity(),
+            $data["content"]
+        );
     }
 
     /**
@@ -405,7 +530,7 @@ class Admin extends \Api_Abstract
      */
     public function public_ticket_get_statuses($data)
     {
-        if (isset($data['titles'])) {
+        if (isset($data["titles"])) {
             return $this->getService()->publicGetStatuses();
         }
 
@@ -419,9 +544,17 @@ class Admin extends \Api_Abstract
      */
     public function helpdesk_get_list($data)
     {
-        list($sql, $bindings) = $this->getService()->helpdeskGetSearchQuery($data);
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        return $this->di['pager']->getSimpleResultSet($sql, $bindings, $per_page);
+        [$sql, $bindings] = $this->getService()->helpdeskGetSearchQuery($data);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        return $this->di["pager"]->getSimpleResultSet(
+            $sql,
+            $bindings,
+            $per_page
+        );
     }
 
     /**
@@ -443,12 +576,16 @@ class Admin extends \Api_Abstract
      */
     public function helpdesk_get($data)
     {
-        $required = array(
-            'id' => 'Help desk id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Help desk id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportHelpdesk', $data['id'], 'Help desk not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportHelpdesk",
+            $data["id"],
+            "Help desk not found"
+        );
 
         return $this->getService()->helpdeskToApiArray($model);
     }
@@ -469,12 +606,16 @@ class Admin extends \Api_Abstract
      */
     public function helpdesk_update($data)
     {
-        $required = array(
-            'id' => 'Help desk id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Help desk id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportHelpdesk', $data['id'], 'Help desk not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportHelpdesk",
+            $data["id"],
+            "Help desk not found"
+        );
 
         return $this->getService()->helpdeskUpdate($model, $data);
     }
@@ -494,10 +635,10 @@ class Admin extends \Api_Abstract
      */
     public function helpdesk_create($data)
     {
-        $required = array(
-            'name' => 'Help desk title is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "name" => "Help desk title is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
         return $this->getService()->helpdeskCreate($data);
     }
@@ -512,12 +653,16 @@ class Admin extends \Api_Abstract
      */
     public function helpdesk_delete($data)
     {
-        $required = array(
-            'id' => 'Help desk id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Help desk id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportHelpdesk', $data['id'], 'Help desk not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportHelpdesk",
+            $data["id"],
+            "Help desk not found"
+        );
 
         return $this->getService()->helpdeskRm($model);
     }
@@ -529,13 +674,27 @@ class Admin extends \Api_Abstract
      */
     public function canned_get_list($data)
     {
-        list($sql, $bindings) = $this->getService()->cannedGetSearchQuery($data);
+        [$sql, $bindings] = $this->getService()->cannedGetSearchQuery($data);
 
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $pager = $this->di['pager']->getSimpleResultSet($sql, $bindings, $per_page);
-        foreach($pager['list'] as $key => $item){
-            $staff = $this->di['db']->getExistingModelById('SupportPr', $item['id'], 'Canned response not found');
-            $pager['list'][$key] = $this->getService()->cannedToApiArray($staff);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $pager = $this->di["pager"]->getSimpleResultSet(
+            $sql,
+            $bindings,
+            $per_page
+        );
+        foreach ($pager["list"] as $key => $item) {
+            $staff = $this->di["db"]->getExistingModelById(
+                "SupportPr",
+                $item["id"],
+                "Canned response not found"
+            );
+            $pager["list"][$key] = $this->getService()->cannedToApiArray(
+                $staff
+            );
         }
 
         return $pager;
@@ -548,10 +707,15 @@ class Admin extends \Api_Abstract
      */
     public function canned_pairs()
     {
-        $res  = $this->di['db']->getAssoc('SELECT id, title FROM support_pr_category WHERE 1');
-        $list = array();
+        $res = $this->di["db"]->getAssoc(
+            "SELECT id, title FROM support_pr_category WHERE 1"
+        );
+        $list = [];
         foreach ($res as $id => $title) {
-            $list[$title] = $this->di['db']->getAssoc('SELECT id, title FROM support_pr WHERE support_pr_category_id = :id', array('id' => $id));
+            $list[$title] = $this->di["db"]->getAssoc(
+                "SELECT id, title FROM support_pr WHERE support_pr_category_id = :id",
+                ["id" => $id]
+            );
         }
 
         return $list;
@@ -567,12 +731,16 @@ class Admin extends \Api_Abstract
      */
     public function canned_get($data)
     {
-        $required = array(
-            'id' => 'Canned reply id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Canned reply id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportPr', $data['id'], 'Canned reply not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportPr",
+            $data["id"],
+            "Canned reply not found"
+        );
 
         return $this->getService()->cannedToApiArray($model);
     }
@@ -587,12 +755,16 @@ class Admin extends \Api_Abstract
      */
     public function canned_delete($data)
     {
-        $required = array(
-            'id' => 'Canned reply id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Canned reply id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportPr', $data['id'], 'Canned reply not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportPr",
+            $data["id"],
+            "Canned reply not found"
+        );
 
         return $this->getService()->cannedRm($model);
     }
@@ -610,15 +782,19 @@ class Admin extends \Api_Abstract
      */
     public function canned_create($data)
     {
-        $required = array(
-            'title'       => 'Canned reply title is missing',
-            'category_id' => 'Canned reply category id is missing'
+        $required = [
+            "title" => "Canned reply title is missing",
+            "category_id" => "Canned reply category id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $content = $this->di["array_get"]($data, "content", null);
+
+        return $this->getService()->cannedCreate(
+            $data["title"],
+            $data["category_id"],
+            $content
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
-
-        $content = $this->di['array_get']($data, 'content', NULL);
-
-        return $this->getService()->cannedCreate($data['title'], $data['category_id'], $content);
     }
 
     /**
@@ -635,12 +811,16 @@ class Admin extends \Api_Abstract
      */
     public function canned_update($data)
     {
-        $required = array(
-            'id' => 'Canned reply id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Canned reply id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportPr', $data['id'], 'Canned reply not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportPr",
+            $data["id"],
+            "Canned reply not found"
+        );
 
         return $this->getService()->cannedUpdate($model, $data);
     }
@@ -652,7 +832,9 @@ class Admin extends \Api_Abstract
      */
     public function canned_category_pairs($data)
     {
-        return $this->di['db']->getAssoc('SELECT id, title FROM support_pr_category WHERE 1');
+        return $this->di["db"]->getAssoc(
+            "SELECT id, title FROM support_pr_category WHERE 1"
+        );
     }
 
     /**
@@ -664,12 +846,16 @@ class Admin extends \Api_Abstract
      */
     public function canned_category_get($data)
     {
-        $required = array(
-            'id' => 'Canned category id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Canned category id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportPrCategory', $data['id'], 'Canned category not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportPrCategory",
+            $data["id"],
+            "Canned category not found"
+        );
 
         return $this->getService()->cannedCategoryToApiArray($model);
     }
@@ -686,14 +872,18 @@ class Admin extends \Api_Abstract
      */
     public function canned_category_update($data)
     {
-        $required = array(
-            'id' => 'Canned category id is missing',
+        $required = [
+            "id" => "Canned category id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportPrCategory",
+            $data["id"],
+            "Canned category not found"
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportPrCategory', $data['id'], 'Canned category not found');
-
-        $title = $this->di['array_get']($data, 'title', $model->title);
+        $title = $this->di["array_get"]($data, "title", $model->title);
 
         return $this->getService()->cannedCategoryUpdate($model, $title);
     }
@@ -708,12 +898,16 @@ class Admin extends \Api_Abstract
      */
     public function canned_category_delete($data)
     {
-        $required = array(
-            'id' => 'Canned category id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Canned category id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportPrCategory', $data['id'], 'Canned category not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportPrCategory",
+            $data["id"],
+            "Canned category not found"
+        );
 
         return $this->getService()->cannedCategoryRm($model);
     }
@@ -728,12 +922,12 @@ class Admin extends \Api_Abstract
      */
     public function canned_category_create($data)
     {
-        $required = array(
-            'title' => 'Canned category title is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "title" => "Canned category title is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        return $this->getService()->cannedCategoryCreate($data['title']);
+        return $this->getService()->cannedCategoryCreate($data["title"]);
     }
 
     /**
@@ -747,15 +941,23 @@ class Admin extends \Api_Abstract
      */
     public function note_create($data)
     {
-        $required = array(
-            'ticket_id' => 'ticket_id is missing',
-            'note'      => 'Note is missing',
+        $required = [
+            "ticket_id" => "ticket_id is missing",
+            "note" => "Note is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $ticket = $this->di["db"]->getExistingModelById(
+            "SupportTicket",
+            $data["ticket_id"],
+            "Ticket not found"
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $ticket = $this->di['db']->getExistingModelById('SupportTicket', $data['ticket_id'], 'Ticket not found');
-
-        return $this->getService()->noteCreate($ticket, $this->getIdentity(), $data['note']);
+        return $this->getService()->noteCreate(
+            $ticket,
+            $this->getIdentity(),
+            $data["note"]
+        );
     }
 
     /**
@@ -768,12 +970,16 @@ class Admin extends \Api_Abstract
      */
     public function note_delete($data)
     {
-        $required = array(
-            'id' => 'Note id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Note id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportTicketNote', $data['id'], 'Note not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportTicketNote",
+            $data["id"],
+            "Note not found"
+        );
 
         return $this->getService()->noteRm($model);
     }
@@ -788,15 +994,18 @@ class Admin extends \Api_Abstract
      */
     public function task_complete($data)
     {
-        $required = array(
-            'id' => 'Ticket id is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket id is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('SupportTicket', $data['id'], 'Ticket not found');
+        $model = $this->di["db"]->getExistingModelById(
+            "SupportTicket",
+            $data["id"],
+            "Ticket not found"
+        );
 
         return $this->getService()->ticketTaskComplete($model);
-
     }
 
     /**
@@ -808,13 +1017,13 @@ class Admin extends \Api_Abstract
      */
     public function batch_delete($data)
     {
-        $required = array(
-            'ids' => 'IDs not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "ids" => "IDs not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        foreach ($data['ids'] as $id) {
-            $this->ticket_delete(array('id' => $id));
+        foreach ($data["ids"] as $id) {
+            $this->ticket_delete(["id" => $id]);
         }
 
         return true;
@@ -829,13 +1038,13 @@ class Admin extends \Api_Abstract
      */
     public function batch_delete_public($data)
     {
-        $required = array(
-            'ids' => 'IDs not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "ids" => "IDs not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        foreach ($data['ids'] as $id) {
-            $this->public_ticket_delete(array('id' => $id));
+        foreach ($data["ids"] as $id) {
+            $this->public_ticket_delete(["id" => $id]);
         }
 
         return true;

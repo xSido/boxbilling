@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_SupportTicketMessage extends RedBean_SimpleModel
 {
 }

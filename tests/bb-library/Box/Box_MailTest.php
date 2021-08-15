@@ -4,52 +4,55 @@
  */
 class Box_MailTest extends PHPUnit\Framework\TestCase
 {
-
     public function testsend_TransportSendMail()
     {
-        $transport = 'sendmail';
+        $transport = "sendmail";
 
         $mailMock = $this->getMockBuilder(Box_Mail::class)
-            ->setMethods(array('_sendMail'))
+            ->setMethods(["_sendMail"])
             ->getMock();
 
-        $mailMock->expects($this->once())
-            ->method('_sendMail')
-            ->with(array());
+        $mailMock
+            ->expects($this->once())
+            ->method("_sendMail")
+            ->with([]);
 
         $mailMock->send($transport);
     }
 
     public function testsend_TransportSmtp()
     {
-        $transport = 'smtp';
+        $transport = "smtp";
 
-        $mailMock = $this->getMockBuilder('Box_Mail')
-            ->setMethods(array('_sendSmtpMail'))
+        $mailMock = $this->getMockBuilder("Box_Mail")
+            ->setMethods(["_sendSmtpMail"])
             ->getMock();
 
-        $mailMock->expects($this->once())
-            ->method('_sendSmtpMail')
-            ->with(array());
+        $mailMock
+            ->expects($this->once())
+            ->method("_sendSmtpMail")
+            ->with([]);
 
         $mailMock->send($transport);
     }
 
     public function testsend_TransportUnknown()
     {
-        $transport = 'mailServer';
+        $transport = "mailServer";
 
         $mail = new Box_Mail();
 
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage(sprintf('Unknown mail transport: %s', $transport));
+        $this->expectExceptionMessage(
+            sprintf("Unknown mail transport: %s", $transport)
+        );
 
         $mail->send($transport);
     }
 
     public function testsetBodyHtml()
     {
-        $context = 'Mail body';
+        $context = "Mail body";
         $mail = new Box_Mail();
 
         $result = $mail->setBodyHtml($context);
@@ -61,7 +64,7 @@ class Box_MailTest extends PHPUnit\Framework\TestCase
 
     public function testsetFrom()
     {
-        $context = 'jobs@boxbilling.com';
+        $context = "jobs@boxbilling.com";
         $mail = new Box_Mail();
 
         $result = $mail->setFrom($context);
@@ -71,7 +74,7 @@ class Box_MailTest extends PHPUnit\Framework\TestCase
 
     public function testsetSubject()
     {
-        $context = 'Mail title';
+        $context = "Mail title";
         $mail = new Box_Mail();
 
         $result = $mail->setSubject($context);
@@ -83,7 +86,7 @@ class Box_MailTest extends PHPUnit\Framework\TestCase
 
     public function testsetReplyTo()
     {
-        $context = 'do-not-reply@boxbilling.com';
+        $context = "do-not-reply@boxbilling.com";
         $mail = new Box_Mail();
 
         $result = $mail->setReplyTo($context);
@@ -92,7 +95,7 @@ class Box_MailTest extends PHPUnit\Framework\TestCase
 
     public function testaddTo()
     {
-        $context = 'bcc@boxbilling.com';
+        $context = "bcc@boxbilling.com";
         $mail = new Box_Mail();
 
         $result = $mail->addTo($context);

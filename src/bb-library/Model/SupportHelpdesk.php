@@ -12,5 +12,4 @@
 
 class Model_SupportHelpdesk extends RedBean_SimpleModel
 {
-
 }

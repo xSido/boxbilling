@@ -12,8 +12,8 @@
 
 class Model_Transaction extends RedBean_SimpleModel
 {
-    const STATUS_RECEIVED        = 'received';
-    const STATUS_APPROVED        = 'approved';
-    const STATUS_PROCESSED       = 'processed';
-    const STATUS_ERROR           = 'error';
+    const STATUS_RECEIVED = "received";
+    const STATUS_APPROVED = "approved";
+    const STATUS_PROCESSED = "processed";
+    const STATUS_ERROR = "error";
 }

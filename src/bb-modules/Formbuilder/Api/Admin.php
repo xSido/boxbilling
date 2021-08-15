@@ -31,13 +31,21 @@ class Admin extends \Api_Abstract
      */
     public function create_form($data)
     {
-        $required = array(
-            'name' => 'Form name was not provided',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "name" => "Form name was not provided",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        if (isset($data["type"]) && (strtolower($data["type"])!= "horizontal" || strtolower($data["type"])!= "default" )){
-            throw new \Box_Exception ("Form style was not found in predefined list", null, 3657);
+        if (
+            isset($data["type"]) &&
+            (strtolower($data["type"]) != "horizontal" ||
+                strtolower($data["type"]) != "default")
+        ) {
+            throw new \Box_Exception(
+                "Form style was not found in predefined list",
+                null,
+                3657
+            );
         }
 
         $service = $this->getService();
@@ -76,14 +84,26 @@ class Admin extends \Api_Abstract
     public function add_field($data)
     {
         $service = $this->getService();
-        if (!isset($data['type']) || !$service->typeValidation($data['type'])) {
-            throw new \Box_Exception('Form field type is not valid', null, 2684);
+        if (!isset($data["type"]) || !$service->typeValidation($data["type"])) {
+            throw new \Box_Exception(
+                "Form field type is not valid",
+                null,
+                2684
+            );
         }
-        if (isset($data['options']) && is_array(($data['options'])) && !$service->isArrayUnique($data['options'])) {
-            throw new \Box_Exception('This input type must have unique values', null, 3658);
+        if (
+            isset($data["options"]) &&
+            is_array($data["options"]) &&
+            !$service->isArrayUnique($data["options"])
+        ) {
+            throw new \Box_Exception(
+                "This input type must have unique values",
+                null,
+                3658
+            );
         }
-        if (!isset($data['form_id'])) {
-            throw new \Box_Exception('Form id was not passed', null, 9846);
+        if (!isset($data["form_id"])) {
+            throw new \Box_Exception("Form id was not passed", null, 9846);
         }
 
         $fieldId = $service->addNewField($data);
@@ -101,13 +121,18 @@ class Admin extends \Api_Abstract
 
     public function get_form($data)
     {
-        $required = array(
-            'id' => 'Form id was not passed',
+        $required = [
+            "id" => "Form id was not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray(
+            $required,
+            $data,
+            null,
+            2391
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data, null, 2391);
 
         $service = $this->getService();
-        return $service->getForm($data['id']);
+        return $service->getForm($data["id"]);
     }
 
     /**
@@ -120,17 +145,21 @@ class Admin extends \Api_Abstract
      */
     public function get_form_fields($data)
     {
-        $required = array(
-            'form_id' => 'Form id was not passed',
+        $required = [
+            "form_id" => "Form id was not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray(
+            $required,
+            $data,
+            null,
+            1822
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data, null, 1822);
 
         $service = $this->getService();
-        $fields = $service->getFormFields($data['form_id']);
+        $fields = $service->getFormFields($data["form_id"]);
 
         return $fields;
     }
-
 
     /**
      * Get field data by field id
@@ -142,13 +171,18 @@ class Admin extends \Api_Abstract
      */
     public function get_field($data)
     {
-        $required = array(
-            'id' => 'Field id was not passed',
+        $required = [
+            "id" => "Field id was not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray(
+            $required,
+            $data,
+            null,
+            3547
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data, null, 3547);
 
         $service = $this->getService();
-        $field = $service->getField($data['id']);
+        $field = $service->getField($data["id"]);
 
         return $field;
     }
@@ -178,16 +212,20 @@ class Admin extends \Api_Abstract
      */
     public function delete_form($data)
     {
-        $required = array(
-            'id' => 'Form id was not passed',
+        $required = [
+            "id" => "Form id was not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray(
+            $required,
+            $data,
+            null,
+            9958
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data, null, 9958);
 
         $service = $this->getService();
-        $service->removeForm($data['id']);
+        $service->removeForm($data["id"]);
         return true;
     }
-
 
     /**
      * Delete field by id
@@ -199,17 +237,20 @@ class Admin extends \Api_Abstract
      */
     public function delete_field($data)
     {
-        $required = array(
-            'id' => 'Field id was not passed',
+        $required = [
+            "id" => "Field id was not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray(
+            $required,
+            $data,
+            null,
+            9959
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data, null, 9959);
 
         $service = $this->getService();
         $service->removeField($data);
         return true;
     }
-
-
 
     /**
      * Update form
@@ -242,21 +283,32 @@ class Admin extends \Api_Abstract
      */
     public function update_field($data)
     {
-        $required = array(
-            'id' => 'Field id was not passed',
+        $required = [
+            "id" => "Field id was not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray(
+            $required,
+            $data,
+            null,
+            9958
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data, null, 9958);
 
         $service = $this->getService();
-        if (isset($data['options']) && !$service->isArrayUnique($data['options'])) {
-            throw new \Box_Exception('This input type must have unique values', null, 3658);
+        if (
+            isset($data["options"]) &&
+            !$service->isArrayUnique($data["options"])
+        ) {
+            throw new \Box_Exception(
+                "This input type must have unique values",
+                null,
+                3658
+            );
         }
 
         $fieldId = $service->updateField($data);
 
         return $fieldId;
     }
-
 
     /**
      * Get form pairs
@@ -268,7 +320,6 @@ class Admin extends \Api_Abstract
         $service = $this->getService();
         return $service->getFormPairs();
     }
-
 
     /**
      * Duplicate form with its fields in database
@@ -282,11 +333,11 @@ class Admin extends \Api_Abstract
      */
     public function copy_form($data)
     {
-        if (!isset($data['form_id'])) {
-            throw new \Box_Exception('Form id was not passed', null, 9958);
+        if (!isset($data["form_id"])) {
+            throw new \Box_Exception("Form id was not passed", null, 9958);
         }
-        if (!isset($data['name'])) {
-            throw new \Box_Exception('Form name was not passed', null, 9842);
+        if (!isset($data["name"])) {
+            throw new \Box_Exception("Form name was not passed", null, 9842);
         }
 
         $service = $this->getService();
@@ -304,25 +355,22 @@ class Admin extends \Api_Abstract
      */
     public function update_form_settings($data)
     {
-        if (!isset($data['form_id']) || (trim($data['form_id']) == "")) {
-            throw new \Box_Exception('Form id was not passed', null, 1654);
+        if (!isset($data["form_id"]) || trim($data["form_id"]) == "") {
+            throw new \Box_Exception("Form id was not passed", null, 1654);
         }
-        if (!isset($data['form_name'])) {
-            throw new \Box_Exception('Form name was not passed', null, 9241);
-        }
-
-        if (!isset($data['type'])) {
-            throw new \Box_Exception('Form type was not passed', null, 3794);
+        if (!isset($data["form_name"])) {
+            throw new \Box_Exception("Form name was not passed", null, 9241);
         }
 
-        if ($data['type'] !='horizontal' && $data['type'] != 'default') {
-            throw new \Box_Exception('Field type not supported', null, 3207);
+        if (!isset($data["type"])) {
+            throw new \Box_Exception("Form type was not passed", null, 3794);
+        }
+
+        if ($data["type"] != "horizontal" && $data["type"] != "default") {
+            throw new \Box_Exception("Field type not supported", null, 3207);
         }
 
         $service = $this->getService();
         return $service->updateFormSettings($data);
-
     }
-
-
 }

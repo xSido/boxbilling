@@ -15,8 +15,8 @@ class QueryDebuggerListener extends Doctrine_EventListener
                 $param = sprintf("'%s'", $param);
             }
 
-            $query = substr_replace($query, $param, strpos($query, '?'), 1);
-            
+            $query = substr_replace($query, $param, strpos($query, "?"), 1);
+
             debug($query);
         }
     }

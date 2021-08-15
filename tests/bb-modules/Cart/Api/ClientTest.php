@@ -1,8 +1,8 @@
 <?php
 namespace Box\Tests\Mod\Cart\Api;
 
-
-class ClientTest extends \BBTestCase {
+class ClientTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Cart\Api\Client
      */
@@ -18,20 +18,23 @@ class ClientTest extends \BBTestCase {
         $cart = new \Model_Cart();
         $cart->loadBean(new \RedBeanPHP\OODBBean());
 
-       $serviceMock = $this->getMockBuilder('\Box\Mod\Cart\Service')
-            ->setMethods(array('getSessionCart', 'checkoutCart'))
-           ->getMock();
-       $serviceMock->expects($this->atLeastOnce())->method('getSessionCart')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Cart\Service")
+            ->setMethods(["getSessionCart", "checkoutCart"])
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getSessionCart")
             ->will($this->returnValue($cart));
 
-        $checkOutCartResult =  array (
-            'gateway_id'   => 1,
-            'invoice_hash' => null,
-            'order_id'     => 1,
-            'orders'       => 1,
-        );
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('checkoutCart')
+        $checkOutCartResult = [
+            "gateway_id" => 1,
+            "invoice_hash" => null,
+            "order_id" => 1,
+            "orders" => 1,
+        ];
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("checkoutCart")
             ->will($this->returnValue($checkOutCartResult));
 
         $this->clientApi->setService($serviceMock);
@@ -41,12 +44,16 @@ class ClientTest extends \BBTestCase {
 
         $this->clientApi->setIdentity($client);
 
-        $data   = array(
-            'id' => rand(1, 100)
-        );
+        $data = [
+            "id" => rand(1, 100),
+        ];
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->clientApi->setDi($di);
         $result = $this->clientApi->checkout($data);
@@ -54,4 +61,3 @@ class ClientTest extends \BBTestCase {
         $this->assertIsArray($result);
     }
 }
- 

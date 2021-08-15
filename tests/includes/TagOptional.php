@@ -20,7 +20,7 @@
  */
 
 /** Zend_Reflection_Docblock_Tag */
-require_once 'Zend/Reflection/Docblock/Tag.php';
+require_once "Zend/Reflection/Docblock/Tag.php";
 
 /**
  * @category   Zend
@@ -47,19 +47,29 @@ class TagOptional extends Zend_Reflection_Docblock_Tag
      */
     public function __construct($tagDocblockLine)
     {
-        $matches = array();
+        $matches = [];
 
-        if (!preg_match('#^@(\w+)\s+([\w|\\\]+)(?:\s+(\$\S+))?(?:\s+(.*))?#s', $tagDocblockLine, $matches)) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Provided docblock line is does not contain a valid tag');
+        if (
+            !preg_match(
+                '#^@(\w+)\s+([\w|\\\]+)(?:\s+(\$\S+))?(?:\s+(.*))?#s',
+                $tagDocblockLine,
+                $matches
+            )
+        ) {
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Provided docblock line is does not contain a valid tag"
+            );
         }
 
-        if ($matches[1] != 'optional') {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Provided docblock line is does not contain a valid @optional tag');
+        if ($matches[1] != "optional") {
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Provided docblock line is does not contain a valid @optional tag"
+            );
         }
 
-        $this->_name = 'optional';
+        $this->_name = "optional";
         $this->_type = $matches[2];
 
         if (isset($matches[3])) {
@@ -67,7 +77,7 @@ class TagOptional extends Zend_Reflection_Docblock_Tag
         }
 
         if (isset($matches[4])) {
-            $this->_description = preg_replace('#\s+#', ' ', $matches[4]);
+            $this->_description = preg_replace("#\s+#", " ", $matches[4]);
         }
     }
 

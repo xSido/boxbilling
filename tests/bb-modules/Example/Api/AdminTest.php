@@ -1,11 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Example\Api;
 
-
-class AdminTest extends \BBTestCase {
-
+class AdminTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Example\Api\Admin
      */
@@ -13,16 +11,15 @@ class AdminTest extends \BBTestCase {
 
     public function setup(): void
     {
-        $this->api= new \Box\Mod\Example\Api\Admin();
+        $this->api = new \Box\Mod\Example\Api\Admin();
     }
 
     public function testget_something()
     {
-        $data = array('microsoft' => '');
-        $expected = array('apple', 'google', 'facebook', 'microsoft');
+        $data = ["microsoft" => ""];
+        $expected = ["apple", "google", "facebook", "microsoft"];
         $result = $this->api->get_something($data);
         $this->assertIsArray($result);
         $this->assertEquals($expected, $result);
     }
 }
- 

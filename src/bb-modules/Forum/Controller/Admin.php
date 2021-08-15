@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Forum\Controller;
 
 class Admin implements \Box\InjectionAwareInterface
@@ -35,50 +34,65 @@ class Admin implements \Box\InjectionAwareInterface
 
     public function fetchNavigation()
     {
-        return array(
-            'subpages'=>array(
-                array(
-                    'location'  => 'support',
-                    'index'     => 700,
-                    'label' => 'Forum',
-                    'uri'   => $this->di['url']->adminLink('forum'),
-                    'class' => '',
-                ),
-            ),
-        );
+        return [
+            "subpages" => [
+                [
+                    "location" => "support",
+                    "index" => 700,
+                    "label" => "Forum",
+                    "uri" => $this->di["url"]->adminLink("forum"),
+                    "class" => "",
+                ],
+            ],
+        ];
     }
-    
+
     public function register(\Box_App &$app)
     {
-        $app->get('/forum', 'get_index', array(), get_class($this));
-        $app->get('/forum/profile/:id', 'get_profile', array('id'=>'[0-9]+'), get_class($this));
-        $app->get('/forum/:id', 'get_forum', array('id'=>'[0-9]+'), get_class($this));
-        $app->get('/forum/topic/:id', 'get_topic', array('id'=>'[0-9]+'), get_class($this));
+        $app->get("/forum", "get_index", [], get_class($this));
+        $app->get(
+            "/forum/profile/:id",
+            "get_profile",
+            ["id" => "[0-9]+"],
+            get_class($this)
+        );
+        $app->get(
+            "/forum/:id",
+            "get_forum",
+            ["id" => "[0-9]+"],
+            get_class($this)
+        );
+        $app->get(
+            "/forum/topic/:id",
+            "get_topic",
+            ["id" => "[0-9]+"],
+            get_class($this)
+        );
     }
 
     public function get_index(\Box_App $app)
     {
-        $this->di['is_admin_logged'];
-        return $app->render('mod_forum_index');
+        $this->di["is_admin_logged"];
+        return $app->render("mod_forum_index");
     }
-    
+
     public function get_forum(\Box_App $app, $id)
     {
-        $api = $this->di['api_admin'];
-        $forum = $api->forum_get(array('id'=>$id));
-        return $app->render('mod_forum_forum', array('forum'=>$forum));
+        $api = $this->di["api_admin"];
+        $forum = $api->forum_get(["id" => $id]);
+        return $app->render("mod_forum_forum", ["forum" => $forum]);
     }
-    
+
     public function get_topic(\Box_App $app, $id)
     {
-        $api = $this->di['api_admin'];
-        $topic = $api->forum_topic_get(array('id'=>$id));
-        return $app->render('mod_forum_topic', array('topic'=>$topic));
+        $api = $this->di["api_admin"];
+        $topic = $api->forum_topic_get(["id" => $id]);
+        return $app->render("mod_forum_topic", ["topic" => $topic]);
     }
-    
+
     public function get_profile(\Box_App $app, $id)
     {
-        $this->di['is_admin_logged'];
-        return $app->render('mod_forum_profile', array('client_id'=>$id));
+        $this->di["is_admin_logged"];
+        return $app->render("mod_forum_profile", ["client_id" => $id]);
     }
 }

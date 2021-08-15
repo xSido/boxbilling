@@ -10,8 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_Currency extends \RedBean_SimpleModel
 {
-    
 }

@@ -10,10 +10,9 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_LogStream
 {
-    private $_stream = NULL;
+    private $_stream = null;
 
     /**
      * @param string $streamOrUrl
@@ -22,40 +21,47 @@ class Box_LogStream
     {
         // Setting the default
         if (null === $mode) {
-            $mode = 'a';
+            $mode = "a";
         }
 
         if (is_resource($streamOrUrl)) {
-            if (get_resource_type($streamOrUrl) != 'stream') {
-                throw new \Box_Exception('Resource is not a stream');
+            if (get_resource_type($streamOrUrl) != "stream") {
+                throw new \Box_Exception("Resource is not a stream");
             }
 
-            if ($mode != 'a') {
-                throw new \Box_Exception('Mode cannot be changed on existing streams');
+            if ($mode != "a") {
+                throw new \Box_Exception(
+                    "Mode cannot be changed on existing streams"
+                );
             }
 
             $this->_stream = $streamOrUrl;
         } else {
-            if (is_array($streamOrUrl) && isset($streamOrUrl['stream'])) {
-                $streamOrUrl = $streamOrUrl['stream'];
+            if (is_array($streamOrUrl) && isset($streamOrUrl["stream"])) {
+                $streamOrUrl = $streamOrUrl["stream"];
             }
 
-            if(!file_exists($streamOrUrl)) {
+            if (!file_exists($streamOrUrl)) {
                 @touch($streamOrUrl);
             }
 
-            if (! $this->_stream = @fopen($streamOrUrl, $mode, false)) {
-                throw new \Box_Exception(":stream cannot be opened with mode :mode", array(':stream'=>$streamOrUrl, ':mode'=>$mode));
+            if (!($this->_stream = @fopen($streamOrUrl, $mode, false))) {
+                throw new \Box_Exception(
+                    ":stream cannot be opened with mode :mode",
+                    [":stream" => $streamOrUrl, ":mode" => $mode]
+                );
             }
         }
     }
 
     public function write($event)
     {
-        $output = '%timestamp% %priorityName% (%priority%): %message%'.PHP_EOL;
+        $output =
+            "%timestamp% %priorityName% (%priority%): %message%" . PHP_EOL;
         foreach ($event as $name => $value) {
-            if ((is_object($value) && !method_exists($value,'__toString'))
-                || is_array($value)
+            if (
+                (is_object($value) && !method_exists($value, "__toString")) ||
+                is_array($value)
             ) {
                 $value = gettype($value);
             }

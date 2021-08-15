@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Orderbutton\Controller;
 
 class Client implements \Box\InjectionAwareInterface
@@ -35,18 +34,18 @@ class Client implements \Box\InjectionAwareInterface
 
     public function register(\Box_App &$app)
     {
-        $app->get('/orderbutton', 'get_index', array(), get_class($this));
-        $app->get('/orderbutton/js', 'get_js', array(), get_class($this));
+        $app->get("/orderbutton", "get_index", [], get_class($this));
+        $app->get("/orderbutton/js", "get_js", [], get_class($this));
     }
 
     public function get_index(\Box_App $app)
     {
-        return $app->render('mod_orderbutton_index');
+        return $app->render("mod_orderbutton_index");
     }
 
     public function get_js(\Box_App $app)
     {
         header("Content-Type: application/javascript");
-        return $app->render('mod_orderbutton_js');
+        return $app->render("mod_orderbutton_js");
     }
 }

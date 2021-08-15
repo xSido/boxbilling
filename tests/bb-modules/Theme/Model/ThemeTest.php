@@ -1,12 +1,10 @@
 <?php
 
-
 namespace Box\Mod\Theme\Model;
 
-
-class ThemeTest extends \BBTestCase {
-
-    private $existingTheme = 'huraga';
+class ThemeTest extends \BBTestCase
+{
+    private $existingTheme = "huraga";
 
     public function testgetName()
     {
@@ -16,9 +14,11 @@ class ThemeTest extends \BBTestCase {
 
     public function testNotExistingTheme()
     {
-        $themeName = 'not existing theme';
+        $themeName = "not existing theme";
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage(sprintf('Theme "%s" does not exists', $themeName));
+        $this->expectExceptionMessage(
+            sprintf('Theme "%s" does not exists', $themeName)
+        );
         new \Box\Mod\Theme\Model\Theme($themeName);
     }
 
@@ -74,7 +74,7 @@ class ThemeTest extends \BBTestCase {
     public function testgetPresetFromSettingsDataFile()
     {
         $theme = new \Box\Mod\Theme\Model\Theme($this->existingTheme);
-        $result = $theme->getPresetFromSettingsDataFile('default');
+        $result = $theme->getPresetFromSettingsDataFile("default");
         $this->assertIsArray($result);
     }
 
@@ -90,7 +90,7 @@ class ThemeTest extends \BBTestCase {
         $theme = new \Box\Mod\Theme\Model\Theme($this->existingTheme);
         $result = $theme->getPathConfig();
         $this->assertIsString($result);
-        $this->assertTrue(strpos($result, 'config') !== false);
+        $this->assertTrue(strpos($result, "config") !== false);
     }
 
     public function testgetPathAssets()
@@ -98,7 +98,7 @@ class ThemeTest extends \BBTestCase {
         $theme = new \Box\Mod\Theme\Model\Theme($this->existingTheme);
         $result = $theme->getPathAssets();
         $this->assertIsString($result);
-        $this->assertTrue(strpos($result, 'assets') !== false);
+        $this->assertTrue(strpos($result, "assets") !== false);
     }
 
     public function testgetPathHtml()
@@ -106,7 +106,7 @@ class ThemeTest extends \BBTestCase {
         $theme = new \Box\Mod\Theme\Model\Theme($this->existingTheme);
         $result = $theme->getPathHtml();
         $this->assertIsString($result);
-        $this->assertTrue(strpos($result, 'html') !== false);
+        $this->assertTrue(strpos($result, "html") !== false);
     }
 
     public function testgetPathSettingsDataFile()
@@ -114,8 +114,6 @@ class ThemeTest extends \BBTestCase {
         $theme = new \Box\Mod\Theme\Model\Theme($this->existingTheme);
         $result = $theme->getPathSettingsDataFile();
         $this->assertIsString($result);
-        $this->assertTrue(strpos($result, 'settings_data.json') !== false);
+        $this->assertTrue(strpos($result, "settings_data.json") !== false);
     }
-
 }
- 

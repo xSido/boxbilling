@@ -4,12 +4,16 @@ namespace Box\Mod\Order;
 
 class PdoMock extends \PDO
 {
-    public function __construct() { }
+    public function __construct()
+    {
+    }
 }
 
 class PdoStatmentsMock extends \PDOStatement
 {
-    public function __construct() { }
+    public function __construct()
+    {
+    }
 }
 
 class ServiceTest extends \BBTestCase
@@ -34,27 +38,40 @@ class ServiceTest extends \BBTestCase
 
     public function testCounter()
     {
-        $counter = array(
-            \Model_ClientOrder::STATUS_ACTIVE => rand(1, 100)
-        );
-        $dbMock  = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getAssoc')
+        $counter = [
+            \Model_ClientOrder::STATUS_ACTIVE => rand(1, 100),
+        ];
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getAssoc")
             ->will($this->returnValue($counter));
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->service->setDi($di);
 
         $result = $this->service->counter();
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('total', $result);
-        $this->assertEquals(array_sum($counter), $result['total']);
-        $this->assertArrayHasKey(\Model_ClientOrder::STATUS_PENDING_SETUP, $result);
-        $this->assertArrayHasKey(\Model_ClientOrder::STATUS_FAILED_SETUP, $result);
+        $this->assertArrayHasKey("total", $result);
+        $this->assertEquals(array_sum($counter), $result["total"]);
+        $this->assertArrayHasKey(
+            \Model_ClientOrder::STATUS_PENDING_SETUP,
+            $result
+        );
+        $this->assertArrayHasKey(
+            \Model_ClientOrder::STATUS_FAILED_SETUP,
+            $result
+        );
         $this->assertArrayHasKey(\Model_ClientOrder::STATUS_ACTIVE, $result);
         $this->assertArrayHasKey(\Model_ClientOrder::STATUS_SUSPENDED, $result);
         $this->assertArrayHasKey(\Model_ClientOrder::STATUS_CANCELED, $result);
@@ -62,59 +79,79 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderActivate()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
             ->will($this->returnValue(true));
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedBeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
 
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->setDi($di);
@@ -124,59 +161,81 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderActivate_LogException()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
-            ->willThrowException(new \Exception('PHPUnit controlled exception'));
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
+            ->willThrowException(
+                new \Exception("PHPUnit controlled exception")
+            );
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedBeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
 
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->setDi($di);
@@ -186,59 +245,79 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderRenew()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedbeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
             ->will($this->returnValue(true));
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedbeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderRenew($eventMock);
@@ -246,59 +325,81 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderRenew_LogException()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
-            ->willThrowException(new \Exception('PHPUnit controlled exception'));
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
+            ->willThrowException(
+                new \Exception("PHPUnit controlled exception")
+            );
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedBeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderRenew($eventMock);
@@ -306,59 +407,79 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderSuspend()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedbeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
             ->will($this->returnValue(true));
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedbeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderSuspend($eventMock);
@@ -366,62 +487,88 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderSuspend_LogException()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
-            ->willThrowException(new \Exception('PHPUnit controlled exception'));
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
+            ->willThrowException(
+                new \Exception("PHPUnit controlled exception")
+            );
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedBeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderSuspend($eventMock);
@@ -429,59 +576,79 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderUnsuspend()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedbeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
             ->will($this->returnValue(true));
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedbeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderUnsuspend($eventMock);
@@ -489,59 +656,81 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderUnsuspend_LogException()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
-            ->willThrowException(new \Exception('PHPUnit controlled exception'));
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
+            ->willThrowException(
+                new \Exception("PHPUnit controlled exception")
+            );
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedBeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderUnsuspend($eventMock);
@@ -549,57 +738,75 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderCancel()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedbeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
             ->will($this->returnValue(true));
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedbeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderCancel($eventMock);
@@ -607,57 +814,77 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderCancel_LogException()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
-            ->willThrowException(new \Exception('PHPUnit controlled exception'));
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
+            ->willThrowException(
+                new \Exception("PHPUnit controlled exception")
+            );
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedBeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderCancel($eventMock);
@@ -665,59 +892,79 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderUncancel()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
             ->will($this->returnValue(true));
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedBeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderUncancel($eventMock);
@@ -725,59 +972,81 @@ class ServiceTest extends \BBTestCase
 
     public function testOnAfterAdminOrderUncancel_LogException()
     {
-        $params = array(
-            'id' => rand(1, 100)
-        );
+        $params = [
+            "id" => rand(1, 100),
+        ];
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
             ->will($this->returnValue($params));
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($order));
 
-        $emailServiceMock = $this->getMockBuilder('\Box\Mod\Email\Service')
-            ->setMethods(array('sendTemplate'))->getMock();
-        $emailServiceMock->expects($this->atLeastOnce())->method('sendTemplate')
-            ->willThrowException(new \Exception('PHPUnit controlled exception'));
+        $emailServiceMock = $this->getMockBuilder("\Box\Mod\Email\Service")
+            ->setMethods(["sendTemplate"])
+            ->getMock();
+        $emailServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("sendTemplate")
+            ->willThrowException(
+                new \Exception("PHPUnit controlled exception")
+            );
 
-        $orderArr = array(
-            'id'           => rand(1, 100),
-            'client'       => array(
-                'id' => rand(1, 100)
-            ),
-            'service_type' => 'domain'
-        );
+        $orderArr = [
+            "id" => rand(1, 100),
+            "client" => [
+                "id" => rand(1, 100),
+            ],
+            "service_type" => "domain",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getOrderServiceData', 'toApiArray'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getOrderServiceData')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())->method('toApiArray')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getOrderServiceData", "toApiArray"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderServiceData")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
             ->will($this->returnValue($orderArr));
 
         $admin = new \Model_Admin();
         $admin->loadBean(new \RedbeanPHP\OODBBean());
 
-        $di                   = new \Box_Di();
-        $di['db']             = $dbMock;
-        $di['loggedin_admin'] = $admin;
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($emailServiceMock, $serviceMock) {
-            if ($serviceName == 'email') {
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["loggedin_admin"] = $admin;
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $emailServiceMock,
+            $serviceMock
+        ) {
+            if ($serviceName == "email") {
                 return $emailServiceMock;
             }
-            if ($serviceName == 'order') {
+            if ($serviceName == "order") {
                 return $serviceMock;
             }
         });
         $serviceMock->setDi($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->will($this->returnValue($di));
 
         $serviceMock->onAfterAdminOrderUncancel($eventMock);
@@ -787,45 +1056,53 @@ class ServiceTest extends \BBTestCase
     {
         $service = new \Model_ServiceCustom();
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->never())
-            ->method('findOne');
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock->expects($this->never())->method("findOne");
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
             ->will($this->returnValue($service));
 
-        $toolsMock = $this->getMockBuilder('\Box_Tools')->getMock();
-        $toolsMock->expects($this->atLeastOnce())->method('to_camel_case')
-            ->will($this->returnValue('ServiceCustom'));
+        $toolsMock = $this->getMockBuilder("\Box_Tools")->getMock();
+        $toolsMock
+            ->expects($this->atLeastOnce())
+            ->method("to_camel_case")
+            ->will($this->returnValue("ServiceCustom"));
 
-        $di          = new \Box_Di();
-        $di['db']    = $dbMock;
-        $di['tools'] = $toolsMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["tools"] = $toolsMock;
         $this->service->setDi($di);
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedbeanPHP\OODBBean());
-        $order->service_id   = rand(1, 100);
+        $order->service_id = rand(1, 100);
         $order->service_type = \Model_ProductTable::CUSTOM;
 
         $result = $this->service->getOrderService($order);
-        $this->assertInstanceOf('Model_ServiceCustom', $result);
+        $this->assertInstanceOf("Model_ServiceCustom", $result);
     }
 
     public function testGetOrderNotCoreService()
     {
         $service = new \Model_ServiceCustom();
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->never())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->never())
+            ->method("getExistingModelById")
             ->will($this->returnValue($service));
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
             ->will($this->returnValue($service));
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $this->service->setDi($di);
 
         $order = new \Model_ClientOrder();
@@ -833,23 +1110,27 @@ class ServiceTest extends \BBTestCase
         $order->service_id = rand(1, 100);
 
         $result = $this->service->getOrderService($order);
-        $this->assertInstanceOf('Model_ServiceCustom', $result);
+        $this->assertInstanceOf("Model_ServiceCustom", $result);
     }
 
     public function testGetOrderServiceIdNotSet()
     {
         $service = new \Model_ServiceCustom();
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->never())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->never())
+            ->method("getExistingModelById")
             ->will($this->returnValue($service));
-        $dbMock->expects($this->never())
-            ->method('findOne')
+        $dbMock
+            ->expects($this->never())
+            ->method("findOne")
             ->will($this->returnValue($service));
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $this->service->setDi($di);
 
         $order = new \Model_ClientOrder();
@@ -864,18 +1145,23 @@ class ServiceTest extends \BBTestCase
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
             ->will($this->returnValue($order));
 
-        $toolsMock = $this->getMockBuilder('\Box_Tools')->getMock();
-        $toolsMock->expects($this->atLeastOnce())->method('from_camel_case')
-            ->will($this->returnValue('servicecustom'));
+        $toolsMock = $this->getMockBuilder("\Box_Tools")->getMock();
+        $toolsMock
+            ->expects($this->atLeastOnce())
+            ->method("from_camel_case")
+            ->will($this->returnValue("servicecustom"));
 
-        $di          = new \Box_Di();
-        $di['db']    = $dbMock;
-        $di['tools'] = $toolsMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
+        $di["tools"] = $toolsMock;
         $this->service->setDi($di);
 
         $service = new \Model_ServiceCustom();
@@ -883,20 +1169,22 @@ class ServiceTest extends \BBTestCase
         $service->id = rand(1, 100);
 
         $result = $this->service->getServiceOrder($service);
-        $this->assertInstanceOf('Model_ClientOrder', $result);
+        $this->assertInstanceOf("Model_ClientOrder", $result);
     }
 
     public function testGetConfig()
     {
-        $decoded   = array(
-            'key' => 'value'
-        );
-        $toolsMock = $this->getMockBuilder('\Box_Tools')->getMock();
-        $toolsMock->expects($this->atLeastOnce())->method('decodeJ')
+        $decoded = [
+            "key" => "value",
+        ];
+        $toolsMock = $this->getMockBuilder("\Box_Tools")->getMock();
+        $toolsMock
+            ->expects($this->atLeastOnce())
+            ->method("decodeJ")
             ->will($this->returnValue($decoded));
 
-        $di          = new \Box_Di();
-        $di['tools'] = $toolsMock;
+        $di = new \Box_Di();
+        $di["tools"] = $toolsMock;
         $this->service->setDi($di);
 
         $order = new \Model_ClientOrder();
@@ -911,10 +1199,7 @@ class ServiceTest extends \BBTestCase
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        return array(
-            array($order, true),
-            array(null, false),
-        );
+        return [[$order, true], [null, false]];
     }
 
     /**
@@ -922,13 +1207,16 @@ class ServiceTest extends \BBTestCase
      */
     public function testProductHasOrders($order, $expectedResult)
     {
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
             ->will($this->returnValue($order));
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $this->service->setDi($di);
 
         $product = new \Model_Product();
@@ -945,16 +1233,20 @@ class ServiceTest extends \BBTestCase
         $orderStatus = new \Model_ClientOrderStatus();
         $orderStatus->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('dispense')
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("dispense")
             ->will($this->returnValue($orderStatus));
-        $dbMock->expects($this->atLeastOnce())
-            ->method('store')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("store")
             ->will($this->returnValue(rand(1, 100)));
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $this->service->setDi($di);
 
         $order = new \Model_ClientOrder();
@@ -970,17 +1262,25 @@ class ServiceTest extends \BBTestCase
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->disableOriginalConstructor()->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getAll')
-            ->will($this->returnValue(array(array(), array())));
+        $dbMock = $this->getMockBuilder("\Box_Database")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getAll")
+            ->will($this->returnValue([[], []]));
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')->setMethods(array('getSoonExpiringActiveOrdersQuery'))->disableOriginalConstructor()->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('getSoonExpiringActiveOrdersQuery')
-            ->will($this->returnValue(array('query', array())));
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getSoonExpiringActiveOrdersQuery"])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getSoonExpiringActiveOrdersQuery")
+            ->will($this->returnValue(["query", []]));
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $serviceMock->setDi($di);
 
         $serviceMock->getSoonExpiringActiveOrders();
@@ -993,26 +1293,33 @@ class ServiceTest extends \BBTestCase
         $orderStatus = new \Model_ClientOrderStatus();
         $orderStatus->loadBean(new \RedBeanPHP\OODBBean());
 
-        $systemService = $this->getMockBuilder('\Box\Mod\System\Service')
-            ->setMethods(array('getParamValue'))->getMock();
-        $systemService->expects($this->atLeastOnce())->method('getParamValue')
+        $systemService = $this->getMockBuilder("\Box\Mod\System\Service")
+            ->setMethods(["getParamValue"])
+            ->getMock();
+        $systemService
+            ->expects($this->atLeastOnce())
+            ->method("getParamValue")
             ->will($this->returnValue($randId));
 
-        $di                = new \Box_Di();
-        $di['mod_service'] = $di->protect(function () use ($systemService) {
+        $di = new \Box_Di();
+        $di["mod_service"] = $di->protect(function () use ($systemService) {
             return $systemService;
         });
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->service->setDi($di);
 
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $data   = array(
-            'client_id' => $randId
-        );
+        $data = [
+            "client_id" => $randId,
+        ];
         $result = $this->service->getSoonExpiringActiveOrdersQuery($data);
 
         $expectedQuery = "SELECT *
@@ -1023,61 +1330,62 @@ class ServiceTest extends \BBTestCase
                 AND expires_at IS NOT NULL
                 AND unpaid_invoice_id IS NULL AND client_id = :client_id HAVING DATEDIFF(expires_at, NOW()) <= :days_until_expiration ORDER BY client_id DESC";
 
-        $expectedBindings = array(
-            ':client_id'             => $randId,
-            ':status'                => 'active',
-            ':invoice_option'        => 'issue-invoice',
-            ':days_until_expiration' => $randId,
-        );
+        $expectedBindings = [
+            ":client_id" => $randId,
+            ":status" => "active",
+            ":invoice_option" => "issue-invoice",
+            ":days_until_expiration" => $randId,
+        ];
 
         $this->assertIsString($result[0]);
         $this->assertIsArray($result[1]);
 
         $this->assertEquals($expectedQuery, $result[0]);
         $this->assertEquals($expectedBindings, $result[1]);
-
     }
 
     public function testgetRelatedOrderIdByType()
     {
-        $id    = 1;
+        $id = 1;
         $model = new \Model_ClientOrder();
         $model->loadBean(new \RedBeanPHP\OODBBean());
         $model->id = $id;
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->with('ClientOrder')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
+            ->with("ClientOrder")
             ->will($this->returnValue($model));
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $this->service->setDi($di);
 
-        $result = $this->service->getRelatedOrderIdByType($model, 'domain');
+        $result = $this->service->getRelatedOrderIdByType($model, "domain");
         $this->assertIsInt($result);
         $this->assertEquals($id, $result);
     }
 
     public function testgetRelatedOrderIdByType_returnNull()
     {
-        $id    = 1;
+        $id = 1;
         $model = new \Model_ClientOrder();
         $model->loadBean(new \RedBeanPHP\OODBBean());
         $model->id = $id;
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->with('ClientOrder')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
+            ->with("ClientOrder")
             ->will($this->returnValue(null));
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $this->service->setDi($di);
 
-        $result = $this->service->getRelatedOrderIdByType($model, 'domain');
+        $result = $this->service->getRelatedOrderIdByType($model, "domain");
         $this->assertNull($result);
     }
 
@@ -1086,187 +1394,180 @@ class ServiceTest extends \BBTestCase
         $model = new \Model_ClientOrder();
         $model->loadBean(new \RedBeanPHP\OODBBean());
 
-        $loggerMock = $this->getMockBuilder('\Box_Log')->disableOriginalConstructor()->getMock();
-        $loggerMock->expects($this->atLeastOnce())
-            ->method('addWriter');
-        $loggerMock->expects($this->atLeastOnce())
-            ->method('setEventItem')
-            ->withConsecutive(
-                array('client_order_id'),
-                array('status')
-            );
+        $loggerMock = $this->getMockBuilder("\Box_Log")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $loggerMock->expects($this->atLeastOnce())->method("addWriter");
+        $loggerMock
+            ->expects($this->atLeastOnce())
+            ->method("setEventItem")
+            ->withConsecutive(["client_order_id"], ["status"]);
 
-        $di           = new \Box_Di();
-        $di['logger'] = $loggerMock;
+        $di = new \Box_Di();
+        $di["logger"] = $loggerMock;
         $this->service->setDi($di);
 
         $result = $this->service->getLogger($model);
-        $this->assertInstanceOf('\Box_Log', $result);
+        $this->assertInstanceOf("\Box_Log", $result);
     }
 
     public function testtoApiArray()
     {
         $model = new \Model_ClientOrder();
         $model->loadBean(new \RedBeanPHP\OODBBean());
-        $model->config   = '{}';
-        $model->price    = 10;
+        $model->config = "{}";
+        $model->price = 10;
         $model->quantity = 1;
         $model->client_id = 1;
 
-        $clientService = $this->getMockBuilder('\Box\Mod\Client\Service')->getMock();
-        $clientService->expects($this->atLeastOnce())
-            ->method('toApiArray')
-            ->willReturn(array());
+        $clientService = $this->getMockBuilder(
+            "\Box\Mod\Client\Service"
+        )->getMock();
+        $clientService
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
+            ->willReturn([]);
 
-        $supportService = $this->getMockBuilder('\Box\Mod\Support\Service')->getMock();
-        $supportService->expects($this->atLeastOnce())
-            ->method('getActiveTicketsCountForOrder')
+        $supportService = $this->getMockBuilder(
+            "\Box\Mod\Support\Service"
+        )->getMock();
+        $supportService
+            ->expects($this->atLeastOnce())
+            ->method("getActiveTicketsCountForOrder")
             ->willReturn(1);
 
         $dbMock = $this->getMockBuilder(\Box_Database::class)->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('toArray')
-            ->willReturn(array());
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getAssoc')
-            ->willReturn(array());
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("toArray")
+            ->willReturn([]);
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getAssoc")
+            ->willReturn([]);
 
         $modelProduct = new \Model_Product();
         $modelProduct->loadBean(new \RedBeanPHP\OODBBean());
         $modelClient = new \Model_Client();
         $modelClient->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->withConsecutive(array('Product'))
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->withConsecutive(["Product"])
             ->willReturnOnConsecutiveCalls($modelProduct);
-        $exceptionError = 'Client not found';
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
-            ->with('Client', $model->client_id, $exceptionError)
+        $exceptionError = "Client not found";
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
+            ->with("Client", $model->client_id, $exceptionError)
             ->willReturn($modelClient);
 
-        $toolsMock = $this->getMockBuilder('\Box_Tools')->getMock();
-        $toolsMock->expects($this->atLeastOnce())
-            ->method('decodeJ')
-            ->willReturn(array());
+        $toolsMock = $this->getMockBuilder("\Box_Tools")->getMock();
+        $toolsMock
+            ->expects($this->atLeastOnce())
+            ->method("decodeJ")
+            ->willReturn([]);
 
-        $di                = new \Box_Di();
-        $di['mod_service'] = $di->protect(function ($serviceName) use ($clientService, $supportService) {
-            if ($serviceName == 'client') {
+        $di = new \Box_Di();
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $clientService,
+            $supportService
+        ) {
+            if ($serviceName == "client") {
                 return $clientService;
             }
-            if ($serviceName == 'support') {
+            if ($serviceName == "support") {
                 return $supportService;
             }
         });
-        $di['db']          = $dbMock;
-        $di['tools']       = $toolsMock;
+        $di["db"] = $dbMock;
+        $di["tools"] = $toolsMock;
 
         $this->service->setDi($di);
         $result = $this->service->toApiArray($model, true, new \Model_Admin());
 
-        $this->assertArrayHasKey('config', $result);
-        $this->assertArrayHasKey('total', $result);
-        $this->assertArrayHasKey('title', $result);
-        $this->assertArrayHasKey('meta', $result);
-        $this->assertArrayHasKey('active_tickets', $result);
-        $this->assertArrayHasKey('plugin', $result);
-        $this->assertArrayHasKey('client', $result);
+        $this->assertArrayHasKey("config", $result);
+        $this->assertArrayHasKey("total", $result);
+        $this->assertArrayHasKey("title", $result);
+        $this->assertArrayHasKey("meta", $result);
+        $this->assertArrayHasKey("active_tickets", $result);
+        $this->assertArrayHasKey("plugin", $result);
+        $this->assertArrayHasKey("client", $result);
     }
 
     public function searchQueryData()
     {
-        return array(
-            array(array(), 'SELECT co.* from client_order co', array()),
-            array(
-                array('client_id' => 1),
-                'co.client_id = :client_id',
-                array(':client_id' => '1',)
-            ),
-            array(
-                array('invoice_option' => 'issue-invoice'),
-                'co.invoice_option = :invoice_option',
-                array(':invoice_option' => 'issue-invoice',)
-            ),
-            array(
-                array('id' => 1),
-                'co.id = :id',
-                array(':id' => '1',)
-            ),
-            array(
-                array('status' => 'pending_setup'),
-                'co.status = :status',
-                array(':status' => 'pending_setup',)
-            ),
-            array(
-                array('product_id' => 1),
-                'co.product_id = :product_id',
-                array(':product_id' => '1',)
-            ),
-            array(
-                array('type' => 'custom'),
-                'co.service_type = :service_type',
-                array(':service_type' => 'custom',)
-            ),
-            array(
-                array('title' => 'titleField'),
-                'co.title LIKE :title',
-                array(':title' => '%titleField%',)
-            ),
-            array(
-                array('period' => '1Y'),
-                'co.period = :period',
-                array(':period' => '1Y',)
-            ),
-            array(
-                array('hide_addons' => true),
-                'co.group_master = 1',
-                array()
-            ),
-            array(
-                array('created_at' => '2012-12-11'),
+        return [
+            [[], "SELECT co.* from client_order co", []],
+            [
+                ["client_id" => 1],
+                "co.client_id = :client_id",
+                [":client_id" => "1"],
+            ],
+            [
+                ["invoice_option" => "issue-invoice"],
+                "co.invoice_option = :invoice_option",
+                [":invoice_option" => "issue-invoice"],
+            ],
+            [["id" => 1], "co.id = :id", [":id" => "1"]],
+            [
+                ["status" => "pending_setup"],
+                "co.status = :status",
+                [":status" => "pending_setup"],
+            ],
+            [
+                ["product_id" => 1],
+                "co.product_id = :product_id",
+                [":product_id" => "1"],
+            ],
+            [
+                ["type" => "custom"],
+                "co.service_type = :service_type",
+                [":service_type" => "custom"],
+            ],
+            [
+                ["title" => "titleField"],
+                "co.title LIKE :title",
+                [":title" => "%titleField%"],
+            ],
+            [["period" => "1Y"], "co.period = :period", [":period" => "1Y"]],
+            [["hide_addons" => true], "co.group_master = 1", []],
+            [
+                ["created_at" => "2012-12-11"],
                 "DATE_FORMAT(co.created_at, '%Y-%m-%d') = :created_at",
-                array(':created_at' => '2012-12-11',)
-            ),
-            array(
-                array('date_from' => '2012-12-11'),
-                'UNIX_TIMESTAMP(co.created_at) >= :date_from',
-                array(':date_from' => strtotime('2012-12-11'),)
-            ),
-            array(
-                array('date_to' => '2012-12-11'),
-                'UNIX_TIMESTAMP(co.created_at) <= :date_to',
-                array(':date_to' => strtotime('2012-12-11'),)
-            ),
-            array(
-                array('search' => 120),
-                'co.id = :search',
-                array(':search' => 120,)
-            ),
-            array(
-                array('search' => 'John'),
-                '(c.first_name LIKE :first_name OR c.last_name LIKE :last_name OR co.title LIKE :title)',
-                array(
-                    ':first_name' => '%John%',
-                    ':last_name'  => '%John%',
-                    ':title'      => '%John%',
-                )
-            ),
-            array(
-                array('ids' => array(1, 2, 3)),
-                'co.id IN (:ids)',
-                array(':ids' => array(1, 2, 3))
-            ),
+                [":created_at" => "2012-12-11"],
+            ],
+            [
+                ["date_from" => "2012-12-11"],
+                "UNIX_TIMESTAMP(co.created_at) >= :date_from",
+                [":date_from" => strtotime("2012-12-11")],
+            ],
+            [
+                ["date_to" => "2012-12-11"],
+                "UNIX_TIMESTAMP(co.created_at) <= :date_to",
+                [":date_to" => strtotime("2012-12-11")],
+            ],
+            [["search" => 120], "co.id = :search", [":search" => 120]],
+            [
+                ["search" => "John"],
+                "(c.first_name LIKE :first_name OR c.last_name LIKE :last_name OR co.title LIKE :title)",
+                [
+                    ":first_name" => "%John%",
+                    ":last_name" => "%John%",
+                    ":title" => "%John%",
+                ],
+            ],
+            [["ids" => [1, 2, 3]], "co.id IN (:ids)", [":ids" => [1, 2, 3]]],
 
-            array(
-                array('meta' => array('param' => 'value')),
-                '(meta.name = :meta_name1 AND meta.value LIKE :meta_value1)',
-                array(
-                    ':meta_name1'  => 'param',
-                    ':meta_value1' => 'value%'
-                ),
-            ),
-        );
+            [
+                ["meta" => ["param" => "value"]],
+                "(meta.name = :meta_name1 AND meta.value LIKE :meta_value1)",
+                [
+                    ":meta_name1" => "param",
+                    ":meta_value1" => "value%",
+                ],
+            ],
+        ];
     }
 
     /**
@@ -1275,8 +1576,12 @@ class ServiceTest extends \BBTestCase
     public function testgetSearchQuery($data, $expectedStr, $expectedParams)
     {
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->service->setDi($di);
 
@@ -1284,8 +1589,11 @@ class ServiceTest extends \BBTestCase
         $this->assertIsString($result[0]);
         $this->assertIsArray($result[1]);
 
-        $this->assertTrue(strpos($result[0], $expectedStr) !== false, $result[0]);
-        $this->assertTrue(array_diff_key($result[1], $expectedParams) == array());
+        $this->assertTrue(
+            strpos($result[0], $expectedStr) !== false,
+            $result[0]
+        );
+        $this->assertTrue(array_diff_key($result[1], $expectedParams) == []);
     }
 
     public function testcreateOrder_MissingOrderCurrency()
@@ -1296,29 +1604,36 @@ class ServiceTest extends \BBTestCase
         $modelProduct = new \Model_Product();
         $modelProduct->loadBean(new \RedBeanPHP\OODBBean());
 
-        $currencyServiceMock = $this->getMockBuilder('\Box\Mod\Currency\Service')->getMock();
-        $currencyServiceMock->expects($this->atLeastOnce())
-            ->method('getDefault')
+        $currencyServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Currency\Service"
+        )->getMock();
+        $currencyServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getDefault")
             ->willReturn(null);
 
-        $di                = new \Box_Di();
-        $di['mod_service'] = $di->protect(function ($serviceName) use ($currencyServiceMock) {
-            if ($serviceName == 'currency') {
+        $di = new \Box_Di();
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $currencyServiceMock
+        ) {
+            if ($serviceName == "currency") {
                 return $currencyServiceMock;
             }
         });
 
         $this->service->setDi($di);
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage('Currency could not be determined for order');
-        $this->service->createOrder($modelClient, $modelProduct, array());
+        $this->expectExceptionMessage(
+            "Currency could not be determined for order"
+        );
+        $this->service->createOrder($modelClient, $modelProduct, []);
     }
 
     public function testcreateOrder_OutOfStock()
     {
         $modelClient = new \Model_Client();
         $modelClient->loadBean(new \RedBeanPHP\OODBBean());
-        $modelClient->currency = 'USD';
+        $modelClient->currency = "USD";
 
         $modelProduct = new \Model_Product();
         $modelProduct->loadBean(new \RedBeanPHP\OODBBean());
@@ -1327,97 +1642,123 @@ class ServiceTest extends \BBTestCase
         $currencyModel = new \Model_Currency();
         $currencyModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $currencyServiceMock = $this->getMockBuilder('\Box\Mod\Currency\Service')->getMock();
-        $currencyServiceMock->expects($this->atLeastOnce())
-            ->method('getByCode')
+        $currencyServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Currency\Service"
+        )->getMock();
+        $currencyServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getByCode")
             ->willReturn($currencyModel);
 
-        $cartServiceMock = $this->getMockBuilder('\Box\Mod\Cart\Service')->getMock();
-        $cartServiceMock->expects($this->atLeastOnce())
-            ->method('isStockAvailable')
+        $cartServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Cart\Service"
+        )->getMock();
+        $cartServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isStockAvailable")
             ->with($modelProduct)
             ->willReturn(false);
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $di                   = new \Box_Di();
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($currencyServiceMock, $cartServiceMock) {
-            if ($serviceName == 'currency') {
+        $di = new \Box_Di();
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $currencyServiceMock,
+            $cartServiceMock
+        ) {
+            if ($serviceName == "currency") {
                 return $currencyServiceMock;
             }
-            if ($serviceName == 'cart') {
+            if ($serviceName == "cart") {
                 return $cartServiceMock;
             }
         });
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
-        $di['events_manager'] = $eventMock;
+        $di["events_manager"] = $eventMock;
 
         $this->service->setDi($di);
         $this->expectException(\Box_Exception::class);
         $this->expectExceptionCode(831);
-        $this->expectExceptionMessage('Product 1 is out of stock.');
-        $this->service->createOrder($modelClient, $modelProduct, array());
+        $this->expectExceptionMessage("Product 1 is out of stock.");
+        $this->service->createOrder($modelClient, $modelProduct, []);
     }
 
     public function testcreateOrder_GroupIdMissing()
     {
         $modelClient = new \Model_Client();
         $modelClient->loadBean(new \RedBeanPHP\OODBBean());
-        $modelClient->currency = 'USD';
+        $modelClient->currency = "USD";
 
         $modelProduct = new \Model_Product();
         $modelProduct->loadBean(new \RedBeanPHP\OODBBean());
-        $modelProduct->id       = 1;
+        $modelProduct->id = 1;
         $modelProduct->is_addon = 1;
 
         $currencyModel = new \Model_Currency();
         $currencyModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $currencyServiceMock = $this->getMockBuilder('\Box\Mod\Currency\Service')->getMock();
-        $currencyServiceMock->expects($this->atLeastOnce())
-            ->method('getByCode')
+        $currencyServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Currency\Service"
+        )->getMock();
+        $currencyServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getByCode")
             ->willReturn($currencyModel);
 
-        $cartServiceMock = $this->getMockBuilder('\Box\Mod\Cart\Service')->getMock();
-        $cartServiceMock->expects($this->atLeastOnce())
-            ->method('isStockAvailable')
+        $cartServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Cart\Service"
+        )->getMock();
+        $cartServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isStockAvailable")
             ->with($modelProduct)
             ->willReturn(true);
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $di                   = new \Box_Di();
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($currencyServiceMock, $cartServiceMock) {
-            if ($serviceName == 'currency') {
+        $di = new \Box_Di();
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $currencyServiceMock,
+            $cartServiceMock
+        ) {
+            if ($serviceName == "currency") {
                 return $currencyServiceMock;
             }
-            if ($serviceName == 'cart') {
+            if ($serviceName == "cart") {
                 return $cartServiceMock;
             }
         });
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
-        $di['events_manager'] = $eventMock;
+        $di["events_manager"] = $eventMock;
 
         $this->service->setDi($di);
         $this->expectException(\Box_Exception::class);
         $this->expectExceptionCode(832);
-        $this->expectExceptionMessage('Group ID parameter is missing for addon product order');
-        $this->service->createOrder($modelClient, $modelProduct, array());
+        $this->expectExceptionMessage(
+            "Group ID parameter is missing for addon product order"
+        );
+        $this->service->createOrder($modelClient, $modelProduct, []);
     }
 
     public function testcreateOrder_ParentOrderNotFound()
     {
         $modelClient = new \Model_Client();
         $modelClient->loadBean(new \RedBeanPHP\OODBBean());
-        $modelClient->currency = 'USD';
+        $modelClient->currency = "USD";
 
         $modelProduct = new \Model_Product();
         $modelProduct->loadBean(new \RedBeanPHP\OODBBean());
@@ -1426,118 +1767,159 @@ class ServiceTest extends \BBTestCase
         $currencyModel = new \Model_Currency();
         $currencyModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $currencyServiceMock = $this->getMockBuilder('\Box\Mod\Currency\Service')->getMock();
-        $currencyServiceMock->expects($this->atLeastOnce())
-            ->method('getByCode')
+        $currencyServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Currency\Service"
+        )->getMock();
+        $currencyServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getByCode")
             ->willReturn($currencyModel);
 
-        $cartServiceMock = $this->getMockBuilder('\Box\Mod\Cart\Service')->getMock();
-        $cartServiceMock->expects($this->atLeastOnce())
-            ->method('isStockAvailable')
+        $cartServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Cart\Service"
+        )->getMock();
+        $cartServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isStockAvailable")
             ->with($modelProduct)
             ->willReturn(true);
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $di                   = new \Box_Di();
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($currencyServiceMock, $cartServiceMock) {
-            if ($serviceName == 'currency') {
+        $di = new \Box_Di();
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $currencyServiceMock,
+            $cartServiceMock
+        ) {
+            if ($serviceName == "currency") {
                 return $currencyServiceMock;
             }
-            if ($serviceName == 'cart') {
+            if ($serviceName == "cart") {
                 return $cartServiceMock;
             }
         });
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
-        $di['events_manager'] = $eventMock;
+        $di["events_manager"] = $eventMock;
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')
-            ->setMethods(array('getMasterOrderForClient'))
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["getMasterOrderForClient"])
             ->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getMasterOrderForClient')
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getMasterOrderForClient")
             ->willReturn(null);
 
         $serviceMock->setDi($di);
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage('Parent order 1 was not found');
-        $serviceMock->createOrder($modelClient, $modelProduct, array('group_id' => 1));
+        $this->expectExceptionMessage("Parent order 1 was not found");
+        $serviceMock->createOrder($modelClient, $modelProduct, [
+            "group_id" => 1,
+        ]);
     }
 
     public function testcreateOrder()
     {
         $modelClient = new \Model_Client();
         $modelClient->loadBean(new \RedBeanPHP\OODBBean());
-        $modelClient->currency = 'USD';
+        $modelClient->currency = "USD";
 
         $modelProduct = new \Model_Product();
         $modelProduct->loadBean(new \RedBeanPHP\OODBBean());
-        $modelProduct->id   = 1;
-        $modelProduct->type = 'custom';
+        $modelProduct->id = 1;
+        $modelProduct->type = "custom";
 
         $currencyModel = new \Model_Currency();
         $currencyModel->loadBean(new \RedBeanPHP\OODBBean());
-        $currencyServiceMock = $this->getMockBuilder('\Box\Mod\Currency\Service')->getMock();
-        $currencyServiceMock->expects($this->atLeastOnce())
-            ->method('getByCode')
+        $currencyServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Currency\Service"
+        )->getMock();
+        $currencyServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getByCode")
             ->willReturn($currencyModel);
-        $cartServiceMock = $this->getMockBuilder('\Box\Mod\Cart\Service')->getMock();
-        $cartServiceMock->expects($this->atLeastOnce())
-            ->method('isStockAvailable')
+        $cartServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Cart\Service"
+        )->getMock();
+        $cartServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isStockAvailable")
             ->with($modelProduct)
             ->willReturn(true);
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $productServiceMock = $this->getMockBuilder('\Box\Mod\Servicecustom')->getMock();
+        $productServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Servicecustom"
+        )->getMock();
 
         $clientOrderModel = new \Model_ClientOrder();
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('dispense')
-            ->with('ClientOrder')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("dispense")
+            ->with("ClientOrder")
             ->willReturn($clientOrderModel);
         $newId = 1;
-        $dbMock->expects($this->atLeastOnce())
-            ->method('store')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("store")
             ->with($clientOrderModel)
             ->willReturn($newId);
 
-        $periodMock = $this->getMockBuilder('\Box_Period')->disableOriginalConstructor()->getMock();
-        $periodMock->expects($this->atLeastOnce())
-            ->method('getCode')
-            ->willReturn('1Y');
+        $periodMock = $this->getMockBuilder("\Box_Period")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $periodMock
+            ->expects($this->atLeastOnce())
+            ->method("getCode")
+            ->willReturn("1Y");
 
-        $di                   = new \Box_Di();
-        $di['mod_service']    = $di->protect(function ($serviceName) use ($currencyServiceMock, $cartServiceMock, $productServiceMock) {
-            if ($serviceName == 'currency') {
+        $di = new \Box_Di();
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $currencyServiceMock,
+            $cartServiceMock,
+            $productServiceMock
+        ) {
+            if ($serviceName == "currency") {
                 return $currencyServiceMock;
             }
-            if ($serviceName == 'cart') {
+            if ($serviceName == "cart") {
                 return $cartServiceMock;
             }
-            if ($serviceName == 'servicecustom') {
+            if ($serviceName == "servicecustom") {
                 return $productServiceMock;
             }
         });
-        $di['events_manager'] = $eventMock;
-        $di['db']             = $dbMock;
-        $di['period']         = $di->protect(function () use ($periodMock) { return $periodMock; });
-        $di['logger']         = new \Box_Log();
-        $di['array_get']      = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["events_manager"] = $eventMock;
+        $di["db"] = $dbMock;
+        $di["period"] = $di->protect(function () use ($periodMock) {
+            return $periodMock;
+        });
+        $di["logger"] = new \Box_Log();
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
         $this->service->setDi($di);
-        $result = $this->service->createOrder($modelClient, $modelProduct, array('period' => '1Y', 'price' => '10', 'notes' => 'test'));
+        $result = $this->service->createOrder($modelClient, $modelProduct, [
+            "period" => "1Y",
+            "price" => "10",
+            "notes" => "test",
+        ]);
         $this->assertEquals($newId, $result);
     }
 
@@ -1549,17 +1931,18 @@ class ServiceTest extends \BBTestCase
         $clientOrderModel = new \Model_ClientOrder();
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->with('ClientOrder')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
+            ->with("ClientOrder")
             ->willReturn($clientOrderModel);
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $this->service->setDi($di);
         $result = $this->service->getMasterOrderForClient($clientModel, 1);
-        $this->assertInstanceOf('Model_ClientOrder', $result);
+        $this->assertInstanceOf("Model_ClientOrder", $result);
     }
 
     public function testactivateOrder_ExceptionPendingOrFailedOrders()
@@ -1568,7 +1951,9 @@ class ServiceTest extends \BBTestCase
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
         $clientOrderModel->status = \Model_ClientOrder::STATUS_CANCELED;
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage('Only pending setup or failed orders can be activated');
+        $this->expectExceptionMessage(
+            "Only pending setup or failed orders can be activated"
+        );
         $this->service->activateOrder($clientOrderModel);
     }
 
@@ -1576,25 +1961,30 @@ class ServiceTest extends \BBTestCase
     {
         $clientOrderModel = new \Model_ClientOrder();
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
-        $clientOrderModel->status       = \Model_ClientOrder::STATUS_PENDING_SETUP;
+        $clientOrderModel->status = \Model_ClientOrder::STATUS_PENDING_SETUP;
         $clientOrderModel->group_master = 1;
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $di                   = new \Box_Di();
-        $di['events_manager'] = $eventMock;
-        $di['logger']         = new \Box_Log();
+        $di = new \Box_Di();
+        $di["events_manager"] = $eventMock;
+        $di["logger"] = new \Box_Log();
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')
-            ->setMethods(array('createFromOrder', 'getOrderAddonsList', 'activateOrderAddons'))
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods([
+                "createFromOrder",
+                "getOrderAddonsList",
+                "activateOrderAddons",
+            ])
             ->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('createFromOrder')
-            ->willReturn(array());
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('activateOrderAddons');
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("createFromOrder")
+            ->willReturn([]);
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("activateOrderAddons");
 
         $serviceMock->setDi($di);
         $result = $serviceMock->activateOrder($clientOrderModel);
@@ -1606,33 +1996,33 @@ class ServiceTest extends \BBTestCase
         $order = new \Model_ClientOrder();
         $order->loadBean(new \RedBeanPHP\OODBBean());
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')
-            ->setMethods(array('createFromOrder', 'getOrderAddonsList'))
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["createFromOrder", "getOrderAddonsList"])
             ->getMock();
 
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('createFromOrder')
-            ->willReturn(array());
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("createFromOrder")
+            ->willReturn([]);
 
         $clientOrderModel = new \Model_ClientOrder();
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
-        $clientOrderModel->status       = \Model_ClientOrder::STATUS_PENDING_SETUP;
+        $clientOrderModel->status = \Model_ClientOrder::STATUS_PENDING_SETUP;
         $clientOrderModel->group_master = 1;
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getOrderAddonsList')
-            ->willReturn(array($clientOrderModel));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderAddonsList")
+            ->willReturn([$clientOrderModel]);
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $di                   = new \Box_Di();
-        $di['events_manager'] = $eventMock;
+        $di = new \Box_Di();
+        $di["events_manager"] = $eventMock;
 
         $serviceMock->setDi($di);
         $result = $serviceMock->activateOrderAddons($clientOrderModel);
         $this->assertTrue($result);
-
     }
 
     public function testgetOrderAddonsList()
@@ -1640,19 +2030,20 @@ class ServiceTest extends \BBTestCase
         $modelClientOrder = new \Model_ClientOrder();
         $modelClientOrder->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('find')
-            ->with('ClientOrder')
-            ->willReturn(array(new \Model_ClientOrder()));
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("find")
+            ->with("ClientOrder")
+            ->willReturn([new \Model_ClientOrder()]);
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $this->service->setDi($di);
 
         $result = $this->service->getOrderAddonsList($modelClientOrder);
         $this->assertIsArray($result);
-        $this->assertInstanceOf('\Model_ClientOrder', $result[0]);
+        $this->assertInstanceOf("\Model_ClientOrder", $result[0]);
     }
 
     public function teststockSale()
@@ -1661,13 +2052,14 @@ class ServiceTest extends \BBTestCase
         $productModel->loadBean(new \RedBeanPHP\OODBBean());
         $productModel->stock_control = 1;
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('store')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("store")
             ->with($productModel);
 
-        $di       = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di = new \Box_Di();
+        $di["db"] = $dbMock;
         $this->service->setDi($di);
 
         $result = $this->service->stockSale($productModel, 2);
@@ -1679,47 +2071,52 @@ class ServiceTest extends \BBTestCase
         $clientOrderModel = new \Model_ClientOrder();
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('store')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("store")
             ->with($clientOrderModel);
 
-        $di                   = new \Box_Di();
-        $di['array_get']      = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di = new \Box_Di();
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
-        $di['events_manager'] = $eventMock;
-        $di['db']             = $dbMock;
-        $di['logger']         = new \Box_Log();
+        $di["events_manager"] = $eventMock;
+        $di["db"] = $dbMock;
+        $di["logger"] = new \Box_Log();
 
-        $data = array(
-            'period'         => '1Y',
-            'created_at'     => '2012-12-01',
-            'activated_at'   => '2012-12-01',
-            'expires_at'     => '2013-12-01',
-            'invoice_option' => 'issue-invoice',
-            'title'          => 'Testing',
-            'price'          => 10,
-            'status'         => 'active',
-            'notes'          => 'Empty note',
-            'reason'         => 'non',
-            'meta'           => array()
+        $data = [
+            "period" => "1Y",
+            "created_at" => "2012-12-01",
+            "activated_at" => "2012-12-01",
+            "expires_at" => "2013-12-01",
+            "invoice_option" => "issue-invoice",
+            "title" => "Testing",
+            "price" => 10,
+            "status" => "active",
+            "notes" => "Empty note",
+            "reason" => "non",
+            "meta" => [],
+        ];
 
-        );
-
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')
-            ->setMethods(array('updatePeriod', 'updateOrderMeta'))
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["updatePeriod", "updateOrderMeta"])
             ->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('updatePeriod')
-            ->with($clientOrderModel, $data['period']);
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('updateOrderMeta')
-            ->with($clientOrderModel, $data['meta']);
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("updatePeriod")
+            ->with($clientOrderModel, $data["period"]);
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("updateOrderMeta")
+            ->with($clientOrderModel, $data["meta"]);
 
         $serviceMock->setDi($di);
         $result = $serviceMock->updateOrder($clientOrderModel, $data);
@@ -1731,25 +2128,26 @@ class ServiceTest extends \BBTestCase
         $clientOrderModel = new \Model_ClientOrder();
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
         $clientOrderModel->group_master = 1;
-        $clientOrderModel->status       = \Model_ClientOrder::STATUS_PENDING_SETUP;
+        $clientOrderModel->status = \Model_ClientOrder::STATUS_PENDING_SETUP;
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $di                   = new \Box_Di();
-        $di['events_manager'] = $eventMock;
-        $di['logger']         = new \Box_Log();
+        $di = new \Box_Di();
+        $di["events_manager"] = $eventMock;
+        $di["logger"] = new \Box_Log();
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')
-            ->setMethods(array('renewFromOrder', 'getOrderAddonsList'))
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["renewFromOrder", "getOrderAddonsList"])
             ->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('renewFromOrder')
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("renewFromOrder")
             ->with($clientOrderModel);
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getOrderAddonsList')
-            ->willReturn(array($clientOrderModel));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getOrderAddonsList")
+            ->willReturn([$clientOrderModel]);
 
         $serviceMock->setDi($di);
         $result = $serviceMock->renewOrder($clientOrderModel);
@@ -1758,32 +2156,40 @@ class ServiceTest extends \BBTestCase
 
     public function testrenewFromOrder()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')
-            ->setMethods(array('_callOnService', 'saveStatusChange'))
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["_callOnService", "saveStatusChange"])
             ->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('_callOnService');
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('saveStatusChange');
+        $serviceMock->expects($this->atLeastOnce())->method("_callOnService");
+        $serviceMock->expects($this->atLeastOnce())->method("saveStatusChange");
         $clientOrderModel = new \Model_ClientOrder();
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
-        $clientOrderModel->period = '1Y';
+        $clientOrderModel->period = "1Y";
 
-        $periodMock = $this->getMockBuilder('\Box_Period')->disableOriginalConstructor()->getMock();
-        $periodMock->expects($this->atLeastOnce())
-            ->method('getExpirationTime');
+        $periodMock = $this->getMockBuilder("\Box_Period")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $periodMock->expects($this->atLeastOnce())->method("getExpirationTime");
 
-        $dbMock = $this->getMockBuilder('Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('store')
+        $dbMock = $this->getMockBuilder("Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("store")
             ->with($clientOrderModel);
 
-        $di               = new \Box_Di();
-        $di['mod_config'] = $di->protect(function ($name) { return array(); });
-        $di['period']     = $di->protect(function () use ($periodMock) { return $periodMock; });
-        $di['db']         = $dbMock;
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di = new \Box_Di();
+        $di["mod_config"] = $di->protect(function ($name) {
+            return [];
+        });
+        $di["period"] = $di->protect(function () use ($periodMock) {
+            return $periodMock;
+        });
+        $di["db"] = $dbMock;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
         $serviceMock->setDi($di);
@@ -1796,16 +2202,15 @@ class ServiceTest extends \BBTestCase
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
         $clientOrderModel->status = \Model_ClientOrder::STATUS_SUSPENDED;
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $di                   = new \Box_Di();
-        $di['events_manager'] = $eventMock;
+        $di = new \Box_Di();
+        $di["events_manager"] = $eventMock;
 
         $this->service->setDi($di);
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage('Only active orders can be suspended');
+        $this->expectExceptionMessage("Only active orders can be suspended");
         $this->service->suspendFromOrder($clientOrderModel);
     }
 
@@ -1815,28 +2220,25 @@ class ServiceTest extends \BBTestCase
         $clientOrderModel->loadBean(new \RedBeanPHP\OODBBean());
         $clientOrderModel->status = \Model_ClientOrder::STATUS_ACTIVE;
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('store')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("store")
             ->with($clientOrderModel);
 
+        $di = new \Box_Di();
+        $di["events_manager"] = $eventMock;
+        $di["logger"] = new \Box_Log();
+        $di["db"] = $dbMock;
 
-        $di                   = new \Box_Di();
-        $di['events_manager'] = $eventMock;
-        $di['logger']         = new \Box_Log();
-        $di['db']             = $dbMock;
-
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Order\Service')
-            ->setMethods(array('_callOnService', 'saveStatusChange'))
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Order\Service")
+            ->setMethods(["_callOnService", "saveStatusChange"])
             ->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('_callOnService');
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('saveStatusChange');
+        $serviceMock->expects($this->atLeastOnce())->method("_callOnService");
+        $serviceMock->expects($this->atLeastOnce())->method("saveStatusChange");
 
         $serviceMock->setDi($di);
         $result = $serviceMock->suspendFromOrder($clientOrderModel);
@@ -1848,32 +2250,33 @@ class ServiceTest extends \BBTestCase
         $clientModel = new \Model_Client();
         $clientModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $pdoStatment = $this->getMockBuilder('\Box\Mod\Order\PdoStatmentsMock')->getMock();
-        $pdoStatment->expects($this->atLeastOnce())
-            ->method('execute');
+        $pdoStatment = $this->getMockBuilder(
+            "\Box\Mod\Order\PdoStatmentsMock"
+        )->getMock();
+        $pdoStatment->expects($this->atLeastOnce())->method("execute");
 
-
-        $pdoMock = $this->getMockBuilder('\Box\Mod\Order\PdoMock')->getMock();
-        $pdoMock->expects($this->atLeastOnce())
-            ->method('prepare')
+        $pdoMock = $this->getMockBuilder("\Box\Mod\Order\PdoMock")->getMock();
+        $pdoMock
+            ->expects($this->atLeastOnce())
+            ->method("prepare")
             ->will($this->returnValue($pdoStatment));
 
-        $di        = new \Box_Di();
-        $di['pdo'] = $pdoMock;
+        $di = new \Box_Di();
+        $di["pdo"] = $pdoMock;
         $this->service->setDi($di);
         $this->service->rmByClient($clientModel);
-
     }
 
     public function testupdatePeriod()
     {
-        $period = '1Y';
-        $di     = new \Box_Di();
+        $period = "1Y";
+        $di = new \Box_Di();
 
-        $periodMock = $this->getMockBuilder('\Box_Period')->disableOriginalConstructor()->getMock();
-        $periodMock->expects($this->atLeastOnce())
-            ->method('getCode');
-        $di['period'] = $di->protect(function () use ($periodMock) {
+        $periodMock = $this->getMockBuilder("\Box_Period")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $periodMock->expects($this->atLeastOnce())->method("getCode");
+        $di["period"] = $di->protect(function () use ($periodMock) {
             return $periodMock;
         });
 
@@ -1886,12 +2289,13 @@ class ServiceTest extends \BBTestCase
 
     public function testupdatePeriod_isEmpty()
     {
-        $period     = '';
-        $di         = new \Box_Di();
-        $periodMock = $this->getMockBuilder('\Box_Period')->disableOriginalConstructor()->getMock();
-        $periodMock->expects($this->never())
-            ->method('getCode');
-        $di['period'] = $di->protect(function () use ($periodMock) {
+        $period = "";
+        $di = new \Box_Di();
+        $periodMock = $this->getMockBuilder("\Box_Period")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $periodMock->expects($this->never())->method("getCode");
+        $di["period"] = $di->protect(function () use ($periodMock) {
             return $periodMock;
         });
 
@@ -1904,12 +2308,13 @@ class ServiceTest extends \BBTestCase
 
     public function testupdatePeriod_notSet()
     {
-        $period     = null;
-        $di         = new \Box_Di();
-        $periodMock = $this->getMockBuilder('\Box_Period')->disableOriginalConstructor()->getMock();
-        $periodMock->expects($this->never())
-            ->method('getCode');
-        $di['period'] = $di->protect(function () use ($periodMock) {
+        $period = null;
+        $di = new \Box_Di();
+        $periodMock = $this->getMockBuilder("\Box_Period")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $periodMock->expects($this->never())->method("getCode");
+        $di["period"] = $di->protect(function () use ($periodMock) {
             return $periodMock;
         });
 
@@ -1922,7 +2327,7 @@ class ServiceTest extends \BBTestCase
 
     public function testupdateOrderMeta_isNotSet()
     {
-        $meta        = null;
+        $meta = null;
         $clientOrder = new \Model_ClientOrder();
         $clientOrder->loadBean(new \RedBeanPHP\OODBBean());
         $result = $this->service->updateOrderMeta($clientOrder, $meta);
@@ -1931,13 +2336,12 @@ class ServiceTest extends \BBTestCase
 
     public function testupdateOrderMeta_isEmpty()
     {
-        $meta = array();
-        $di   = new \Box_Di();
+        $meta = [];
+        $di = new \Box_Di();
 
-        $dBMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dBMock->expects($this->atLeastOnce())
-            ->method('exec');
-        $di['db'] = $dBMock;
+        $dBMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dBMock->expects($this->atLeastOnce())->method("exec");
+        $di["db"] = $dBMock;
 
         $this->service->setDi($di);
         $clientOrder = new \Model_ClientOrder();
@@ -1948,26 +2352,27 @@ class ServiceTest extends \BBTestCase
 
     public function testupdateOrderMeta()
     {
-        $meta = array(
-            'key' => 'value',
-        );
-        $di   = new \Box_Di();
+        $meta = [
+            "key" => "value",
+        ];
+        $di = new \Box_Di();
 
-        $dBMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dBMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->with('ClientOrderMeta')
+        $dBMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dBMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
+            ->with("ClientOrderMeta")
             ->willReturn(null);
 
         $clientOrderMetaModel = new \Model_ClientOrderMeta();
         $clientOrderMetaModel->loadBean(new \RedBeanPHP\OODBBean());
-        $dBMock->expects($this->atLeastOnce())
-            ->method('dispense')
-            ->with('ClientOrderMeta')
+        $dBMock
+            ->expects($this->atLeastOnce())
+            ->method("dispense")
+            ->with("ClientOrderMeta")
             ->willReturn($clientOrderMetaModel);
-        $dBMock->expects($this->atLeastOnce())
-            ->method('store');
-        $di['db'] = $dBMock;
+        $dBMock->expects($this->atLeastOnce())->method("store");
+        $di["db"] = $dBMock;
 
         $this->service->setDi($di);
         $clientOrder = new \Model_ClientOrder();
@@ -1976,4 +2381,3 @@ class ServiceTest extends \BBTestCase
         $this->assertEquals(2, $result);
     }
 }
- 

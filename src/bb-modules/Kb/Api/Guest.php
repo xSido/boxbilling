@@ -26,19 +26,33 @@ class Guest extends \Api_Abstract
      */
     public function article_get_list($data)
     {
-        $data['status'] = 'active';
+        $data["status"] = "active";
 
-        $status = $this->di['array_get']($data, 'status', NULL);
-        $search = $this->di['array_get']($data, 'search', NULL);
-        $cat    = $this->di['array_get']($data, 'kb_article_category_id', NULL);
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $page = $this->di['array_get']($data, 'page');
+        $status = $this->di["array_get"]($data, "status", null);
+        $search = $this->di["array_get"]($data, "search", null);
+        $cat = $this->di["array_get"]($data, "kb_article_category_id", null);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $page = $this->di["array_get"]($data, "page");
 
-        $pager = $this->getService()->searchArticles($status, $search, $cat, $per_page, $page);
+        $pager = $this->getService()->searchArticles(
+            $status,
+            $search,
+            $cat,
+            $per_page,
+            $page
+        );
 
-        foreach ($pager['list'] as $key => $item) {
-            $article              = $this->di['db']->getExistingModelById('KbArticle', $item['id'], 'KB Article not found');
-            $pager['list'][$key] = $this->getService()->toApiArray($article);
+        foreach ($pager["list"] as $key => $item) {
+            $article = $this->di["db"]->getExistingModelById(
+                "KbArticle",
+                $item["id"],
+                "KB Article not found"
+            );
+            $pager["list"][$key] = $this->getService()->toApiArray($article);
         }
 
         return $pager;
@@ -54,14 +68,14 @@ class Guest extends \Api_Abstract
      */
     public function article_get($data)
     {
-        if (!isset($data['id']) && !isset($data['slug'])) {
-            throw new \Box_Exception('ID or slug is missing');
+        if (!isset($data["id"]) && !isset($data["slug"])) {
+            throw new \Box_Exception("ID or slug is missing");
         }
 
-        $id   = $this->di['array_get']($data, 'id', NULL);
-        $slug = $this->di['array_get']($data, 'slug', NULL);
+        $id = $this->di["array_get"]($data, "id", null);
+        $slug = $this->di["array_get"]($data, "slug", null);
 
-        $model = FALSE;
+        $model = false;
         if ($id) {
             $model = $this->getService()->findActiveArticleById($id);
         } else {
@@ -69,11 +83,15 @@ class Guest extends \Api_Abstract
         }
 
         if (!$model instanceof \Model_KbArticle) {
-            throw new \Box_Exception('Article item not found');
+            throw new \Box_Exception("Article item not found");
         }
         $this->getService()->hitView($model);
 
-        return $this->getService()->toApiArray($model, true, $this->getIdentity());
+        return $this->getService()->toApiArray(
+            $model,
+            true,
+            $this->getIdentity()
+        );
     }
 
     /**
@@ -82,17 +100,35 @@ class Guest extends \Api_Abstract
      */
     public function category_get_list($data)
     {
-        $data['article_status'] = \Model_KbArticle::ACTIVE;
-        list($query, $bindings) = $this->getService()->categoryGetSearchQuery($data);
+        $data["article_status"] = \Model_KbArticle::ACTIVE;
+        [$query, $bindings] = $this->getService()->categoryGetSearchQuery(
+            $data
+        );
 
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $pager = $this->di['pager']->getAdvancedResultSet($query, $bindings, $per_page);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $pager = $this->di["pager"]->getAdvancedResultSet(
+            $query,
+            $bindings,
+            $per_page
+        );
 
-        $q = $this->di['array_get']($data, 'q', null);
+        $q = $this->di["array_get"]($data, "q", null);
 
-        foreach ($pager['list'] as $key => $item) {
-            $category               = $this->di['db']->getExistingModelById('KbArticleCategory', $item['id'], 'KB Article not found');
-            $pager['list'][$key] = $this->getService()->categoryToApiArray($category, $this->getIdentity(), $q);
+        foreach ($pager["list"] as $key => $item) {
+            $category = $this->di["db"]->getExistingModelById(
+                "KbArticleCategory",
+                $item["id"],
+                "KB Article not found"
+            );
+            $pager["list"][$key] = $this->getService()->categoryToApiArray(
+                $category,
+                $this->getIdentity(),
+                $q
+            );
         }
         return $pager;
     }
@@ -117,15 +153,14 @@ class Guest extends \Api_Abstract
      */
     public function category_get($data)
     {
-        if (!isset($data['id']) && !isset($data['slug'])) {
-            throw new \Box_Exception('Category ID or slug is missing');
+        if (!isset($data["id"]) && !isset($data["slug"])) {
+            throw new \Box_Exception("Category ID or slug is missing");
         }
 
-        $id   = $this->di['array_get']($data, 'id', NULL);
-        $slug = $this->di['array_get']($data, 'slug', NULL);
+        $id = $this->di["array_get"]($data, "id", null);
+        $slug = $this->di["array_get"]($data, "slug", null);
 
-
-        $model = FALSE;
+        $model = false;
         if ($id) {
             $model = $this->getService()->findCategoryById($id);
         } else {
@@ -133,9 +168,12 @@ class Guest extends \Api_Abstract
         }
 
         if (!$model instanceof \Model_KbArticleCategory) {
-            throw new \Box_Exception('Knowledge base category not found');
+            throw new \Box_Exception("Knowledge base category not found");
         }
 
-        return $this->getService()->categoryToApiArray($model, $this->getIdentity());
+        return $this->getService()->categoryToApiArray(
+            $model,
+            $this->getIdentity()
+        );
     }
 }

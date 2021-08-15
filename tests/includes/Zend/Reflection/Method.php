@@ -22,17 +22,17 @@
 /**
  * @see Zend_Reflection_Class
  */
-require_once 'Zend/Reflection/Class.php';
+require_once "Zend/Reflection/Class.php";
 
 /**
  * @see Zend_Reflection_Docblock
  */
-require_once 'Zend/Reflection/Docblock.php';
+require_once "Zend/Reflection/Docblock.php";
 
 /**
  * @see Zend_Reflection_Parameter
  */
-require_once 'Zend/Reflection/Parameter.php';
+require_once "Zend/Reflection/Parameter.php";
 
 /**
  * @category   Zend
@@ -48,17 +48,21 @@ class Zend_Reflection_Method extends ReflectionMethod
      * @return Zend_Reflection_Docblock
      * @throws Zend_Reflection_Exception
      */
-    public function getDocblock($reflectionClass = 'Zend_Reflection_Docblock')
+    public function getDocblock($reflectionClass = "Zend_Reflection_Docblock")
     {
-        if ('' == $this->getDocComment()) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception($this->getName() . ' does not have a docblock');
+        if ("" == $this->getDocComment()) {
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                $this->getName() . " does not have a docblock"
+            );
         }
 
         $instance = new $reflectionClass($this);
         if (!$instance instanceof Zend_Reflection_Docblock) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Docblock');
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Invalid reflection class provided; must extend Zend_Reflection_Docblock"
+            );
         }
         return $instance;
     }
@@ -72,7 +76,7 @@ class Zend_Reflection_Method extends ReflectionMethod
     public function getStartLine($includeDocComment = false)
     {
         if ($includeDocComment) {
-            if ($this->getDocComment() != '') {
+            if ($this->getDocComment() != "") {
                 return $this->getDocblock()->getStartLine();
             }
         }
@@ -86,13 +90,16 @@ class Zend_Reflection_Method extends ReflectionMethod
      * @param  string $reflectionClass Name of reflection class to use
      * @return Zend_Reflection_Class
      */
-    public function getDeclaringClass($reflectionClass = 'Zend_Reflection_Class')
-    {
-        $phpReflection  = parent::getDeclaringClass();
+    public function getDeclaringClass(
+        $reflectionClass = "Zend_Reflection_Class"
+    ) {
+        $phpReflection = parent::getDeclaringClass();
         $zendReflection = new $reflectionClass($phpReflection->getName());
         if (!$zendReflection instanceof Zend_Reflection_Class) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Class');
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Invalid reflection class provided; must extend Zend_Reflection_Class"
+            );
         }
         unset($phpReflection);
         return $zendReflection;
@@ -104,15 +111,24 @@ class Zend_Reflection_Method extends ReflectionMethod
      * @param  string $reflectionClass Name of reflection class to use
      * @return array of Zend_Reflection_Parameter objects
      */
-    public function getParameters($reflectionClass = 'Zend_Reflection_Parameter')
-    {
-        $phpReflections  = parent::getParameters();
-        $zendReflections = array();
-        while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
-            $instance = new $reflectionClass(array($this->getDeclaringClass()->getName(), $this->getName()), $phpReflection->getName());
+    public function getParameters(
+        $reflectionClass = "Zend_Reflection_Parameter"
+    ) {
+        $phpReflections = parent::getParameters();
+        $zendReflections = [];
+        while (
+            $phpReflections &&
+            ($phpReflection = array_shift($phpReflections))
+        ) {
+            $instance = new $reflectionClass(
+                [$this->getDeclaringClass()->getName(), $this->getName()],
+                $phpReflection->getName()
+            );
             if (!$instance instanceof Zend_Reflection_Parameter) {
-                require_once 'Zend/Reflection/Exception.php';
-                throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Parameter');
+                require_once "Zend/Reflection/Exception.php";
+                throw new Zend_Reflection_Exception(
+                    "Invalid reflection class provided; must extend Zend_Reflection_Parameter"
+                );
             }
             $zendReflections[] = $instance;
             unset($phpReflection);
@@ -131,9 +147,12 @@ class Zend_Reflection_Method extends ReflectionMethod
     {
         $fileContents = file($this->getFileName());
         $startNum = $this->getStartLine($includeDocblock);
-        $endNum = ($this->getEndLine() - $this->getStartLine());
+        $endNum = $this->getEndLine() - $this->getStartLine();
 
-        return implode("\n", array_splice($fileContents, $startNum, $endNum, true));
+        return implode(
+            "\n",
+            array_splice($fileContents, $startNum, $endNum, true)
+        );
     }
 
     /**
@@ -144,25 +163,28 @@ class Zend_Reflection_Method extends ReflectionMethod
     public function getBody()
     {
         $lines = array_slice(
-            file($this->getDeclaringClass()->getFileName(), FILE_IGNORE_NEW_LINES),
+            file(
+                $this->getDeclaringClass()->getFileName(),
+                FILE_IGNORE_NEW_LINES
+            ),
             $this->getStartLine(),
-            ($this->getEndLine() - $this->getStartLine()),
+            $this->getEndLine() - $this->getStartLine(),
             true
         );
 
         $firstLine = array_shift($lines);
 
-        if (trim($firstLine) !== '{') {
+        if (trim($firstLine) !== "{") {
             array_unshift($lines, $firstLine);
         }
 
         $lastLine = array_pop($lines);
 
-        if (trim($lastLine) !== '}') {
+        if (trim($lastLine) !== "}") {
             array_push($lines, $lastLine);
         }
 
         // just in case we had code on the bracket lines
-        return rtrim(ltrim(implode("\n", $lines), '{'), '}');
+        return rtrim(ltrim(implode("\n", $lines), "{"), "}");
     }
 }

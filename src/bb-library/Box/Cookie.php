@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_Cookie implements \Box\InjectionAwareInterface
 {
     protected $di;
@@ -45,7 +44,7 @@ class Box_Cookie implements \Box\InjectionAwareInterface
     {
         return isset($_COOKIE[$key]) ? $_COOKIE[$key] : null;
     }
-    
+
     public function set($key, $value)
     {
         $_COOKIE[$key] = $value;

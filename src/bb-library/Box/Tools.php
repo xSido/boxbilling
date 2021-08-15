@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_Tools
 {
     protected $di = null;
@@ -31,7 +30,7 @@ class Box_Tools
         return $this->di;
     }
 
-    public function file_put_contents($content, $target, $mode = 'wt')
+    public function file_put_contents($content, $target, $mode = "wt")
     {
         $fp = @fopen($target, $mode);
 
@@ -44,26 +43,36 @@ class Box_Tools
 
             throw new RuntimeException(
                 sprintf(
-                    'Could not write to %s: %s',
+                    "Could not write to %s: %s",
                     $target,
                     substr(
-                        $error['message'],
-                        strpos($error['message'], ':') + 2
+                        $error["message"],
+                        strpos($error["message"], ":") + 2
                     )
                 )
             );
         }
     }
 
-    public function file_get_contents($filename, $use_include_path = false, $context = null, $offset = -1)
-    {
-        return file_get_contents($filename, $use_include_path, $context, $offset);
+    public function file_get_contents(
+        $filename,
+        $use_include_path = false,
+        $context = null,
+        $offset = -1
+    ) {
+        return file_get_contents(
+            $filename,
+            $use_include_path,
+            $context,
+            $offset
+        );
     }
 
     public function get_url($url, $timeout = 10)
     {
         $ch = curl_init();
-        $userAgent = 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0';
+        $userAgent =
+            "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0";
         curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -75,7 +84,7 @@ class Box_Tools
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
         $data = curl_exec($ch);
-        if($data === false) {
+        if ($data === false) {
             throw new Exception(curl_error($ch), curl_errno($ch));
         }
         curl_close($ch);
@@ -88,47 +97,50 @@ class Box_Tools
      */
     public function url($link = null)
     {
-        $link = trim($link, '/');
-        if(BB_SEF_URLS) {
+        $link = trim($link, "/");
+        if (BB_SEF_URLS) {
             return BB_URL . $link;
         }
 
-        return BB_URL .'index.php?_url=/' . $link;
+        return BB_URL . "index.php?_url=/" . $link;
     }
-    
+
     public function hasService($type)
     {
-        $file = BB_PATH_MODS . '/mod_'.$type.'/Service.php';
+        $file = BB_PATH_MODS . "/mod_" . $type . "/Service.php";
         return file_exists($file);
     }
-    
+
     public function getService($type)
     {
-        $class = 'Box_Mod_'.ucfirst($type).'_Service';
-        $file = BB_PATH_MODS . '/mod_'.$type.'/Service.php';
-        if(!file_exists($file)){
-            throw new \Box_Exception('Service class :class was not found in :path', array(':class'=>$class,':path'=>$file));
+        $class = "Box_Mod_" . ucfirst($type) . "_Service";
+        $file = BB_PATH_MODS . "/mod_" . $type . "/Service.php";
+        if (!file_exists($file)) {
+            throw new \Box_Exception(
+                "Service class :class was not found in :path",
+                [":class" => $class, ":path" => $file]
+            );
         }
         require_once $file;
-    	return new $class();
+        return new $class();
     }
-    
+
     /**
      * Get client IP
      * @return string
      */
     public function getIpv4()
     {
-        $ip = NULL;
-        if (isset($_SERVER) ) {
-            if (isset($_SERVER['REMOTE_ADDR']) ) {
-                $ip = $_SERVER['REMOTE_ADDR'];
-            } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
-                $ip = $_SERVER['HTTP_CLIENT_IP'];
-            } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-                $iplist = explode(',', $ip);
-                if(is_array($iplist)) {
+        $ip = null;
+        if (isset($_SERVER)) {
+            if (isset($_SERVER["REMOTE_ADDR"])) {
+                $ip = $_SERVER["REMOTE_ADDR"];
+            } elseif (isset($_SERVER["HTTP_CLIENT_IP"])) {
+                $ip = $_SERVER["HTTP_CLIENT_IP"];
+            } elseif (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+                $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+                $iplist = explode(",", $ip);
+                if (is_array($iplist)) {
                     $ip = trim(array_pop($iplist));
                 }
             }
@@ -136,16 +148,16 @@ class Box_Tools
         return $ip;
     }
 
-    public function checkPerms($path, $perm = '0777')
+    public function checkPerms($path, $perm = "0777")
     {
         clearstatcache();
-        $configmod = substr(sprintf('%o', fileperms($path)), -4);
-        $int = (int)$configmod;
-        if($configmod == $perm) {
+        $configmod = substr(sprintf("%o", fileperms($path)), -4);
+        $int = (int) $configmod;
+        if ($configmod == $perm) {
             return true;
         }
 
-        if((int)$configmod < (int)$perm) {
+        if ((int) $configmod < (int) $perm) {
             return true;
         }
         return false;
@@ -153,17 +165,17 @@ class Box_Tools
 
     public function emptyFolder($folder)
     {
-        if(!is_dir($folder)) {
+        if (!is_dir($folder)) {
             return;
         }
         $d = dir($folder);
         while (false !== ($entry = $d->read())) {
-            $isdir = is_dir($folder."/".$entry);
-            if (!$isdir && $entry!="." && $entry!="..") {
-                unlink($folder."/".$entry);
-            } elseif ($isdir  &&  $entry!="." && $entry!="..") {
-                $this->emptyFolder($folder."/".$entry);
-                rmdir($folder."/".$entry);
+            $isdir = is_dir($folder . "/" . $entry);
+            if (!$isdir && $entry != "." && $entry != "..") {
+                unlink($folder . "/" . $entry);
+            } elseif ($isdir && $entry != "." && $entry != "..") {
+                $this->emptyFolder($folder . "/" . $entry);
+                rmdir($folder . "/" . $entry);
             }
         }
         $d->close();
@@ -173,9 +185,11 @@ class Box_Tools
      * Returns referer url
      * @return string
      */
-    public function getReferer($default = '/')
+    public function getReferer($default = "/")
     {
-        $r = empty($_SERVER['HTTP_REFERER']) ? $default : $_SERVER['HTTP_REFERER'];
+        $r = empty($_SERVER["HTTP_REFERER"])
+            ? $default
+            : $_SERVER["HTTP_REFERER"];
         return $r;
     }
 
@@ -185,76 +199,78 @@ class Box_Tools
      * @param int $strength
      * @return string
      */
-    public function generatePassword($length=8, $strength=3) {
-    	$upper = 0;
-    	$lower = 0;
-    	$numeric = 0;
-    	$other = 0;
+    public function generatePassword($length = 8, $strength = 3)
+    {
+        $upper = 0;
+        $lower = 0;
+        $numeric = 0;
+        $other = 0;
 
-    	$upper_letters = 'QWERTYUIOPASDFGHJKLZXCVBNM';
-    	$lower_letters = 'qwertyuiopasdfghjklzxccvbnm';
-    	$numbers = '1234567890';
-    	$symbols = '!@#$%&?()+-_';
+        $upper_letters = "QWERTYUIOPASDFGHJKLZXCVBNM";
+        $lower_letters = "qwertyuiopasdfghjklzxccvbnm";
+        $numbers = "1234567890";
+        $symbols = '!@#$%&?()+-_';
 
-		switch ($strength) {
-			//lowercase
-			case 1:
-				$lower = $length;
-			break;
-			//lowercase + numeric
-			case 2:
-				$lower = rand(1, $length - 1);
-				$numeric = $length - $lower;
-			break;
-			//lowercase + uppsercase + numeric
-			case 3:
-				$lower = rand(1, $length - 2);
-				$upper = rand(1, $length - $lower - 1);
-				$numeric = $length - $lower - $upper;
-			break;
-			//lowercase + uppercase + numeric + symbols
+        switch ($strength) {
+            //lowercase
+            case 1:
+                $lower = $length;
+                break;
+            //lowercase + numeric
+            case 2:
+                $lower = rand(1, $length - 1);
+                $numeric = $length - $lower;
+                break;
+            //lowercase + uppsercase + numeric
+            case 3:
+                $lower = rand(1, $length - 2);
+                $upper = rand(1, $length - $lower - 1);
+                $numeric = $length - $lower - $upper;
+                break;
+            //lowercase + uppercase + numeric + symbols
             case 4:
-			default:
-				$lower = rand(1, $length - 3);
-				$upper = rand(1, $length - $lower - 2);
-				$numeric = rand(1, $length - $lower - $upper - 1);
-				$other = $length - $lower - $upper - $numeric;
-			break;
-		}
+            default:
+                $lower = rand(1, $length - 3);
+                $upper = rand(1, $length - $lower - 2);
+                $numeric = rand(1, $length - $lower - $upper - 1);
+                $other = $length - $lower - $upper - $numeric;
+                break;
+        }
 
-        $passOrder = array();
+        $passOrder = [];
 
-		for ($i = 0; $i < $upper; $i++) {
-        	$passOrder[] = $upper_letters[rand() % strlen($upper_letters)];
-    	}
-    	for ($i = 0; $i < $lower; $i++) {
-        	$passOrder[] = $lower_letters[rand() % strlen($lower_letters)];
-    	}
-    	for ($i = 0; $i < $numeric; $i++) {
-        	$passOrder[] = $numbers[rand() % strlen($numbers)];
-    	}
-    	for ($i = 0; $i < $other; $i++) {
-        	$passOrder[] = $symbols[rand() % strlen($symbols)];
-    	}
+        for ($i = 0; $i < $upper; $i++) {
+            $passOrder[] = $upper_letters[rand() % strlen($upper_letters)];
+        }
+        for ($i = 0; $i < $lower; $i++) {
+            $passOrder[] = $lower_letters[rand() % strlen($lower_letters)];
+        }
+        for ($i = 0; $i < $numeric; $i++) {
+            $passOrder[] = $numbers[rand() % strlen($numbers)];
+        }
+        for ($i = 0; $i < $other; $i++) {
+            $passOrder[] = $symbols[rand() % strlen($symbols)];
+        }
 
-    	shuffle($passOrder);
-    	$password = implode('', $passOrder);
+        shuffle($passOrder);
+        $password = implode("", $passOrder);
 
         return $password;
     }
 
     public function autoLinkText($text)
     {
-       $pattern  = '#\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))#';
-       $callback = function($matches){
-           $url       = array_shift($matches);
-           $url_parts = parse_url($url);
-           if(!isset($url_parts["scheme"])) {
-              $url = "http://".$url;
-           }
-           return sprintf('<a target="_blank" href="%s">%s</a>', $url, $url);
+        $pattern =
+            "#\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))#";
+        $callback = function ($matches) {
+            $url = array_shift($matches);
+            $url_parts = parse_url($url);
+            if (!isset($url_parts["scheme"])) {
+                $url = "http://" . $url;
+            }
+            return sprintf('<a target="_blank" href="%s">%s</a>', $url, $url);
         };
-       return preg_replace_callback($pattern, $callback, $text);
+        return preg_replace_callback($pattern, $callback, $text);
     }
 
     public function getResponseCode($theURL)
@@ -266,16 +282,16 @@ class Box_Tools
     public function slug($str)
     {
         $str = strtolower(trim($str));
-        $str = preg_replace('/[^a-z0-9-]/', '-', $str);
-        $str = preg_replace('/-+/', "-", $str);
-        $str = trim($str, '-');
+        $str = preg_replace("/[^a-z0-9-]/", "-", $str);
+        $str = preg_replace("/-+/", "-", $str);
+        $str = trim($str, "-");
         return $str;
     }
 
     public function escape($string)
     {
-    	$string = htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-    	return stripslashes($string);
+        $string = htmlspecialchars($string, ENT_QUOTES, "UTF-8");
+        return stripslashes($string);
     }
 
     /**
@@ -285,111 +301,114 @@ class Box_Tools
      */
     public function get_mime_content_type($filename)
     {
-        $mime_types = array(
-
-            'txt' => 'text/plain',
-            'htm' => 'text/html',
-            'html' => 'text/html',
-            'php' => 'text/html',
-            'css' => 'text/css',
-            'js' => 'application/javascript',
-            'json' => 'application/json',
-            'xml' => 'application/xml',
-            'swf' => 'application/x-shockwave-flash',
-            'flv' => 'video/x-flv',
+        $mime_types = [
+            "txt" => "text/plain",
+            "htm" => "text/html",
+            "html" => "text/html",
+            "php" => "text/html",
+            "css" => "text/css",
+            "js" => "application/javascript",
+            "json" => "application/json",
+            "xml" => "application/xml",
+            "swf" => "application/x-shockwave-flash",
+            "flv" => "video/x-flv",
 
             // images
-            'png' => 'image/png',
-            'jpe' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'jpg' => 'image/jpeg',
-            'gif' => 'image/gif',
-            'bmp' => 'image/bmp',
-            'ico' => 'image/vnd.microsoft.icon',
-            'tiff' => 'image/tiff',
-            'tif' => 'image/tiff',
-            'svg' => 'image/svg+xml',
-            'svgz' => 'image/svg+xml',
+            "png" => "image/png",
+            "jpe" => "image/jpeg",
+            "jpeg" => "image/jpeg",
+            "jpg" => "image/jpeg",
+            "gif" => "image/gif",
+            "bmp" => "image/bmp",
+            "ico" => "image/vnd.microsoft.icon",
+            "tiff" => "image/tiff",
+            "tif" => "image/tiff",
+            "svg" => "image/svg+xml",
+            "svgz" => "image/svg+xml",
 
             // archives
-            'zip' => 'application/zip',
-            'rar' => 'application/x-rar-compressed',
-            'exe' => 'application/x-msdownload',
-            'msi' => 'application/x-msdownload',
-            'cab' => 'application/vnd.ms-cab-compressed',
+            "zip" => "application/zip",
+            "rar" => "application/x-rar-compressed",
+            "exe" => "application/x-msdownload",
+            "msi" => "application/x-msdownload",
+            "cab" => "application/vnd.ms-cab-compressed",
 
             // audio/video
-            'mp3' => 'audio/mpeg',
-            'qt' => 'video/quicktime',
-            'mov' => 'video/quicktime',
+            "mp3" => "audio/mpeg",
+            "qt" => "video/quicktime",
+            "mov" => "video/quicktime",
 
             // adobe
-            'pdf' => 'application/pdf',
-            'psd' => 'image/vnd.adobe.photoshop',
-            'ai' => 'application/postscript',
-            'eps' => 'application/postscript',
-            'ps' => 'application/postscript',
+            "pdf" => "application/pdf",
+            "psd" => "image/vnd.adobe.photoshop",
+            "ai" => "application/postscript",
+            "eps" => "application/postscript",
+            "ps" => "application/postscript",
 
             // ms office
-            'doc' => 'application/msword',
-            'rtf' => 'application/rtf',
-            'xls' => 'application/vnd.ms-excel',
-            'ppt' => 'application/vnd.ms-powerpoint',
+            "doc" => "application/msword",
+            "rtf" => "application/rtf",
+            "xls" => "application/vnd.ms-excel",
+            "ppt" => "application/vnd.ms-powerpoint",
 
             // open office
-            'odt' => 'application/vnd.oasis.opendocument.text',
-            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-        );
+            "odt" => "application/vnd.oasis.opendocument.text",
+            "ods" => "application/vnd.oasis.opendocument.spreadsheet",
+        ];
 
-        $ext = explode('.',$filename);
+        $ext = explode(".", $filename);
         $ext = array_pop($ext);
         $ext = strtolower($ext);
         if (array_key_exists($ext, $mime_types)) {
             return $mime_types[$ext];
-        }
-        elseif (function_exists('finfo_open')) {
+        } elseif (function_exists("finfo_open")) {
             $finfo = finfo_open(FILEINFO_MIME);
             $mimetype = finfo_file($finfo, $filename);
             finfo_close($finfo);
             return $mimetype;
-        }
-        else {
-            return 'application/octet-stream';
+        } else {
+            return "application/octet-stream";
         }
     }
 
-    public function to_camel_case($str, $capitalise_first_char = false) {
-        if($capitalise_first_char) {
+    public function to_camel_case($str, $capitalise_first_char = false)
+    {
+        if ($capitalise_first_char) {
             $str[0] = strtoupper($str[0]);
         }
-        $func = function($c){ return strtoupper($c[1]); };
-        return preg_replace_callback('/-([a-z])/', $func, $str);
+        $func = function ($c) {
+            return strtoupper($c[1]);
+        };
+        return preg_replace_callback("/-([a-z])/", $func, $str);
     }
 
-    public function from_camel_case($str) {
+    public function from_camel_case($str)
+    {
         $str[0] = strtolower($str[0]);
-        $func = function($c){ return "-" . strtolower($c[1]); };
-        return preg_replace_callback('/([A-Z])/', $func, $str);
+        $func = function ($c) {
+            return "-" . strtolower($c[1]);
+        };
+        return preg_replace_callback("/([A-Z])/", $func, $str);
     }
 
     public function decodeJ($json_str)
     {
         $config = json_decode($json_str, true);
-        return is_array($config) ? $config : array();
+        return is_array($config) ? $config : [];
     }
-    
-    public function sortByOneKey(array $array, $key, $asc = true) {
-        $result = array();
 
-        $values = array();
+    public function sortByOneKey(array $array, $key, $asc = true)
+    {
+        $result = [];
+
+        $values = [];
         foreach ($array as $id => $value) {
-            $values[$id] = isset($value[$key]) ? $value[$key] : '';
+            $values[$id] = isset($value[$key]) ? $value[$key] : "";
         }
 
         if ($asc) {
             asort($values);
-        }
-        else {
+        } else {
             arsort($values);
         }
 
@@ -399,28 +418,34 @@ class Box_Tools
 
         return $result;
     }
-    
-    public function cache_function($buildCallback, array $args = array(), $timeoutSeconds = 3600)
-    {
-            // Set up the filename for the cache file 
-            if(is_array($buildCallback)){
-                    $cacheKey = get_class($buildCallback[0]) .'::'. $buildCallback[1];
-            }else{
-                    $cacheKey = $buildCallback . ':' . implode(':', $args);
-            }
-            $cacheKey .= ':' . implode(':', $args);
-            $file_path = BB_PATH_CACHE .DIRECTORY_SEPARATOR. md5($cacheKey);
 
-            // If the file hasn't yet been created or is out of date then call the require function and store it's result.
-            if(!file_exists($file_path) || filemtime($file_path) < (time() - $timeoutSeconds)){
-                    $result = call_user_func_array($buildCallback, $args);
-                    file_put_contents($file_path, serialize($result), LOCK_EX);
+    public function cache_function(
+        $buildCallback,
+        array $args = [],
+        $timeoutSeconds = 3600
+    ) {
+        // Set up the filename for the cache file
+        if (is_array($buildCallback)) {
+            $cacheKey = get_class($buildCallback[0]) . "::" . $buildCallback[1];
+        } else {
+            $cacheKey = $buildCallback . ":" . implode(":", $args);
+        }
+        $cacheKey .= ":" . implode(":", $args);
+        $file_path = BB_PATH_CACHE . DIRECTORY_SEPARATOR . md5($cacheKey);
+
+        // If the file hasn't yet been created or is out of date then call the require function and store it's result.
+        if (
+            !file_exists($file_path) ||
+            filemtime($file_path) < time() - $timeoutSeconds
+        ) {
+            $result = call_user_func_array($buildCallback, $args);
+            file_put_contents($file_path, serialize($result), LOCK_EX);
             // Else, grab the result from the cache.
-            }else{
-                    $result = unserialize(file_get_contents($file_path));
-            }
+        } else {
+            $result = unserialize(file_get_contents($file_path));
+        }
 
-            return $result;
+        return $result;
     }
 
     public function fileExists($file)
@@ -450,10 +475,13 @@ class Box_Tools
 
     public function getTable($type)
     {
-        $class = 'Model_'.ucfirst($type).'Table';
-        $file = BB_PATH_LIBRARY . '/Model/'.$type.'Table.php';
-        if(!file_exists($file)){
-            throw new \Box_Exception('Service class :class was not found in :path', array(':class'=>$class,':path'=>$file));
+        $class = "Model_" . ucfirst($type) . "Table";
+        $file = BB_PATH_LIBRARY . "/Model/" . $type . "Table.php";
+        if (!file_exists($file)) {
+            throw new \Box_Exception(
+                "Service class :class was not found in :path",
+                [":class" => $class, ":path" => $file]
+            );
         }
         require_once $file;
         return new $class();
@@ -461,20 +489,24 @@ class Box_Tools
 
     public function getPairsForTableByIds($table, $ids)
     {
-        if (empty ($ids)) {
-            return array();
+        if (empty($ids)) {
+            return [];
         }
 
-        $slots = (count($ids)) ? implode(',', array_fill(0, count($ids), '?')) : ''; //same as RedBean genSlots() method
+        $slots = count($ids)
+            ? implode(",", array_fill(0, count($ids), "?"))
+            : ""; //same as RedBean genSlots() method
 
-        $rows = $this->di['db']->getAll('SELECT id, title FROM ' . $table . ' WHERE id in (' . $slots . ')', $ids);
+        $rows = $this->di["db"]->getAll(
+            "SELECT id, title FROM " . $table . " WHERE id in (" . $slots . ")",
+            $ids
+        );
 
-        $result = array();
+        $result = [];
         foreach ($rows as $record) {
-            $result[$record['id']] = $record['title'];
+            $result[$record["id"]] = $record["title"];
         }
 
         return $result;
     }
-
 }

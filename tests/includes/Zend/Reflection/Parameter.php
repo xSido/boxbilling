@@ -38,13 +38,16 @@ class Zend_Reflection_Parameter extends ReflectionParameter
      * @param  string $reflectionClass Reflection class to use
      * @return Zend_Reflection_Class
      */
-    public function getDeclaringClass($reflectionClass = 'Zend_Reflection_Class')
-    {
-        $phpReflection  = parent::getDeclaringClass();
+    public function getDeclaringClass(
+        $reflectionClass = "Zend_Reflection_Class"
+    ) {
+        $phpReflection = parent::getDeclaringClass();
         $zendReflection = new $reflectionClass($phpReflection->getName());
         if (!$zendReflection instanceof Zend_Reflection_Class) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Class');
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Invalid reflection class provided; must extend Zend_Reflection_Class"
+            );
         }
         unset($phpReflection);
         return $zendReflection;
@@ -56,17 +59,19 @@ class Zend_Reflection_Parameter extends ReflectionParameter
      * @param  string $reflectionClass Reflection class to use
      * @return Zend_Reflection_Class
      */
-    public function getClass($reflectionClass = 'Zend_Reflection_Class')
+    public function getClass($reflectionClass = "Zend_Reflection_Class")
     {
-        $phpReflection  = parent::getClass();
-        if($phpReflection == null) {
+        $phpReflection = parent::getClass();
+        if ($phpReflection == null) {
             return null;
         }
 
         $zendReflection = new $reflectionClass($phpReflection->getName());
         if (!$zendReflection instanceof Zend_Reflection_Class) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Class');
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Invalid reflection class provided; must extend Zend_Reflection_Class"
+            );
         }
         unset($phpReflection);
         return $zendReflection;
@@ -82,21 +87,26 @@ class Zend_Reflection_Parameter extends ReflectionParameter
     {
         $phpReflection = parent::getDeclaringFunction();
         if ($phpReflection instanceof ReflectionMethod) {
-            $baseClass = 'Zend_Reflection_Method';
+            $baseClass = "Zend_Reflection_Method";
             if (null === $reflectionClass) {
                 $reflectionClass = $baseClass;
             }
-            $zendReflection = new $reflectionClass($this->getDeclaringClass()->getName(), $phpReflection->getName());
+            $zendReflection = new $reflectionClass(
+                $this->getDeclaringClass()->getName(),
+                $phpReflection->getName()
+            );
         } else {
-            $baseClass = 'Zend_Reflection_Function';
+            $baseClass = "Zend_Reflection_Function";
             if (null === $reflectionClass) {
                 $reflectionClass = $baseClass;
             }
             $zendReflection = new $reflectionClass($phpReflection->getName());
         }
         if (!$zendReflection instanceof $baseClass) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend ' . $baseClass);
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Invalid reflection class provided; must extend " . $baseClass
+            );
         }
         unset($phpReflection);
         return $zendReflection;
@@ -110,12 +120,11 @@ class Zend_Reflection_Parameter extends ReflectionParameter
     public function getType()
     {
         if ($docblock = $this->getDeclaringFunction()->getDocblock()) {
-            $params = $docblock->getTags('param');
+            $params = $docblock->getTags("param");
 
             if (isset($params[$this->getPosition()])) {
                 return $params[$this->getPosition()]->getType();
             }
-
         }
 
         return null;

@@ -12,7 +12,7 @@
 
 class Payment_Adapter_Custom
 {
-    private $config = array();
+    private $config = [];
     protected $di;
 
     public function __construct($config)
@@ -30,48 +30,61 @@ class Payment_Adapter_Custom
 
     public static function getConfig()
     {
-        return array(
-            'can_load_in_iframe'   =>  true,
-            'supports_one_time_payments'   =>  true,
-            'supports_subscriptions'       =>  true,
-            'description'     =>  'Custom payment gateway allows you to give instructions how can your client pay invoice. All system, client, order and invoice details can be printed. HTML and JavaScript code is supported.',
-            'form'  => array(
-                'single' => array('textarea', array(
-                            'label' => 'Enter your text for single payment information',
-                    ),
-                ),
-                'recurrent' => array('textarea', array(
-                            'label' => 'Enter your text for subscription information',
-                    ),
-                ),
-            ),
-        );
+        return [
+            "can_load_in_iframe" => true,
+            "supports_one_time_payments" => true,
+            "supports_subscriptions" => true,
+            "description" =>
+                "Custom payment gateway allows you to give instructions how can your client pay invoice. All system, client, order and invoice details can be printed. HTML and JavaScript code is supported.",
+            "form" => [
+                "single" => [
+                    "textarea",
+                    [
+                        "label" =>
+                            "Enter your text for single payment information",
+                    ],
+                ],
+                "recurrent" => [
+                    "textarea",
+                    [
+                        "label" =>
+                            "Enter your text for subscription information",
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
      * Generate payment text
-     * 
+     *
      * @param Api_Admin $api_admin
      * @param int $invoice_id
      * @param bool $subscription
-     * 
+     *
      * @since BoxBilling v2.9.15
-     * 
+     *
      * @return string - html form with auto submit javascript
      */
     public function getHtml($api_admin, $invoice_id, $subscription)
     {
-        $invoiceModel = $this->di['db']->load('Invoice', $invoice_id);
-        $invoiceService = $this->di['mod_service']("Invoice");
+        $invoiceModel = $this->di["db"]->load("Invoice", $invoice_id);
+        $invoiceService = $this->di["mod_service"]("Invoice");
         $invoice = $invoiceService->toApiArray($invoiceModel, true);
 
-        $vars = array(
-            '_client_id'    => $invoice['client']['id'],
-            'invoice'   =>  $invoice,
-            '_tpl'      =>  $subscription ? (isset($this->config['recurrent']) ? $this->config['recurrent'] : null) : (isset($this->config['single']) ? $this->config['single'] : null),
-        );
-        $systemService = $this->di['mod_service']('System');
-        return $systemService->renderString($vars['_tpl'], true, $vars);
+        $vars = [
+            "_client_id" => $invoice["client"]["id"],
+            "invoice" => $invoice,
+            "_tpl" => $subscription
+                ? (isset($this->config["recurrent"])
+                    ? $this->config["recurrent"]
+                    : null)
+                : (isset($this->config["single"])
+                    ? $this->config["single"]
+                    : null),
+        ];
+        $systemService = $this->di["mod_service"]("System");
+        return $systemService->renderString($vars["_tpl"], true, $vars);
     }
 
     public function process($tx)

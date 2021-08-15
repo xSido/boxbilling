@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Notification\Controller;
 
 class Admin implements \Box\InjectionAwareInterface
@@ -35,12 +34,12 @@ class Admin implements \Box\InjectionAwareInterface
 
     public function register(\Box_App &$app)
     {
-        $app->get('/notification',           'get_index', array(), get_class($this));
+        $app->get("/notification", "get_index", [], get_class($this));
     }
 
     public function get_index(\Box_App $app)
     {
-        $this->di['is_admin_logged'];
-        return $app->render('mod_notification_index');
+        $this->di["is_admin_logged"];
+        return $app->render("mod_notification_index");
     }
 }

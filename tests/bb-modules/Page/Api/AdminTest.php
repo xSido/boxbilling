@@ -1,11 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Page\Api;
 
-
-class AdminTest extends \BBTestCase {
-
+class AdminTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Page\Api\Admin
      */
@@ -15,7 +13,6 @@ class AdminTest extends \BBTestCase {
     {
         $this->api = new \Box\Mod\Page\Api\Admin();
     }
-
 
     public function testgetDi()
     {
@@ -27,16 +24,17 @@ class AdminTest extends \BBTestCase {
 
     public function testget_pairs()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Page\Service')->getMock();
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Page\Service"
+        )->getMock();
 
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getPairs')
-            ->will($this->returnValue(array()));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getPairs")
+            ->will($this->returnValue([]));
 
         $this->api->setService($serviceMock);
         $result = $this->api->get_pairs();
         $this->assertIsArray($result);
     }
-
 }
- 

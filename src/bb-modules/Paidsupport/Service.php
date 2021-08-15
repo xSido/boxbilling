@@ -50,11 +50,15 @@ class Service implements InjectionAwareInterface
         $di = $event->getDi();
         $params = $event->getParameters();
 
-        $client = $di['db']->load('Client', $params['client_id']);
+        $client = $di["db"]->load("Client", $params["client_id"]);
 
-        $paidSupportService = $di['mod_service']('Paidsupport');
+        $paidSupportService = $di["mod_service"]("Paidsupport");
         $paidSupportService->setDi($di);
-        if ($paidSupportService->hasHelpdeskPaidSupport($params['support_helpdesk_id'])) {
+        if (
+            $paidSupportService->hasHelpdeskPaidSupport(
+                $params["support_helpdesk_id"]
+            )
+        ) {
             $paidSupportService->enoughInBalanceToOpenTicket($client);
         }
         return true;
@@ -69,26 +73,39 @@ class Service implements InjectionAwareInterface
         $di = $event->getDi();
         $params = $event->getParameters();
 
-        $supportTicket = $di['db']->load('SupportTicket', $params['id']);
-        $client = $di['db']->load('Client', $supportTicket->client_id);
+        $supportTicket = $di["db"]->load("SupportTicket", $params["id"]);
+        $client = $di["db"]->load("Client", $supportTicket->client_id);
 
-        $paidSupportService = $di['mod_service']('Paidsupport');
+        $paidSupportService = $di["mod_service"]("Paidsupport");
         $paidSupportService->setDi($di);
-        if (!$paidSupportService->hasHelpdeskPaidSupport($supportTicket->support_helpdesk_id)) {
+        if (
+            !$paidSupportService->hasHelpdeskPaidSupport(
+                $supportTicket->support_helpdesk_id
+            )
+        ) {
             return true;
         }
 
         $paidSupportService->enoughInBalanceToOpenTicket($client);
 
-        $clientBalanceService = $di['mod_service']('Client', 'Balance');
+        $clientBalanceService = $di["mod_service"]("Client", "Balance");
         $clientBalanceService->setDi($di);
 
-        $message = sprintf('Paid support ticket#%d "%s" opened', $supportTicket->id, $supportTicket->subject);
-        $extra = array(
-            'rel_id' => $supportTicket->id,
-            'type' => 'supportticket',
+        $message = sprintf(
+            'Paid support ticket#%d "%s" opened',
+            $supportTicket->id,
+            $supportTicket->subject
         );
-        $clientBalanceService->deductFunds($client, $paidSupportService->getTicketPrice(), $message, $extra);
+        $extra = [
+            "rel_id" => $supportTicket->id,
+            "type" => "supportticket",
+        ];
+        $clientBalanceService->deductFunds(
+            $client,
+            $paidSupportService->getTicketPrice(),
+            $message,
+            $extra
+        );
 
         return true;
     }
@@ -98,12 +115,12 @@ class Service implements InjectionAwareInterface
      */
     public function getTicketPrice()
     {
-        $config = $this->di['mod_config']('Paidsupport');
-        if (!isset($config['ticket_price'])){
-            error_log('Paid Support ticket price is not set');
+        $config = $this->di["mod_config"]("Paidsupport");
+        if (!isset($config["ticket_price"])) {
+            error_log("Paid Support ticket price is not set");
             return (float) 0;
         }
-        return (float) $config['ticket_price'];
+        return (float) $config["ticket_price"];
     }
 
     /**
@@ -111,23 +128,25 @@ class Service implements InjectionAwareInterface
      */
     public function getErrorMessage()
     {
-        $config = $this->di['mod_config']('Paidsupport');
-        $errorMessage = $this->di['array_get']($config, 'error_msg', '');
-        return strlen(trim($errorMessage)) > 0 ? $errorMessage : 'Configure paid support module!';
+        $config = $this->di["mod_config"]("Paidsupport");
+        $errorMessage = $this->di["array_get"]($config, "error_msg", "");
+        return strlen(trim($errorMessage)) > 0
+            ? $errorMessage
+            : "Configure paid support module!";
     }
 
     public function getPaidHelpdeskConfig()
     {
-        $config = $this->di['mod_config']('Paidsupport');
-        return isset($config['helpdesk']) ? $config['helpdesk'] : array();
+        $config = $this->di["mod_config"]("Paidsupport");
+        return isset($config["helpdesk"]) ? $config["helpdesk"] : [];
     }
 
     public function enoughInBalanceToOpenTicket(\Model_Client $client)
     {
-        $clientBalanceService = $this->di['mod_service']('Client', 'Balance');
+        $clientBalanceService = $this->di["mod_service"]("Client", "Balance");
         $clientBalance = $clientBalanceService->getClientBalance($client);
 
-        if ($this->getTicketPrice() > $clientBalance){
+        if ($this->getTicketPrice() > $clientBalance) {
             throw new \Box_Exception($this->getErrorMessage());
         }
 
@@ -142,7 +161,7 @@ class Service implements InjectionAwareInterface
     {
         $helpdeskConfig = $this->getPaidHelpdeskConfig();
 
-        if (isset($helpdeskConfig[$id]) && $helpdeskConfig[$id] == 1){
+        if (isset($helpdeskConfig[$id]) && $helpdeskConfig[$id] == 1) {
             return true;
         }
         return false;
@@ -150,23 +169,25 @@ class Service implements InjectionAwareInterface
 
     public function uninstall()
     {
-        $model = $this->di['db']->findOne('ExtensionMeta', 'extension = :ext AND meta_key = :key',
-            array(':ext'=>'mod_paidsupport', ':key'=>'config'));
+        $model = $this->di["db"]->findOne(
+            "ExtensionMeta",
+            "extension = :ext AND meta_key = :key",
+            [":ext" => "mod_paidsupport", ":key" => "config"]
+        );
         if ($model instanceof \Model_ExtensionMeta) {
-            $this->di['db']->trash($model);
+            $this->di["db"]->trash($model);
         }
         return true;
     }
 
     public function install()
     {
-        $extensionService = $this->di['mod_service']('Extension');
-        $defaultConfig = array(
-            'ext' => 'mod_paidsupport',
-            'error_msg' => 'Insufficient funds'
-        );
+        $extensionService = $this->di["mod_service"]("Extension");
+        $defaultConfig = [
+            "ext" => "mod_paidsupport",
+            "error_msg" => "Insufficient funds",
+        ];
         $extensionService->setConfig($defaultConfig);
         return true;
     }
-
 }

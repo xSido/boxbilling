@@ -20,20 +20,20 @@ class Guest extends \Api_Abstract
 {
     /**
      * Get custom order form details for product
-     * 
+     *
      * @param int $product_id - Product id
-     * 
+     *
      * @return array
-     * @throws Box_Exception 
+     * @throws Box_Exception
      */
     public function get($data)
     {
-        $required = array(
-            'id' => 'Form id was not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
-       
+        $required = [
+            "id" => "Form id was not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
         $service = $this->getService();
-        return $service->getForm($data['id']);
+        return $service->getForm($data["id"]);
     }
 }

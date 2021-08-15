@@ -12,5 +12,4 @@
 
 class Model_KbArticleCategory extends \RedBean_SimpleModel
 {
-    
 }

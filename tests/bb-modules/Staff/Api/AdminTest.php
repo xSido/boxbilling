@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Staff\Api;
 
-
-class AdminTest extends \BBTestCase {
+class AdminTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Staff\Api\Admin
      */
@@ -12,7 +11,7 @@ class AdminTest extends \BBTestCase {
 
     public function setup(): void
     {
-        $this->api= new \Box\Mod\Staff\Api\Admin();
+        $this->api = new \Box\Mod\Staff\Api\Admin();
     }
 
     public function testgetDi()
@@ -25,36 +24,46 @@ class AdminTest extends \BBTestCase {
 
     public function testget_list()
     {
-        $data = array();
+        $data = [];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getSearchQuery')
-            ->will($this->returnValue(array('sqlString', array())));
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('toModel_AdminApiiArray')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getSearchQuery")
+            ->will($this->returnValue(["sqlString", []]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toModel_AdminApiiArray")
+            ->will($this->returnValue([]));
 
-        $resultSet = array(
-            'list' => array('id' => 1),
-        );
-        $pagerMock = $this->getMockBuilder('\Box_Pagination')->getMock();
-        $pagerMock->expects($this->atLeastOnce())
-            ->method('getSimpleResultSet')
+        $resultSet = [
+            "list" => ["id" => 1],
+        ];
+        $pagerMock = $this->getMockBuilder("\Box_Pagination")->getMock();
+        $pagerMock
+            ->expects($this->atLeastOnce())
+            ->method("getSimpleResultSet")
             ->will($this->returnValue($resultSet));
 
         $adminModel = new \Model_Admin();
         $adminModel->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($adminModel));
 
         $di = new \Box_Di();
-        $di['pager'] = $pagerMock;
-        $di['db'] = $dbMock;
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["pager"] = $pagerMock;
+        $di["db"] = $dbMock;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
         $this->api->setDi($di);
@@ -66,24 +75,29 @@ class AdminTest extends \BBTestCase {
 
     public function testget()
     {
-        $data['id'] = 1;
+        $data["id"] = 1;
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('toModel_AdminApiiArray')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toModel_AdminApiiArray")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue(new \Model_Admin()));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setService($serviceMock);
         $this->api->setDi($di);
@@ -94,24 +108,29 @@ class AdminTest extends \BBTestCase {
 
     public function testupdate()
     {
-        $data['id'] = 1;
+        $data["id"] = 1;
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('update')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("update")
             ->will($this->returnValue(true));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue(new \Model_Admin()));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
@@ -123,24 +142,29 @@ class AdminTest extends \BBTestCase {
 
     public function testdelete()
     {
-        $data['id'] = 1;
+        $data["id"] = 1;
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('delete')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("delete")
             ->will($this->returnValue(true));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue(new \Model_Admin()));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
@@ -150,34 +174,39 @@ class AdminTest extends \BBTestCase {
         $this->assertTrue($result);
     }
 
-
     public function testchange_password()
     {
-        $data = array(
-            'id' => '1',
-            'password' => 'test!23A',
-            'password_confirm' => 'test!23A',
-        );
+        $data = [
+            "id" => "1",
+            "password" => "test!23A",
+            "password_confirm" => "test!23A",
+        ];
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('isPasswordStrong');
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("isPasswordStrong");
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('changePassword')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("changePassword")
             ->will($this->returnValue(true));
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue(new \Model_Admin()));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
@@ -188,47 +217,52 @@ class AdminTest extends \BBTestCase {
 
     public function testchange_passwordPasswordDonotMatch()
     {
-        $data = array(
-            'id' => '1',
-            'password' => 'test!23A',
-            'password_confirm' => 'test',
-        );
+        $data = [
+            "id" => "1",
+            "password" => "test!23A",
+            "password_confirm" => "test",
+        ];
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setDi($di);
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage('Passwords do not match');
+        $this->expectExceptionMessage("Passwords do not match");
         $this->api->change_password($data);
     }
 
     public function testcreate()
     {
-        $data = array(
-            'admin_group_id' => '1',
-            'password' => 'test!23A',
-            'email' => 'okey@example.com',
-            'name' => 'OkeyTest',
-        );
+        $data = [
+            "admin_group_id" => "1",
+            "password" => "test!23A",
+            "email" => "okey@example.com",
+            "name" => "OkeyTest",
+        ];
 
         $newStaffId = 1;
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('create')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("create")
             ->will($this->returnValue($newStaffId));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
@@ -240,27 +274,32 @@ class AdminTest extends \BBTestCase {
 
     public function testpermissions_get()
     {
-        $data['id'] = 1;
+        $data["id"] = 1;
 
         $staffModel = new \Model_Admin();
         $staffModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getPermissions')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getPermissions")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($staffModel));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
@@ -271,32 +310,36 @@ class AdminTest extends \BBTestCase {
 
     public function testpermissions_update()
     {
-        $data = array(
-            'id' => '1',
-            'permissions' => 'default',
-        );
+        $data = [
+            "id" => "1",
+            "permissions" => "default",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('setPermissions')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("setPermissions")
             ->will($this->returnValue(true));
-
 
         $staffModel = new \Model_Admin();
         $staffModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($staffModel));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
-        $di['logger'] = new \Box_Log();
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
+        $di["logger"] = new \Box_Log();
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
@@ -308,34 +351,45 @@ class AdminTest extends \BBTestCase {
 
     public function testgroup_get_pairs()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getAdminGroupPair')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getAdminGroupPair")
+            ->will($this->returnValue([]));
 
         $this->api->setService($serviceMock);
-        $result = $this->api->group_get_pairs(array());
+        $result = $this->api->group_get_pairs([]);
         $this->assertIsArray($result);
     }
 
     public function testgroup_get_list()
     {
-        $data = array();
+        $data = [];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getAdminGroupSearchQuery')
-            ->will($this->returnValue(array('sqlString', array())));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getAdminGroupSearchQuery")
+            ->will($this->returnValue(["sqlString", []]));
 
-        $pagerMock = $this->getMockBuilder('\Box_Pagination')->getMock();
-        $pagerMock->expects($this->atLeastOnce())
-            ->method('getSimpleResultSet')
-            ->will($this->returnValue(array('list' => array())));
+        $pagerMock = $this->getMockBuilder("\Box_Pagination")->getMock();
+        $pagerMock
+            ->expects($this->atLeastOnce())
+            ->method("getSimpleResultSet")
+            ->will($this->returnValue(["list" => []]));
 
         $di = new \Box_Di();
-        $di['pager'] = $pagerMock;
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["pager"] = $pagerMock;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
         $this->api->setDi($di);
@@ -347,20 +401,24 @@ class AdminTest extends \BBTestCase {
 
     public function testgroup_create()
     {
-        $data['name'] = 'Prime Group';
+        $data["name"] = "Prime Group";
         $newGroupId = 1;
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('createGroup')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("createGroup")
             ->will($this->returnValue($newGroupId));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
@@ -372,25 +430,29 @@ class AdminTest extends \BBTestCase {
 
     public function testgroup_get()
     {
-        $data['id'] = '1';
+        $data["id"] = "1";
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('toAdminGroupApiArray')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toAdminGroupApiArray")
+            ->will($this->returnValue([]));
 
-
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue(new \Model_AdminGroup()));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setIdentity(new \Model_Admin());
         $this->api->setDi($di);
@@ -402,24 +464,29 @@ class AdminTest extends \BBTestCase {
 
     public function testgroup_delete()
     {
-        $data['id'] = '1';
+        $data["id"] = "1";
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('deleteGroup')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("deleteGroup")
             ->will($this->returnValue(true));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue(new \Model_AdminGroup()));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setIdentity(new \Model_Admin());
         $this->api->setDi($di);
@@ -432,24 +499,29 @@ class AdminTest extends \BBTestCase {
 
     public function testgroup_update()
     {
-        $data['id'] = '1';
+        $data["id"] = "1";
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('updateGroup')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("updateGroup")
             ->will($this->returnValue(true));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue(new \Model_AdminGroup()));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setIdentity(new \Model_Admin());
         $this->api->setDi($di);
@@ -462,36 +534,46 @@ class AdminTest extends \BBTestCase {
 
     public function testlogin_history_get_list()
     {
-        $data = array();
+        $data = [];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getActivityAdminHistorySearchQuery')
-            ->will($this->returnValue(array('sqlString', array())));
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('toActivityAdminHistoryApiArray')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getActivityAdminHistorySearchQuery")
+            ->will($this->returnValue(["sqlString", []]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toActivityAdminHistoryApiArray")
+            ->will($this->returnValue([]));
 
-        $resultSet = array(
-            'list' => array('id' => 1),
-        );
-        $pagerMock = $this->getMockBuilder('\Box_Pagination')->getMock();
-        $pagerMock->expects($this->atLeastOnce())
-            ->method('getSimpleResultSet')
+        $resultSet = [
+            "list" => ["id" => 1],
+        ];
+        $pagerMock = $this->getMockBuilder("\Box_Pagination")->getMock();
+        $pagerMock
+            ->expects($this->atLeastOnce())
+            ->method("getSimpleResultSet")
             ->will($this->returnValue($resultSet));
 
         $model = new \Model_ActivityAdminHistory();
         $model->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue($model));
 
         $di = new \Box_Di();
-        $di['pager'] = $pagerMock;
-        $di['db'] = $dbMock;
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["pager"] = $pagerMock;
+        $di["db"] = $dbMock;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
         $this->api->setDi($di);
@@ -503,24 +585,29 @@ class AdminTest extends \BBTestCase {
 
     public function testlogin_history_get()
     {
-        $data['id'] = '1';
+        $data["id"] = "1";
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('toActivityAdminHistoryApiArray')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("toActivityAdminHistoryApiArray")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue(new \Model_ActivityAdminHistory()));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setIdentity(new \Model_Admin());
         $this->api->setDi($di);
@@ -532,24 +619,29 @@ class AdminTest extends \BBTestCase {
 
     public function testlogin_history_delete()
     {
-        $data['id'] = '1';
+        $data["id"] = "1";
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('deleteLoginHistory')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("deleteLoginHistory")
             ->will($this->returnValue(true));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray');
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('getExistingModelById')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray");
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("getExistingModelById")
             ->will($this->returnValue(new \Model_ActivityAdminHistory()));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $di['db'] = $dbMock;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $dbMock;
 
         $this->api->setIdentity(new \Model_Admin());
         $this->api->setDi($di);
@@ -562,20 +654,27 @@ class AdminTest extends \BBTestCase {
 
     public function testBatch_delete()
     {
-        $activityMock = $this->getMockBuilder('\Box\Mod\Staff\Api\Admin')->setMethods(array('login_history_delete'))->getMock();
-        $activityMock->expects($this->atLeastOnce())->method('login_history_delete')->will($this->returnValue(true));
+        $activityMock = $this->getMockBuilder("\Box\Mod\Staff\Api\Admin")
+            ->setMethods(["login_history_delete"])
+            ->getMock();
+        $activityMock
+            ->expects($this->atLeastOnce())
+            ->method("login_history_delete")
+            ->will($this->returnValue(true));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
-        $di              = new \Box_Di();
-        $di['validator'] = $validatorMock;
+        $di = new \Box_Di();
+        $di["validator"] = $validatorMock;
         $activityMock->setDi($di);
 
-        $result = $activityMock->batch_delete_logs(array('ids' => array(1, 2, 3)));
+        $result = $activityMock->batch_delete_logs(["ids" => [1, 2, 3]]);
         $this->assertEquals(true, $result);
     }
 }
- 

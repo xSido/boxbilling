@@ -27,17 +27,23 @@ class Guest extends \Api_Abstract
      */
     public function get($data)
     {
-        $required = array(
-            'hash' => 'Invoice hash not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "hash" => "Invoice hash not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->findOne('Invoice', 'hash = :hash', array('hash' => $data['hash']));
+        $model = $this->di["db"]->findOne("Invoice", "hash = :hash", [
+            "hash" => $data["hash"],
+        ]);
         if (!$model) {
-            throw new \Box_Exception('Invoice was not found');
+            throw new \Box_Exception("Invoice was not found");
         }
 
-        return $this->getService()->toApiArray($model, true, $this->getIdentity());
+        return $this->getService()->toApiArray(
+            $model,
+            true,
+            $this->getIdentity()
+        );
     }
 
     /**
@@ -52,21 +58,27 @@ class Guest extends \Api_Abstract
      */
     public function update($data)
     {
-        $required = array(
-            'hash' => 'Invoice hash not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "hash" => "Invoice hash not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $invoice = $this->di['db']->findOne('Invoice', 'hash = :hash', array('hash' => $data['hash']));
+        $invoice = $this->di["db"]->findOne("Invoice", "hash = :hash", [
+            "hash" => $data["hash"],
+        ]);
         if (!$invoice) {
-            throw new \Box_Exception('Invoice was not found');
+            throw new \Box_Exception("Invoice was not found");
         }
-        if ($invoice->status == 'paid') {
-            throw new \Box_Exception('Paid Invoice can not be modified');
+        if ($invoice->status == "paid") {
+            throw new \Box_Exception("Paid Invoice can not be modified");
         }
 
-        $updateParams               = array();
-        $updateParams['gateway_id'] = $this->di['array_get']($data, 'gateway_id', null);
+        $updateParams = [];
+        $updateParams["gateway_id"] = $this->di["array_get"](
+            $data,
+            "gateway_id",
+            null
+        );
 
         return $this->getService()->updateInvoice($invoice, $updateParams);
     }
@@ -80,7 +92,7 @@ class Guest extends \Api_Abstract
      */
     public function gateways($data)
     {
-        $gatewayService = $this->di['mod_service']('Invoice', 'PayGateway');
+        $gatewayService = $this->di["mod_service"]("Invoice", "PayGateway");
 
         return $gatewayService->getActive($data);
     }
@@ -104,17 +116,24 @@ class Guest extends \Api_Abstract
      */
     public function payment($data)
     {
-        if (!isset($data['hash'])) {
-            throw new \Box_Exception('Invoice hash not passed. Missing param hash', null, 810);
+        if (!isset($data["hash"])) {
+            throw new \Box_Exception(
+                "Invoice hash not passed. Missing param hash",
+                null,
+                810
+            );
         }
 
-        if (!isset($data['gateway_id'])) {
-            throw new \Box_Exception('Payment method not found. Missing param gateway_id', null, 811);
+        if (!isset($data["gateway_id"])) {
+            throw new \Box_Exception(
+                "Payment method not found. Missing param gateway_id",
+                null,
+                811
+            );
         }
 
         return $this->getService()->processInvoice($data);
     }
-
 
     /**
      * Generates PDF for given invoice
@@ -127,11 +146,14 @@ class Guest extends \Api_Abstract
      */
     public function pdf($data)
     {
-        $required = array(
-            'hash' => 'Invoice hash is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "hash" => "Invoice hash is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        return $this->getService()->generatePDF($data['hash'], $this->getIdentity());
+        return $this->getService()->generatePDF(
+            $data["hash"],
+            $this->getIdentity()
+        );
     }
 }

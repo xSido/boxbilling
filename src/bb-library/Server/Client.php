@@ -12,32 +12,39 @@
 
 class Server_Client
 {
-    private $id         = NULL;
-    private $email      = NULL;
-    private $full_name  = 'BoxBilling Client';
-    private $company    = 'BoxBilling';
-    private $www        = 'www.boxbilling.com';
-    private $address_1  = NULL;
-    private $address_2  = NULL;
-    private $street     = NULL;
-    private $state      = 'n/a';
-    private $country    = 'US';
-    private $city       = NULL;
-    private $zip        = NULL;
-    private $telephone  = NULL;
-    private $fax  = NULL;
+    private $id = null;
+    private $email = null;
+    private $full_name = "BoxBilling Client";
+    private $company = "BoxBilling";
+    private $www = "www.boxbilling.com";
+    private $address_1 = null;
+    private $address_2 = null;
+    private $street = null;
+    private $state = "n/a";
+    private $country = "US";
+    private $city = null;
+    private $zip = null;
+    private $telephone = null;
+    private $fax = null;
 
     public function __call($name, $arguments)
     {
-        if (version_compare(PHP_VERSION, '5.4.0') < 0) {
+        if (version_compare(PHP_VERSION, "5.4.0") < 0) {
             $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        }
-        else {
+        } else {
             // Get only the stack frames we need (PHP 5.4 only).
             $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         }
-        error_log(sprintf("Calling %s inaccessible method %s from %s::%d", get_class($this), $name, $backtrace[1]['file'], $backtrace[1]['line']));
-        return '';
+        error_log(
+            sprintf(
+                "Calling %s inaccessible method %s from %s::%d",
+                get_class($this),
+                $name,
+                $backtrace[1]["file"],
+                $backtrace[1]["line"]
+            )
+        );
+        return "";
     }
 
     public function setId($id)
@@ -94,7 +101,7 @@ class Server_Client
     {
         return $this->address_1;
     }
-    
+
     public function setAddress2($param)
     {
         $this->address_2 = $param;
@@ -105,7 +112,7 @@ class Server_Client
     {
         return $this->address_2;
     }
-    
+
     public function setStreet($param)
     {
         $this->street = $param;
@@ -116,7 +123,7 @@ class Server_Client
     {
         return $this->street;
     }
-    
+
     public function setCity($param)
     {
         $this->city = $param;
@@ -171,7 +178,7 @@ class Server_Client
     {
         return $this->telephone;
     }
-    
+
     public function setFax($param)
     {
         $this->fax = $param;
@@ -182,7 +189,7 @@ class Server_Client
     {
         return $this->fax;
     }
-    
+
     public function setWww($param)
     {
         $this->www = $param;

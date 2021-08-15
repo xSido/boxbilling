@@ -17,7 +17,10 @@ abstract class Registrar_AdapterAbstract
      */
     public static function getConfig()
     {
-        throw new Registrar_Exception('Domain registrar class did not implement configuration options method', 749);
+        throw new Registrar_Exception(
+            "Domain registrar class did not implement configuration options method",
+            749
+        );
     }
 
     /**
@@ -130,9 +133,9 @@ abstract class Registrar_AdapterAbstract
     public function getLog()
     {
         $log = $this->_log;
-        if(!$log instanceof Box_Log) {
+        if (!$log instanceof Box_Log) {
             $log = new Box_Log();
-            $log->addWriter(new Box_LogDb('Model_ActivitySystem'));
+            $log->addWriter(new Box_LogDb("Model_ActivitySystem"));
         }
         return $log;
     }

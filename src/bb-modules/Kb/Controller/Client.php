@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Kb\Controller;
 
 class Client implements \Box\InjectionAwareInterface
@@ -35,29 +34,39 @@ class Client implements \Box\InjectionAwareInterface
 
     public function register(\Box_App &$app)
     {
-        $app->get('/kb', 'get_kb', array(), get_class($this));
-        $app->get('/kb/:category', 'get_kb_category', array('category' => '[a-z0-9-]+'), get_class($this));
-        $app->get('/kb/:category/:slug', 'get_kb_article', array('category' => '[a-z0-9-]+', 'slug' => '[a-z0-9-]+'), get_class($this));
+        $app->get("/kb", "get_kb", [], get_class($this));
+        $app->get(
+            "/kb/:category",
+            "get_kb_category",
+            ["category" => "[a-z0-9-]+"],
+            get_class($this)
+        );
+        $app->get(
+            "/kb/:category/:slug",
+            "get_kb_article",
+            ["category" => "[a-z0-9-]+", "slug" => "[a-z0-9-]+"],
+            get_class($this)
+        );
     }
 
     public function get_kb(\Box_App $app)
     {
-        return $app->render('mod_kb_index');
+        return $app->render("mod_kb_index");
     }
 
     public function get_kb_category(\Box_App $app, $category)
     {
-        $api = $this->di['api_guest'];
-        $data = array('slug'=>$category);
+        $api = $this->di["api_guest"];
+        $data = ["slug" => $category];
         $model = $api->kb_category_get($data);
-        return $app->render('mod_kb_category', array('category'=>$model));
+        return $app->render("mod_kb_category", ["category" => $model]);
     }
 
     public function get_kb_article(\Box_App $app, $category, $slug)
     {
-        $api = $this->di['api_guest'];
-        $data = array('slug'=>$slug);
+        $api = $this->di["api_guest"];
+        $data = ["slug" => $slug];
         $article = $api->kb_article_get($data);
-        return $app->render('mod_kb_article', array('article'=>$article));
+        return $app->render("mod_kb_article", ["article" => $article]);
     }
 }

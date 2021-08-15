@@ -16,7 +16,7 @@ class Payment_Invoice_Subscription
     private $amount;
     private $cycle;
     private $unit;
-    
+
     /**
      * Set id
      * @param int $id

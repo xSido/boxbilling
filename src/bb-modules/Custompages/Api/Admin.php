@@ -21,11 +21,11 @@ class Admin extends \Api_Abstract
      */
     public function get_list($data)
     {
-        $search = $this->di['array_get']($data, 'search', null);
+        $search = $this->di["array_get"]($data, "search", null);
         $pager = $this->getService()->searchPages($search);
 
-        foreach ($pager['list'] as $key => $item) {
-            $pager['list'][$key] = $item;
+        foreach ($pager["list"] as $key => $item) {
+            $pager["list"][$key] = $item;
         }
 
         return $pager;
@@ -40,12 +40,12 @@ class Admin extends \Api_Abstract
      */
     public function delete($data)
     {
-        $required = array(
-            'id' => 'Custom Page ID not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Custom Page ID not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $this->getService()->deletePage($data['id']);
+        $this->getService()->deletePage($data["id"]);
         return true;
     }
 
@@ -58,12 +58,12 @@ class Admin extends \Api_Abstract
      */
     public function batch_delete($data)
     {
-        $required = array(
-            'ids' => 'Custom Page IDs not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "ids" => "Custom Page IDs not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $this->getService()->deletePage($data['ids']);
+        $this->getService()->deletePage($data["ids"]);
         return true;
     }
 
@@ -80,19 +80,24 @@ class Admin extends \Api_Abstract
      */
     public function create($data)
     {
-        $required = array(
-            'title' => 'Custom page title not passed',
-            'content' => 'Custom page content not passed',
+        $required = [
+            "title" => "Custom page title not passed",
+            "content" => "Custom page content not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $title = $data["title"];
+
+        $content = $data["content"];
+        $description = $this->di["array_get"]($data, "description", null);
+        $keywords = $this->di["array_get"]($data, "keywords", null);
+
+        return $this->getService()->createPage(
+            $title,
+            $description,
+            $keywords,
+            $content
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
-
-        $title       = $data['title'];
-
-        $content       = $data['content'];
-        $description = $this->di['array_get']($data, 'description', NULL);
-        $keywords = $this->di['array_get']($data, 'keywords', NULL);
-
-        return $this->getService()->createPage($title, $description, $keywords, $content);
     }
 
     /**
@@ -109,22 +114,29 @@ class Admin extends \Api_Abstract
      */
     public function update($data)
     {
-        $required = array(
-            'id' => 'Custom page id not passed',
-            'title' => 'Custom page title not passed',
-            'slug' => 'Custom page slug not passed',
-            'content' => 'Custom page content not passed',
+        $required = [
+            "id" => "Custom page id not passed",
+            "title" => "Custom page title not passed",
+            "slug" => "Custom page slug not passed",
+            "content" => "Custom page content not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $id = $data["id"];
+        $title = $data["title"];
+        $content = $data["content"];
+        $slug = $data["slug"];
+        $description = $this->di["array_get"]($data, "description", null);
+        $keywords = $this->di["array_get"]($data, "keywords", null);
+
+        return $this->getService()->updatePage(
+            $id,
+            $title,
+            $description,
+            $keywords,
+            $content,
+            $slug
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
-
-        $id = $data['id'];
-        $title = $data['title'];
-        $content = $data['content'];
-        $slug = $data['slug'];
-        $description = $this->di['array_get']($data, 'description', NULL);
-        $keywords = $this->di['array_get']($data, 'keywords', NULL);
-
-        return $this->getService()->updatePage($id, $title, $description, $keywords, $content, $slug);
     }
 
     /**
@@ -136,6 +148,6 @@ class Admin extends \Api_Abstract
      */
     public function get_page($data)
     {
-        return $this->getService()->getPage($data['page_id']);
+        return $this->getService()->getPage($data["page_id"]);
     }
 }

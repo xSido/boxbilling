@@ -1,7 +1,7 @@
 <?php
 class Api_Guest_ServiceSolusvmTest extends BBDbApiTestCase
 {
-    protected $_initialSeedFile = 'servicesolusvm.xml';
+    protected $_initialSeedFile = "servicesolusvm.xml";
 
     public function testservicesolusvm()
     {

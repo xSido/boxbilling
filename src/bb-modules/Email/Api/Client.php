@@ -24,24 +24,32 @@ class Client extends \Api_Abstract
      */
     public function get_list($data)
     {
-        $client            = $this->getIdentity();
-        $data['client_id'] = $client->id;
-        $per_page          = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        list($sql, $params) = $this->getService()->getSearchQuery($data);
-        $pager = $this->di['pager']->getSimpleResultSet($sql, $params, $per_page);
+        $client = $this->getIdentity();
+        $data["client_id"] = $client->id;
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        [$sql, $params] = $this->getService()->getSearchQuery($data);
+        $pager = $this->di["pager"]->getSimpleResultSet(
+            $sql,
+            $params,
+            $per_page
+        );
 
-        foreach ($pager['list'] as $key => $item) {
-            $pager['list'][$key] = array(
-                'id'           => $item['id'],
-                'client_id'    => $item['client_id'],
-                'sender'       => $item['sender'],
-                'recipients'   => $item['recipients'],
-                'subject'      => $item['subject'],
-                'content_html' => $item['content_html'],
-                'content_text' => $item['content_text'],
-                'created_at'   => $item['created_at'],
-                'updated_at'   => $item['updated_at'],
-            );
+        foreach ($pager["list"] as $key => $item) {
+            $pager["list"][$key] = [
+                "id" => $item["id"],
+                "client_id" => $item["client_id"],
+                "sender" => $item["sender"],
+                "recipients" => $item["recipients"],
+                "subject" => $item["subject"],
+                "content_html" => $item["content_html"],
+                "content_text" => $item["content_text"],
+                "created_at" => $item["created_at"],
+                "updated_at" => $item["updated_at"],
+            ];
         }
 
         return $pager;
@@ -56,15 +64,18 @@ class Client extends \Api_Abstract
      */
     public function get($data)
     {
-        $required = array(
-            'id'         => 'Email ID is required',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Email ID is required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->getService()->findOneForClientById($this->getIdentity(), $data['id']);
+        $model = $this->getService()->findOneForClientById(
+            $this->getIdentity(),
+            $data["id"]
+        );
 
         if (!$model instanceof \Model_ActivityClientEmail) {
-            throw new \Box_Exception('Email not found');
+            throw new \Box_Exception("Email not found");
         }
 
         return $this->getService()->toApiArray($model);
@@ -72,22 +83,25 @@ class Client extends \Api_Abstract
 
     /**
      * Resend email to client once again
-     * 
+     *
      * @param int $id - Email id
      * @return type
      * @throws Exception
-     * @throws LogicException 
+     * @throws LogicException
      */
     public function resend($data)
     {
-        $required = array(
-            'id'         => 'Email ID is required',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Email ID is required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->getService()->findOneForClientById($this->getIdentity(), $data['id']);
-        if(!$model instanceof \Model_ActivityClientEmail) {
-            throw new \Box_Exception('Email not found');
+        $model = $this->getService()->findOneForClientById(
+            $this->getIdentity(),
+            $data["id"]
+        );
+        if (!$model instanceof \Model_ActivityClientEmail) {
+            throw new \Box_Exception("Email not found");
         }
 
         return $this->getService()->resend($model);
@@ -102,14 +116,17 @@ class Client extends \Api_Abstract
      */
     public function delete($data)
     {
-        $required = array(
-            'id'         => 'Email ID is required',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Email ID is required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->getService()->findOneForClientById($this->getIdentity(), $data['id']);
+        $model = $this->getService()->findOneForClientById(
+            $this->getIdentity(),
+            $data["id"]
+        );
         if (!$model instanceof \Model_ActivityClientEmail) {
-            throw new \Box_Exception('Email not found');
+            throw new \Box_Exception("Email not found");
         }
 
         return $this->getService()->rm($model);

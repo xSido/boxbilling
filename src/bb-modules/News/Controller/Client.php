@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\News\Controller;
 
 class Client implements \Box\InjectionAwareInterface
@@ -35,19 +34,23 @@ class Client implements \Box\InjectionAwareInterface
 
     public function register(\Box_App &$app)
     {
-        $app->get('/news', 'get_news', array(), get_class($this));
-        $app->get('/news/:slug', 'get_news_item', array('slug' => '[a-z0-9-]+'), get_class($this));
+        $app->get("/news", "get_news", [], get_class($this));
+        $app->get(
+            "/news/:slug",
+            "get_news_item",
+            ["slug" => "[a-z0-9-]+"],
+            get_class($this)
+        );
     }
 
     public function get_news(\Box_App $app)
     {
-        return $app->render('mod_news_index');
+        return $app->render("mod_news_index");
     }
 
     public function get_news_item(\Box_App $app, $slug)
     {
-        $post = $this->di['api_guest']->news_get(array('slug'=>$slug));
-        return $app->render('mod_news_post', array('post'=>$post));
+        $post = $this->di["api_guest"]->news_get(["slug" => $slug]);
+        return $app->render("mod_news_post", ["post" => $post]);
     }
-
 }

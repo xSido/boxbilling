@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Theme\Api;
 
-
-class AdminTest extends \BBTestCase {
+class AdminTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Theme\Api\Admin
      */
@@ -12,7 +11,7 @@ class AdminTest extends \BBTestCase {
 
     public function setup(): void
     {
-        $this->api= new \Box\Mod\Theme\Api\Admin();
+        $this->api = new \Box\Mod\Theme\Api\Admin();
     }
 
     public function testgetDi()
@@ -25,35 +24,44 @@ class AdminTest extends \BBTestCase {
 
     public function testget_list()
     {
-        $systemServiceMock = $this->getMockBuilder('\Box\Mod\Theme\Service')->getMock();
-        $systemServiceMock->expects($this->atLeastOnce())
-            ->method('getThemes')
-            ->will($this->returnValue(array()));
+        $systemServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Theme\Service"
+        )->getMock();
+        $systemServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getThemes")
+            ->will($this->returnValue([]));
 
         $this->api->setService($systemServiceMock);
 
-        $result = $this->api->get_list(array());
+        $result = $this->api->get_list([]);
         $this->assertIsArray($result);
     }
 
     public function testget()
     {
-        $data = array(
-            'code' => 'themeCode',
-        );
+        $data = [
+            "code" => "themeCode",
+        ];
 
-        $systemServiceMock = $this->getMockBuilder('\Box\Mod\Theme\Service')->getMock();
-        $systemServiceMock->expects($this->atLeastOnce())
-            ->method('loadTheme')
-            ->will($this->returnValue(array()));
+        $systemServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Theme\Service"
+        )->getMock();
+        $systemServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("loadTheme")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
         $this->api->setService($systemServiceMock);
 
@@ -63,109 +71,142 @@ class AdminTest extends \BBTestCase {
 
     public function testselect_NotAdminTheme()
     {
-        $data = array(
-            'code' => 'pjw',
-        );
+        $data = [
+            "code" => "pjw",
+        ];
 
-        $themeMock = $this->getMockBuilder('\Box\Mod\Theme\Model\Theme')->disableOriginalConstructor()->getMock();
-        $themeMock->expects($this->atLeastOnce())
-            ->method('isAdminAreaTheme')
+        $themeMock = $this->getMockBuilder("\Box\Mod\Theme\Model\Theme")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $themeMock
+            ->expects($this->atLeastOnce())
+            ->method("isAdminAreaTheme")
             ->will($this->returnValue(false));
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Theme\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getTheme')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Theme\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getTheme")
             ->will($this->returnValue($themeMock));
 
-        $systemServiceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $systemServiceMock->expects($this->atLeastOnce())
-            ->method('setParamValue')
-            ->with($this->equalTo('theme'));
+        $systemServiceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $systemServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("setParamValue")
+            ->with($this->equalTo("theme"));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
-        $loggerMock = $this->getMockBuilder('\Box_Log')->getMock();
+        $loggerMock = $this->getMockBuilder("\Box_Log")->getMock();
 
         $di = new \Box_Di();
-        $di['mod_service'] = $di->protect(function () use($systemServiceMock) { return $systemServiceMock;});
-        $di['logger'] = $loggerMock;
-        $di['validator'] = $validatorMock;
+        $di["mod_service"] = $di->protect(function () use ($systemServiceMock) {
+            return $systemServiceMock;
+        });
+        $di["logger"] = $loggerMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
 
         $result = $this->api->select($data);
         $this->assertTrue($result);
-
     }
 
     public function testselect_AdminTheme()
     {
-        $data = array(
-            'code' => 'pjw',
-        );
+        $data = [
+            "code" => "pjw",
+        ];
 
-        $themeMock = $this->getMockBuilder('\Box\Mod\Theme\Model\Theme')->disableOriginalConstructor()->getMock();
-        $themeMock->expects($this->atLeastOnce())
-            ->method('isAdminAreaTheme')
+        $themeMock = $this->getMockBuilder("\Box\Mod\Theme\Model\Theme")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $themeMock
+            ->expects($this->atLeastOnce())
+            ->method("isAdminAreaTheme")
             ->will($this->returnValue(true));
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Theme\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getTheme')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Theme\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getTheme")
             ->will($this->returnValue($themeMock));
 
-        $systemServiceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $systemServiceMock->expects($this->atLeastOnce())
-            ->method('setParamValue')
-            ->with($this->equalTo('admin_theme'));
+        $systemServiceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $systemServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("setParamValue")
+            ->with($this->equalTo("admin_theme"));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
-        $loggerMock = $this->getMockBuilder('\Box_Log')->getMock();
+        $loggerMock = $this->getMockBuilder("\Box_Log")->getMock();
 
         $di = new \Box_Di();
-        $di['mod_service'] = $di->protect(function () use($systemServiceMock) { return $systemServiceMock;});
-        $di['logger'] = $loggerMock;
-        $di['validator'] = $validatorMock;
+        $di["mod_service"] = $di->protect(function () use ($systemServiceMock) {
+            return $systemServiceMock;
+        });
+        $di["logger"] = $loggerMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
 
         $result = $this->api->select($data);
         $this->assertTrue($result);
-
     }
 
     public function testpreset_delete()
     {
-        $data = array(
-            'code' => 'themeCode',
-            'preset' => 'themePreset',
-        );
+        $data = [
+            "code" => "themeCode",
+            "preset" => "themePreset",
+        ];
 
-        $themeMock = $this->getMockBuilder('\Box\Mod\Theme\Model\Theme')->disableOriginalConstructor()->getMock();
+        $themeMock = $this->getMockBuilder("\Box\Mod\Theme\Model\Theme")
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Theme\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getTheme')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Theme\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getTheme")
             ->will($this->returnValue($themeMock));
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('deletePreset');
+        $serviceMock->expects($this->atLeastOnce())->method("deletePreset");
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
 
@@ -176,27 +217,36 @@ class AdminTest extends \BBTestCase {
 
     public function testpreset_select()
     {
-        $data = array(
-            'code' => 'themeCode',
-            'preset' => 'themePreset',
-        );
+        $data = [
+            "code" => "themeCode",
+            "preset" => "themePreset",
+        ];
 
-        $themeMock = $this->getMockBuilder('\Box\Mod\Theme\Model\Theme')->disableOriginalConstructor()->getMock();
+        $themeMock = $this->getMockBuilder("\Box\Mod\Theme\Model\Theme")
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Theme\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getTheme')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Theme\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getTheme")
             ->will($this->returnValue($themeMock));
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('setCurrentThemePreset');
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("setCurrentThemePreset");
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
 
         $this->api->setService($serviceMock);
@@ -206,4 +256,3 @@ class AdminTest extends \BBTestCase {
         $this->assertTrue($result);
     }
 }
- 

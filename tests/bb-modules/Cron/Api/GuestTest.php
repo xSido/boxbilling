@@ -1,11 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Cron\Api;
 
-
-class GuestTest extends \BBTestCase {
-
+class GuestTest extends \BBTestCase
+{
     public function testgetDi()
     {
         $di = new \Box_Di();
@@ -24,10 +22,15 @@ class GuestTest extends \BBTestCase {
         $this->assertFalse($result);
     }
 
-    public  function testsettings()
+    public function testsettings()
     {
-        $modMock = $this->getMockBuilder('\Box_Mod')->disableOriginalConstructor()->getMock();
-        $modMock->expects($this->atLeastOnce())->method('getConfig')->will($this->returnValue(array()));
+        $modMock = $this->getMockBuilder("\Box_Mod")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $modMock
+            ->expects($this->atLeastOnce())
+            ->method("getConfig")
+            ->will($this->returnValue([]));
 
         $api = new \Box\Mod\Cron\Api\Guest();
         $api->setMod($modMock);
@@ -38,8 +41,13 @@ class GuestTest extends \BBTestCase {
 
     public function testis_late()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Cron\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('isLate')->will($this->returnValue(true));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Cron\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("isLate")
+            ->will($this->returnValue(true));
 
         $api = new \Box\Mod\Cron\Api\Guest();
         $api->setService($serviceMock);
@@ -48,6 +56,4 @@ class GuestTest extends \BBTestCase {
         $this->assertIsBool($result);
         $this->assertTrue($result);
     }
-
 }
- 

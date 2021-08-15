@@ -13,55 +13,55 @@
 abstract class Server_Manager
 {
     private $_log = null;
-    
-    protected $_config = array(
-        'ip'        =>  NULL,
-        'host'      =>  NULL,
-        'secure'    =>  FALSE,
-        'username'  =>  NULL,
-        'password'  =>  NULL,
-        'accesshash'=>  NULL,
-        'port'      =>  NULL,
-    );
+
+    protected $_config = [
+        "ip" => null,
+        "host" => null,
+        "secure" => false,
+        "username" => null,
+        "password" => null,
+        "accesshash" => null,
+        "port" => null,
+    ];
 
     public function __construct($options)
     {
-        if(isset($options['ip'])) {
-            $this->_config['ip'] = $options['ip'];
+        if (isset($options["ip"])) {
+            $this->_config["ip"] = $options["ip"];
         }
 
-        if(isset($options['host'])) {
-            $this->_config['host'] = $options['host'];
+        if (isset($options["host"])) {
+            $this->_config["host"] = $options["host"];
         }
 
-        if(isset($options['secure'])) {
-            $this->_config['secure'] = (bool)$options['secure'];
+        if (isset($options["secure"])) {
+            $this->_config["secure"] = (bool) $options["secure"];
         }
 
-        if(isset($options['username'])) {
-            $this->_config['username'] = $options['username'];
+        if (isset($options["username"])) {
+            $this->_config["username"] = $options["username"];
         }
 
-        if(isset($options['password'])) {
-            $this->_config['password'] = $options['password'];
+        if (isset($options["password"])) {
+            $this->_config["password"] = $options["password"];
         }
 
-        if(isset($options['accesshash'])) {
-            $this->_config['accesshash'] = $options['accesshash'];
+        if (isset($options["accesshash"])) {
+            $this->_config["accesshash"] = $options["accesshash"];
         }
 
-        if(isset($options['ssl'])) {
-            $this->_config['ssl'] = $options['ssl'];
+        if (isset($options["ssl"])) {
+            $this->_config["ssl"] = $options["ssl"];
         }
 
         /**
          * Custom connection port to API.
          * If not provided, using default server manager port
          */
-        if(isset($options['port'])) {
-            $this->_config['port'] = $options['port'];
+        if (isset($options["port"])) {
+            $this->_config["port"] = $options["port"];
         }
-        
+
         $this->init();
     }
 
@@ -73,15 +73,17 @@ abstract class Server_Manager
 
     public function getLog()
     {
-        if(!$this->_log instanceof Box_Log) {
+        if (!$this->_log instanceof Box_Log) {
             $log = new Box_Log();
-            $log->addWriter(new Box_LogDb('Model_ActivitySystem'));
+            $log->addWriter(new Box_LogDb("Model_ActivitySystem"));
             return $log;
         }
         return $this->_log;
     }
 
-    protected function init(){}
+    protected function init()
+    {
+    }
 
     /**
      * @return string
@@ -112,7 +114,7 @@ abstract class Server_Manager
      * @throws Server_Exception
      */
     abstract public function synchronizeAccount(Server_Account $a);
-    
+
     /**
      * @param Server_Account
      * @return bool
@@ -139,14 +141,20 @@ abstract class Server_Manager
      * @return bool
      * @throws Server_Exception
      */
-    abstract public function changeAccountPassword(Server_Account $a, $new_password);
+    abstract public function changeAccountPassword(
+        Server_Account $a,
+        $new_password
+    );
 
     /**
      * @param Server_Account
      * @return bool
      * @throws Server_Exception
      */
-    abstract public function changeAccountUsername(Server_Account $a, $new_username);
+    abstract public function changeAccountUsername(
+        Server_Account $a,
+        $new_username
+    );
 
     /**
      * @param Server_Account
@@ -154,7 +162,10 @@ abstract class Server_Manager
      * @return bool
      * @throws Server_Exception
      */
-    abstract public function changeAccountDomain(Server_Account $a, $new_domain);
+    abstract public function changeAccountDomain(
+        Server_Account $a,
+        $new_domain
+    );
 
     /**
      * @param Server_Account
@@ -163,12 +174,15 @@ abstract class Server_Manager
      * @throws Server_Exception
      */
     abstract public function changeAccountIp(Server_Account $a, $new_ip);
-    
+
     /**
      * @param Server_Account
      * @param Server_Package - new package
      * @return bool
      * @throws Server_Exception
      */
-    abstract public function changeAccountPackage(Server_Account $a, Server_Package $p);
+    abstract public function changeAccountPackage(
+        Server_Account $a,
+        Server_Package $p
+    );
 }

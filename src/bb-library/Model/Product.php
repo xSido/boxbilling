@@ -10,24 +10,24 @@
  * with this source code in the file LICENSE
  */
 
-
-class Model_Product extends \RedBean_SimpleModel implements \Box\InjectionAwareInterface
+class Model_Product extends \RedBean_SimpleModel implements
+    \Box\InjectionAwareInterface
 {
-    const STATUS_ENABLED    = 'enabled';
-    const STATUS_DISABLED   = 'disabled';
+    const STATUS_ENABLED = "enabled";
+    const STATUS_DISABLED = "disabled";
 
-    const CUSTOM            = 'custom';
-    const LICENSE           = 'license';
-    const ADDON             = 'addon';
-    const DOMAIN            = 'domain';
-    const DOWNLOADABLE      = 'downloadable';
-    const HOSTING           = 'hosting';
-    const MEMBERSHIP        = 'membership';
-    const VPS               = 'vps';
+    const CUSTOM = "custom";
+    const LICENSE = "license";
+    const ADDON = "addon";
+    const DOMAIN = "domain";
+    const DOWNLOADABLE = "downloadable";
+    const HOSTING = "hosting";
+    const MEMBERSHIP = "membership";
+    const VPS = "vps";
 
-    const SETUP_AFTER_ORDER     = 'after_order';
-    const SETUP_AFTER_PAYMENT   = 'after_payment';
-    const SETUP_MANUAL          = 'manual';
+    const SETUP_AFTER_ORDER = "after_order";
+    const SETUP_AFTER_PAYMENT = "after_payment";
+    const SETUP_MANUAL = "manual";
 
     protected $di;
 
@@ -49,17 +49,17 @@ class Model_Product extends \RedBean_SimpleModel implements \Box\InjectionAwareI
 
     public function getTable()
     {
-        $tableName = 'Model_Product'. ucfirst($this->type). 'Table';
-        if(!class_exists($tableName)) {
-            $tableName = 'Model_ProductTable';
+        $tableName = "Model_Product" . ucfirst($this->type) . "Table";
+        if (!class_exists($tableName)) {
+            $tableName = "Model_ProductTable";
         }
-        $productTable = new $tableName;
+        $productTable = new $tableName();
         $productTable->setDi($this->di);
         return $productTable;
     }
 
     public function getService()
     {
-        return $this->di['mod_service']('service'.$this->type);
+        return $this->di["mod_service"]("service" . $this->type);
     }
 }

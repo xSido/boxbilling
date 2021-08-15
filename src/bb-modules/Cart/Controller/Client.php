@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Cart\Controller;
 
 class Client implements \Box\InjectionAwareInterface
@@ -35,11 +34,11 @@ class Client implements \Box\InjectionAwareInterface
 
     public function register(\Box_App &$app)
     {
-        $app->get('/cart', 'get_cart', array(), get_class($this));
+        $app->get("/cart", "get_cart", [], get_class($this));
     }
 
     public function get_cart(\Box_App $app)
     {
-        return $app->render('mod_cart_index');
+        return $app->render("mod_cart_index");
     }
 }

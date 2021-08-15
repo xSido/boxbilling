@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\System\Controller;
 
 class Admin implements \Box\InjectionAwareInterface
@@ -35,43 +34,43 @@ class Admin implements \Box\InjectionAwareInterface
 
     public function fetchNavigation()
     {
-        return array(
-            'group'  =>  array(
-                'index'     => 600,
-                'location'  =>  'system',
-                'label'     => 'Configuration',
-                'class'     => 'settings',
-                'sprite_class' => 'dark-sprite-icon sprite-cog3',
-            ),
-            'subpages'=> array(
-                array(
-                    'location'  => 'system',
-                    'label' => 'Settings',
-                    'index'     => 100,
-                    'uri' => $this->di['url']->adminLink('system'),
-                    'class'     => '',
-                ),
-            ),
-        );
+        return [
+            "group" => [
+                "index" => 600,
+                "location" => "system",
+                "label" => "Configuration",
+                "class" => "settings",
+                "sprite_class" => "dark-sprite-icon sprite-cog3",
+            ],
+            "subpages" => [
+                [
+                    "location" => "system",
+                    "label" => "Settings",
+                    "index" => 100,
+                    "uri" => $this->di["url"]->adminLink("system"),
+                    "class" => "",
+                ],
+            ],
+        ];
     }
-    
+
     public function register(\Box_App &$app)
     {
-        $app->get('/system',           'get_index', array(), get_class($this));
-        $app->get('/system/',           'get_index', array(), get_class($this));
-        $app->get('/system/index',           'get_index', array(), get_class($this));
-        $app->get('/system/activity',           'get_activity', array(), get_class($this));
+        $app->get("/system", "get_index", [], get_class($this));
+        $app->get("/system/", "get_index", [], get_class($this));
+        $app->get("/system/index", "get_index", [], get_class($this));
+        $app->get("/system/activity", "get_activity", [], get_class($this));
     }
 
     public function get_index(\Box_App $app)
     {
-        $this->di['is_admin_logged'];
-        return $app->render('mod_system_index');
+        $this->di["is_admin_logged"];
+        return $app->render("mod_system_index");
     }
-    
+
     public function get_activity(\Box_App $app)
     {
-        $this->di['is_admin_logged'];
-        return $app->render('mod_system_activity');
+        $this->di["is_admin_logged"];
+        return $app->render("mod_system_activity");
     }
 }

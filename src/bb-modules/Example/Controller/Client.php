@@ -46,19 +46,19 @@ class Client implements \Box\InjectionAwareInterface
      */
     public function register(\Box_App &$app)
     {
-        $app->get('/example',             'get_index', array(), get_class($this));
-        $app->get('/example/protected',   'get_protected', array(), get_class($this));
+        $app->get("/example", "get_index", [], get_class($this));
+        $app->get("/example/protected", "get_protected", [], get_class($this));
     }
 
     public function get_index(\Box_App $app)
     {
-        return $app->render('mod_example_index');
+        return $app->render("mod_example_index");
     }
 
     public function get_protected(\Box_App $app)
     {
         // call $this->di['is_client_logged'] method to validate if client is logged in
-        $this->di['is_client_logged'];
-        return $app->render('mod_example_index', array('show_protected'=>true));
+        $this->di["is_client_logged"];
+        return $app->render("mod_example_index", ["show_protected" => true]);
     }
 }

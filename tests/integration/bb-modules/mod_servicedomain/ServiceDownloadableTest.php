@@ -4,7 +4,7 @@
  */
 class Api_Admin_ServiceDownloadableTest extends BBDbApiTestCase
 {
-    protected $_initialSeedFile = 'orders.xml';
+    protected $_initialSeedFile = "orders.xml";
 
     public function testAdminServiceDownloadable()
     {

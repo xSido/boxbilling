@@ -33,13 +33,16 @@ class Zend_Reflection_Property extends ReflectionProperty
      *
      * @return Zend_Reflection_Class
      */
-    public function getDeclaringClass($reflectionClass = 'Zend_Reflection_Class')
-    {
-        $phpReflection  = parent::getDeclaringClass();
+    public function getDeclaringClass(
+        $reflectionClass = "Zend_Reflection_Class"
+    ) {
+        $phpReflection = parent::getDeclaringClass();
         $zendReflection = new $reflectionClass($phpReflection->getName());
         if (!$zendReflection instanceof Zend_Reflection_Class) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Class');
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Invalid reflection class provided; must extend Zend_Reflection_Class"
+            );
         }
         unset($phpReflection);
         return $zendReflection;
@@ -51,7 +54,7 @@ class Zend_Reflection_Property extends ReflectionProperty
      * @param  string $reflectionClass
      * @return Zend_Reflection_Docblock|false False if no docblock defined
      */
-    public function getDocComment($reflectionClass = 'Zend_Reflection_Docblock')
+    public function getDocComment($reflectionClass = "Zend_Reflection_Docblock")
     {
         $docblock = parent::getDocComment();
         if (!$docblock) {
@@ -60,8 +63,10 @@ class Zend_Reflection_Property extends ReflectionProperty
 
         $r = new $reflectionClass($docblock);
         if (!$r instanceof Zend_Reflection_Docblock) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Docblock');
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Invalid reflection class provided; must extend Zend_Reflection_Docblock"
+            );
         }
         return $r;
     }

@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Box\Mod\System\Api;
 
-
-class AdminTest extends \BBTestCase {
+class AdminTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\System\Api\Admin
      */
@@ -12,7 +11,7 @@ class AdminTest extends \BBTestCase {
 
     public function setup(): void
     {
-        $this->api= new \Box\Mod\System\Api\Admin();
+        $this->api = new \Box\Mod\System\Api\Admin();
     }
 
     public function testgetDi()
@@ -25,21 +24,27 @@ class AdminTest extends \BBTestCase {
 
     public function testparam()
     {
-        $data = array(
-            'key' => 'key_parameter',
-        );
-        $serviceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getParamValue')
-            ->will($this->returnValue('paramValue'));
+        $data = [
+            "key" => "key_parameter",
+        ];
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getParamValue")
+            ->will($this->returnValue("paramValue"));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
         $di = new \Box_Di();
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
 
@@ -49,13 +54,15 @@ class AdminTest extends \BBTestCase {
 
     public function testget_params()
     {
-        $data = array(
-        );
+        $data = [];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getParams')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getParams")
+            ->will($this->returnValue([]));
 
         $this->api->setService($serviceMock);
 
@@ -65,12 +72,14 @@ class AdminTest extends \BBTestCase {
 
     public function testupdate_params()
     {
-        $data = array(
-        );
+        $data = [];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('updateParams')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("updateParams")
             ->will($this->returnValue(true));
 
         $this->api->setService($serviceMock);
@@ -82,19 +91,25 @@ class AdminTest extends \BBTestCase {
 
     public function testmessages()
     {
-        $data = array(
-        );
+        $data = [];
 
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->api->setDi($di);
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getMessages')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getMessages")
+            ->will($this->returnValue([]));
 
         $this->api->setService($serviceMock);
 
@@ -104,13 +119,16 @@ class AdminTest extends \BBTestCase {
 
     public function testtemplate_exists()
     {
-        $data = array(
-            'file' => 'testing.txt',
-        );
+        $data = [
+            "file" => "testing.txt",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('templateExists')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("templateExists")
             ->will($this->returnValue(true));
 
         $this->api->setService($serviceMock);
@@ -122,17 +140,24 @@ class AdminTest extends \BBTestCase {
 
     public function teststring_render()
     {
-        $data = array(
-            '_tpl' => 'default'
-        );
+        $data = [
+            "_tpl" => "default",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('renderString')
-            ->will($this->returnValue('returnStringType'));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("renderString")
+            ->will($this->returnValue("returnStringType"));
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
@@ -143,16 +168,23 @@ class AdminTest extends \BBTestCase {
 
     public function testenv()
     {
-        $data = array();
+        $data = [];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getEnv')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getEnv")
+            ->will($this->returnValue([]));
 
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
@@ -163,32 +195,44 @@ class AdminTest extends \BBTestCase {
 
     public function testis_allowed()
     {
-        $data = array(
-            'mod' => 'extension',
-        );
+        $data = [
+            "mod" => "extension",
+        ];
 
-        $staffServiceMock = $this->getMockBuilder('\Box\Mod\Staff\Service')->getMock();
-        $staffServiceMock->expects($this->atLeastOnce())
-            ->method('hasPermission')
+        $staffServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Staff\Service"
+        )->getMock();
+        $staffServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("hasPermission")
             ->will($this->returnValue(true));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
-        $di                = new \Box_Di();
-        $di['mod_service'] = $di->protect(function ($serviceName) use ($staffServiceMock) {
-            if ($serviceName == 'Staff') {
+        $di = new \Box_Di();
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $staffServiceMock
+        ) {
+            if ($serviceName == "Staff") {
                 return $staffServiceMock;
             }
 
             return false;
         });
-        $di['array_get']   = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setDi($di);
 
@@ -199,11 +243,14 @@ class AdminTest extends \BBTestCase {
 
     public function testclear_cache()
     {
-        $data = array();
+        $data = [];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('clearCache')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("clearCache")
             ->will($this->returnValue(true));
 
         $this->api->setService($serviceMock);
@@ -212,10 +259,4 @@ class AdminTest extends \BBTestCase {
         $this->assertIsBool($result);
         $this->assertTrue($result);
     }
-
-
-
-
-
 }
- 

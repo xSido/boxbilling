@@ -1,3 +1,5 @@
 <?php
 
-class FileCacheException extends Exception{}
+class FileCacheException extends Exception
+{
+}

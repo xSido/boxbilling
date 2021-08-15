@@ -10,9 +10,8 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_ForumTopic extends RedBean_SimpleModel
 {
-    const STATUS_ACTIVE = 'active';
-    const STATUS_LOCKED = 'locked';
+    const STATUS_ACTIVE = "active";
+    const STATUS_LOCKED = "locked";
 }

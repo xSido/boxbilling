@@ -25,19 +25,34 @@ class Client extends \Api_Abstract
      */
     public function get_list($data)
     {
-        $identity          = $this->getIdentity();
-        $data['client_id'] = $identity->id;
-        if (isset($data['expiring'])) {
-            list($query, $bindings) = $this->getService()->getSoonExpiringActiveOrdersQuery($data);
+        $identity = $this->getIdentity();
+        $data["client_id"] = $identity->id;
+        if (isset($data["expiring"])) {
+            [
+                $query,
+                $bindings,
+            ] = $this->getService()->getSoonExpiringActiveOrdersQuery($data);
         } else {
-            list($query, $bindings) = $this->getService()->getSearchQuery($data);
+            [$query, $bindings] = $this->getService()->getSearchQuery($data);
         }
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $pager = $this->di['pager']->getAdvancedResultSet($query, $bindings, $per_page);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $pager = $this->di["pager"]->getAdvancedResultSet(
+            $query,
+            $bindings,
+            $per_page
+        );
 
-        foreach ($pager['list'] as $key => $item) {
-            $order = $this->di['db']->getExistingModelById('ClientOrder', $item['id'], 'Client order not found');
-            $pager['list'][$key] = $this->getService()->toApiArray($order);
+        foreach ($pager["list"] as $key => $item) {
+            $order = $this->di["db"]->getExistingModelById(
+                "ClientOrder",
+                $item["id"],
+                "Client order not found"
+            );
+            $pager["list"][$key] = $this->getService()->toApiArray($order);
         }
         return $pager;
     }
@@ -63,9 +78,9 @@ class Client extends \Api_Abstract
      */
     public function addons($data)
     {
-        $model  = $this->_getOrder($data);
-        $list   = $this->getService()->getOrderAddonsList($model);
-        $result = array();
+        $model = $this->_getOrder($data);
+        $list = $this->getService()->getOrderAddonsList($model);
+        $result = [];
         foreach ($list as $order) {
             $result[] = $this->getService()->toApiArray($order);
         }
@@ -83,7 +98,11 @@ class Client extends \Api_Abstract
     {
         $order = $this->_getOrder($data);
 
-        return $this->getService()->getOrderServiceData($order, $data['id'], $this->getIdentity());;
+        return $this->getService()->getOrderServiceData(
+            $order,
+            $data["id"],
+            $this->getIdentity()
+        );
     }
 
     /**
@@ -93,9 +112,12 @@ class Client extends \Api_Abstract
      */
     public function upgradables($data)
     {
-        $model          = $this->_getOrder($data);
-        $product        = $this->di['db']->getExistingModelById('Product', $model->product_id);
-        $productService = $this->di['mod_service']('product');
+        $model = $this->_getOrder($data);
+        $product = $this->di["db"]->getExistingModelById(
+            "Product",
+            $model->product_id
+        );
+        $productService = $this->di["mod_service"]("product");
 
         return $productService->getUpgradablePairs($product);
     }
@@ -107,8 +129,15 @@ class Client extends \Api_Abstract
     public function delete($data)
     {
         $model = $this->_getOrder($data);
-        if (!in_array($model->status, array(\Model_ClientOrder::STATUS_PENDING_SETUP, \Model_ClientOrder::STATUS_FAILED_SETUP))) {
-            throw new \Box_Exception('Only pending and failed setup orders can be deleted.');
+        if (
+            !in_array($model->status, [
+                \Model_ClientOrder::STATUS_PENDING_SETUP,
+                \Model_ClientOrder::STATUS_FAILED_SETUP,
+            ])
+        ) {
+            throw new \Box_Exception(
+                "Only pending and failed setup orders can be deleted."
+            );
         }
 
         return $this->getService()->deleteFromOrder($model);
@@ -116,14 +145,17 @@ class Client extends \Api_Abstract
 
     protected function _getOrder($data)
     {
-        $required = array(
-            'id' => 'Order id required',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Order id required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $order = $this->getService()->findForClientById($this->getIdentity(), $data['id']);
+        $order = $this->getService()->findForClientById(
+            $this->getIdentity(),
+            $data["id"]
+        );
         if (!$order instanceof \Model_ClientOrder) {
-            throw new \Box_Exception('Order not found');
+            throw new \Box_Exception("Order not found");
         }
 
         return $order;

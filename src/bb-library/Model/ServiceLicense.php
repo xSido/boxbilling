@@ -10,13 +10,12 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_ServiceLicense extends \RedBean_SimpleModel
 {
     private function _decodeJson($j)
     {
         $config = json_decode($j, true);
-        return is_array($config) ? $config : array();
+        return is_array($config) ? $config : [];
     }
 
     public function getAllowedIps()
@@ -38,5 +37,4 @@ class Model_ServiceLicense extends \RedBean_SimpleModel
     {
         return $this->_decodeJson($this->paths);
     }
-
 }

@@ -26,7 +26,7 @@ class Admin extends \Api_Abstract
      * @example
      * <code class="response">
      * Array
-	 * (
+     * (
      * 		[id] => 1
      *		[role] => staff
      *		[admin_group_id] => 1
@@ -38,8 +38,8 @@ class Admin extends \Api_Abstract
      *		[api_token] => 29baba87f1c120f1b7fc6b0139167003
      *		[created_at] => 1310024416
      *		[updated_at] => 1310024416
-	 * )
-	 * </code>
+     * )
+     * </code>
      */
     public function get()
     {
@@ -48,26 +48,26 @@ class Admin extends \Api_Abstract
 
     /**
      * Clear session data and logout from system
-     * 
-     * @return boolean 
+     *
+     * @return boolean
      */
     public function logout()
     {
-        $this->di['cookie']->delete('BOXADMR');
-        $this->di['session']->delete('admin');
-        $this->di['logger']->info('Admin logged out');
+        $this->di["cookie"]->delete("BOXADMR");
+        $this->di["session"]->delete("admin");
+        $this->di["logger"]->info("Admin logged out");
         return true;
     }
 
     /**
      * Update currently logged in staff member details
-     * 
+     *
      * @optional string $email - new email
      * @optional string $name - new name
      * @optional string $signature - new signature
-     * 
+     *
      * @return boolean
-     * @throws Exception 
+     * @throws Exception
      */
     public function update($data)
     {
@@ -76,8 +76,8 @@ class Admin extends \Api_Abstract
 
     /**
      * Generates new API token for currently logged in staff member
-     * 
-     * @return boolean 
+     *
+     * @return boolean
      */
     public function generate_api_key($data)
     {
@@ -86,28 +86,31 @@ class Admin extends \Api_Abstract
 
     /**
      * Change password for currently logged in staff member
-     * 
+     *
      * @param string $password - new password
      * @param string $password_confirm - repeat new password
      * @return boolean
-     * @throws Exception 
+     * @throws Exception
      */
     public function change_password($data)
     {
-        if(!isset($data['password'])) {
-            throw new \Exception('Password required');
+        if (!isset($data["password"])) {
+            throw new \Exception("Password required");
         }
 
-        if(!isset($data['password_confirm'])) {
-            throw new \Exception('Password confirmation required');
+        if (!isset($data["password_confirm"])) {
+            throw new \Exception("Password confirmation required");
         }
 
-        if($data['password'] != $data['password_confirm']) {
-            throw new \Exception('Passwords do not match');
+        if ($data["password"] != $data["password_confirm"]) {
+            throw new \Exception("Passwords do not match");
         }
 
-        $this->di['validator']->isPasswordStrong($data['password']);
+        $this->di["validator"]->isPasswordStrong($data["password"]);
 
-        return $this->getService()->changeAdminPassword($this->getIdentity(), $data['password']);
+        return $this->getService()->changeAdminPassword(
+            $this->getIdentity(),
+            $data["password"]
+        );
     }
 }

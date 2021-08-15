@@ -12,5 +12,4 @@
 
 class Model_EmailTemplate extends \RedBean_SimpleModel
 {
-
 }

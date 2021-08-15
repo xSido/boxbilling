@@ -1,8 +1,8 @@
 <?php
 class Box_Mod_Page_Api_AdminTest extends BBModTestCase
 {
-    protected $_mod = 'page';
-    protected $_initialSeedFile = 'mod_page.xml';
+    protected $_mod = "page";
+    protected $_initialSeedFile = "mod_page.xml";
 
     public function testMod()
     {

@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Extension\Api;
 
-
-class GuestTest extends \BBTestCase {
+class GuestTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Extension\Service
      */
@@ -15,13 +14,11 @@ class GuestTest extends \BBTestCase {
      */
     protected $api = null;
 
-
     public function setup(): void
     {
         $this->service = new \Box\Mod\Extension\Service();
         $this->api = new \Box\Mod\Extension\Api\Guest();
     }
-
 
     public function testgetDi()
     {
@@ -33,19 +30,16 @@ class GuestTest extends \BBTestCase {
 
     public function is_onProvider()
     {
-        return array(
-            array(
-                array('mod' => 'testModule'),
-                array(),
-            ),
-            array(
-                array(
-                    'id' => 'extensionId',
-                    'type' => 'extensionType',
-                ),
-                array()
-            ),
-        );
+        return [
+            [["mod" => "testModule"], []],
+            [
+                [
+                    "id" => "extensionId",
+                    "type" => "extensionType",
+                ],
+                [],
+            ],
+        ];
     }
 
     /**
@@ -53,10 +47,13 @@ class GuestTest extends \BBTestCase {
      */
     public function testis_on($data, $expected)
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('isExtensionActive')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("isExtensionActive")
+            ->will($this->returnValue([]));
 
         $this->api->setService($serviceMock);
         $result = $this->api->is_on($data);
@@ -65,20 +62,27 @@ class GuestTest extends \BBTestCase {
 
     public function testis_onInvalidDataArray()
     {
-        $data = array();
+        $data = [];
         $result = $this->api->is_on($data);
         $this->assertTrue($result);
     }
 
     public function testtheme()
     {
-        $themeServiceMock = $this->getMockBuilder('\Box\Mod\Theme\Service')->getMock();
-        $themeServiceMock->expects($this->atLeastOnce())
-            ->method('getThemeConfig')
-            ->will($this->returnValue(array()));
+        $themeServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Theme\Service"
+        )->getMock();
+        $themeServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getThemeConfig")
+            ->will($this->returnValue([]));
 
         $di = new \Box_Di();
-        $di['mod_service'] = $di->protect(function ($name) use($themeServiceMock) { return $themeServiceMock;});
+        $di["mod_service"] = $di->protect(function ($name) use (
+            $themeServiceMock
+        ) {
+            return $themeServiceMock;
+        });
 
         $this->api->setDi($di);
         $result = $this->api->theme();
@@ -87,12 +91,15 @@ class GuestTest extends \BBTestCase {
 
     public function testsettings()
     {
-        $data['ext'] = 'testExtension';
+        $data["ext"] = "testExtension";
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getConfig')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getConfig")
+            ->will($this->returnValue([]));
 
         $this->api->setService($serviceMock);
         $result = $this->api->settings($data);
@@ -101,27 +108,32 @@ class GuestTest extends \BBTestCase {
 
     public function testsettingsExtExtension()
     {
-        $data = array();
+        $data = [];
 
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage('Parameter ext is missing');
+        $this->expectExceptionMessage("Parameter ext is missing");
         $this->api->settings($data);
-
     }
 
     public function testlanguages()
     {
-        $systemServiceMock = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $systemServiceMock->expects($this->atLeastOnce())
-            ->method('getLanguages')
-            ->will($this->returnValue(array()));
+        $systemServiceMock = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $systemServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getLanguages")
+            ->will($this->returnValue([]));
 
         $di = new \Box_Di();
-        $di['mod_service'] = $di->protect(function ($name) use($systemServiceMock) { return $systemServiceMock;});
+        $di["mod_service"] = $di->protect(function ($name) use (
+            $systemServiceMock
+        ) {
+            return $systemServiceMock;
+        });
 
         $this->api->setDi($di);
         $result = $this->api->languages();
         $this->assertIsArray($result);
     }
 }
- 

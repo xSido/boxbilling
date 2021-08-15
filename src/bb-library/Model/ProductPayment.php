@@ -10,10 +10,9 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_ProductPayment extends RedBean_SimpleModel
 {
-    const FREE      = 'free';
-    const ONCE      = 'once';
-    const RECURRENT = 'recurrent';
+    const FREE = "free";
+    const ONCE = "once";
+    const RECURRENT = "recurrent";
 }

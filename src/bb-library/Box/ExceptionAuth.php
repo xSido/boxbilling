@@ -14,6 +14,10 @@ class Box_ExceptionAuth extends Box_Exception
 {
     public function __construct($uri = "", $code = 0)
     {
-        parent::__construct('You need to login in order to view this :url page', array(':url'=>$uri), $code);
+        parent::__construct(
+            "You need to login in order to view this :url page",
+            [":url" => $uri],
+            $code
+        );
     }
 }

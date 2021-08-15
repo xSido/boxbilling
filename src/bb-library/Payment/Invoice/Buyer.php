@@ -78,7 +78,7 @@ class Payment_Invoice_Buyer
     {
         return $this->address;
     }
-    
+
     public function setCity($param)
     {
         $this->city = $param;
@@ -133,7 +133,7 @@ class Payment_Invoice_Buyer
     {
         return $this->phone;
     }
-    
+
     /**
      * @param string $param
      */
@@ -147,5 +147,4 @@ class Payment_Invoice_Buyer
     {
         return $this->phone_cc;
     }
-
 }

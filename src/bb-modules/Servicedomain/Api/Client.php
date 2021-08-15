@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Servicedomain\Api;
 
 /**
@@ -34,11 +33,17 @@ class Client extends \Api_Abstract
     {
         $s = $this->_getService($data);
 
-        $this->di['events_manager']->fire(array('event' => 'onBeforeClientChangeNameservers', 'params' => $data));
+        $this->di["events_manager"]->fire([
+            "event" => "onBeforeClientChangeNameservers",
+            "params" => $data,
+        ]);
 
         $this->getService()->updateNameservers($s, $data);
 
-        $this->di['events_manager']->fire(array('event' => 'onAfterClientChangeNameservers', 'params' => $data));
+        $this->di["events_manager"]->fire([
+            "event" => "onAfterClientChangeNameservers",
+            "params" => $data,
+        ]);
 
         return true;
     }
@@ -132,19 +137,22 @@ class Client extends \Api_Abstract
 
     protected function _getService($data)
     {
-        if (!isset($data['order_id'])) {
-            throw new \Box_Exception('Order id is required');
+        if (!isset($data["order_id"])) {
+            throw new \Box_Exception("Order id is required");
         }
-        $orderService = $this->di['mod_service']('order');
+        $orderService = $this->di["mod_service"]("order");
 
-        $order = $orderService->findForClientById($this->getIdentity(), $data['order_id']);
+        $order = $orderService->findForClientById(
+            $this->getIdentity(),
+            $data["order_id"]
+        );
         if (!$order instanceof \Model_ClientOrder) {
-            throw new \Box_Exception('Order not found');
+            throw new \Box_Exception("Order not found");
         }
 
         $s = $orderService->getOrderService($order);
         if (!$s instanceof \Model_ServiceDomain) {
-            throw new \Box_Exception('Order is not activated');
+            throw new \Box_Exception("Order is not activated");
         }
 
         return $s;

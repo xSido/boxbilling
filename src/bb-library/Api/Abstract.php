@@ -17,27 +17,27 @@ class Api_Abstract implements InjectionAwareInterface
     /**
      * @var string - request ip
      */
-    protected $ip           = null;
+    protected $ip = null;
 
     /**
      * @var \Box_Mod
      */
-    protected $mod          = null;
+    protected $mod = null;
 
     /**
      * @var \Box\Mod\X\Service
      */
-    protected $service      = null;
+    protected $service = null;
 
     /**
      * @var Model_Admin | Model_Client | Model_Guest
      */
-    protected $identity     = null;
+    protected $identity = null;
 
     /**
      * @var \Box_Di
      */
-    protected $di           = null;
+    protected $di = null;
 
     /**
      * @param \Box_Di $di
@@ -68,8 +68,8 @@ class Api_Abstract implements InjectionAwareInterface
      */
     public function getMod()
     {
-        if(!$this->mod) {
-            throw new Box_Exception('Mod object is not set for the service');
+        if (!$this->mod) {
+            throw new Box_Exception("Mod object is not set for the service");
         }
         return $this->mod;
     }
@@ -127,10 +127,10 @@ class Api_Abstract implements InjectionAwareInterface
      */
     public function getApiAdmin()
     {
-        if($this->identity instanceof \Model_Admin) {
-            return $this->di['api_admin'];
+        if ($this->identity instanceof \Model_Admin) {
+            return $this->di["api_admin"];
         }
-        return $this->di['api_system'];
+        return $this->di["api_system"];
     }
 
     /**
@@ -138,7 +138,7 @@ class Api_Abstract implements InjectionAwareInterface
      */
     public function getApiGuest()
     {
-        return $this->di['api_guest'];
+        return $this->di["api_guest"];
     }
 
     /**
@@ -146,6 +146,6 @@ class Api_Abstract implements InjectionAwareInterface
      */
     public function getApiClient()
     {
-        return $this->di['api_client'];
+        return $this->di["api_client"];
     }
 }

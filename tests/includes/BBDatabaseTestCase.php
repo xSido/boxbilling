@@ -3,19 +3,26 @@ use PHPUnit\Framework\TestCase;
 
 abstract class BBDatabaseTestCase extends Testcase
 {
-    static private $pdo = null;
-    private $conn = NULL;
+    private static $pdo = null;
+    private $conn = null;
 
-    protected $_seedFilesPath = NULL;
-    protected $_initialSeedFile = 'initial.xml';
+    protected $_seedFilesPath = null;
+    protected $_initialSeedFile = "initial.xml";
 
     final public function getConnection()
     {
         if ($this->conn === null) {
             if (self::$pdo == null) {
-                self::$pdo = new PDO( 'mysql:dbname='.BB_DB_NAME.';host=127.0.0.1', BB_DB_USER, BB_DB_PASSWORD );
+                self::$pdo = new PDO(
+                    "mysql:dbname=" . BB_DB_NAME . ";host=127.0.0.1",
+                    BB_DB_USER,
+                    BB_DB_PASSWORD
+                );
             }
-            $this->conn = $this->createDefaultDBConnection(self::$pdo, BB_DB_NAME);
+            $this->conn = $this->createDefaultDBConnection(
+                self::$pdo,
+                BB_DB_NAME
+            );
         }
 
         return $this->conn;
@@ -28,11 +35,11 @@ abstract class BBDatabaseTestCase extends Testcase
      */
     public function getSeedFilesPath()
     {
-        if ($this->_seedFilesPath == NULL) {
-            $this->_seedFilesPath = BB_PATH_TESTS.'/fixtures';
+        if ($this->_seedFilesPath == null) {
+            $this->_seedFilesPath = BB_PATH_TESTS . "/fixtures";
         }
 
-        return rtrim($this->_seedFilesPath, '/') . '/';
+        return rtrim($this->_seedFilesPath, "/") . "/";
     }
 
     /**
@@ -42,6 +49,8 @@ abstract class BBDatabaseTestCase extends Testcase
      */
     protected function getDataSet()
     {
-        return $this->createFlatXmlDataSet($this->getSeedFilesPath() . $this->_initialSeedFile);
+        return $this->createFlatXmlDataSet(
+            $this->getSeedFilesPath() . $this->_initialSeedFile
+        );
     }
 }

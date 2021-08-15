@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_Url implements Box\InjectionAwareInterface
 {
     protected $di;
@@ -34,7 +33,7 @@ class Box_Url implements Box\InjectionAwareInterface
     /**
      * Generates a URL
      */
-    public function get ($uri)
+    public function get($uri)
     {
         return $this->baseUri . $uri;
     }
@@ -42,28 +41,28 @@ class Box_Url implements Box\InjectionAwareInterface
     /**
      * @param string $uri
      */
-    public function link($uri = null, $params = array())
+    public function link($uri = null, $params = [])
     {
-        $uri = trim($uri, '/');
-        $link =$this->baseUri .'index.php?_url=/' . $uri;
-        if(BB_SEF_URLS) {
+        $uri = trim($uri, "/");
+        $link = $this->baseUri . "index.php?_url=/" . $uri;
+        if (BB_SEF_URLS) {
             $link = $this->baseUri . $uri;
-            if (!empty($params)){
-                $link .= '?';
+            if (!empty($params)) {
+                $link .= "?";
             }
         }
 
-        if(!empty($params)) {
-            $link  .= '&' . http_build_query($params);
+        if (!empty($params)) {
+            $link .= "&" . http_build_query($params);
         }
         return $link;
     }
 
-    public function adminLink($uri, $params = array())
+    public function adminLink($uri, $params = [])
     {
-        $uri = trim($uri, '/');
-        $prefix = $this->di['config']['admin_area_prefix'];
-        $uri = $prefix . '/' . $uri;
+        $uri = trim($uri, "/");
+        $prefix = $this->di["config"]["admin_area_prefix"];
+        $uri = $prefix . "/" . $uri;
         return $this->link($uri, $params);
     }
 }

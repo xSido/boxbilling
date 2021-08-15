@@ -41,28 +41,28 @@ class Admin implements \Box\InjectionAwareInterface
      * This method registers menu items in admin area navigation block
      * This navigation is cached in bb-data/cache/{hash}. To see changes please
      * remove the file
-     * 
+     *
      * @return array
      */
     public function fetchNavigation()
     {
-        return array(
-            'group'  =>  array(
-                'index'     => 1500,                // menu sort order
-                'location'  =>  'example',          // menu group identificator for subitems
-                'label'     => 'Example module',    // menu group title
-                'class'     => 'example',           // used for css styling menu item
-            ),
-            'subpages'=> array(
-                array(
-                    'location'  => 'example', // place this module in extensions group
-                    'label'     => 'Example module submenu',
-                    'index'     => 1500,
-                    'uri'       => $this->di['url']->adminLink('example'),
-                    'class'     => '',
-                ),
-            ),
-        );
+        return [
+            "group" => [
+                "index" => 1500, // menu sort order
+                "location" => "example", // menu group identificator for subitems
+                "label" => "Example module", // menu group title
+                "class" => "example", // used for css styling menu item
+            ],
+            "subpages" => [
+                [
+                    "location" => "example", // place this module in extensions group
+                    "label" => "Example module submenu",
+                    "index" => 1500,
+                    "uri" => $this->di["url"]->adminLink("example"),
+                    "class" => "",
+                ],
+            ],
+        ];
     }
 
     /**
@@ -77,50 +77,55 @@ class Admin implements \Box\InjectionAwareInterface
      */
     public function register(\Box_App &$app)
     {
-        $app->get('/example',             'get_index', array(), get_class($this));
-        $app->get('/example/test',        'get_test', array(), get_class($this));
-        $app->get('/example/user/:id',    'get_user', array('id'=>'[0-9]+'), get_class($this));
-        $app->get('/example/api',         'get_api', array(), get_class($this));
+        $app->get("/example", "get_index", [], get_class($this));
+        $app->get("/example/test", "get_test", [], get_class($this));
+        $app->get(
+            "/example/user/:id",
+            "get_user",
+            ["id" => "[0-9]+"],
+            get_class($this)
+        );
+        $app->get("/example/api", "get_api", [], get_class($this));
     }
 
     public function get_index(\Box_App $app)
     {
         // always call this method to validate if admin is logged in
-        $this->di['is_admin_logged'];
-        return $app->render('mod_example_index');
+        $this->di["is_admin_logged"];
+        return $app->render("mod_example_index");
     }
 
     public function get_test(\Box_App $app)
     {
         // always call this method to validate if admin is logged in
-        $this->di['is_admin_logged'];
+        $this->di["is_admin_logged"];
 
-        $params = array();
-        $params['youparamname'] = 'yourparamvalue';
+        $params = [];
+        $params["youparamname"] = "yourparamvalue";
 
-        return $app->render('mod_example_index', $params);
+        return $app->render("mod_example_index", $params);
     }
 
     public function get_user(\Box_App $app, $id)
     {
         // always call this method to validate if admin is logged in
-        $this->di['is_admin_logged'];
+        $this->di["is_admin_logged"];
 
-        $params = array();
-        $params['userid'] = $id;
-        return $app->render('mod_example_index', $params);
+        $params = [];
+        $params["userid"] = $id;
+        return $app->render("mod_example_index", $params);
     }
-    
+
     public function get_api(\Box_App $app, $id = null)
     {
         // always call this method to validate if admin is logged in
-        $api = $this->di['api_admin'];
+        $api = $this->di["api_admin"];
         $list_from_controller = $api->example_get_something();
 
-        $params = array();
-        $params['api_example'] = true;
-        $params['list_from_controller'] = $list_from_controller;
+        $params = [];
+        $params["api_example"] = true;
+        $params["list_from_controller"] = $list_from_controller;
 
-        return $app->render('mod_example_index', $params);
+        return $app->render("mod_example_index", $params);
     }
 }

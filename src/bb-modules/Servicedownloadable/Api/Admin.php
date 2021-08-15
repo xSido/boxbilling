@@ -27,15 +27,19 @@ class Admin extends \Api_Abstract
      */
     public function upload($data)
     {
-        $required = array(
-            'id' => 'Product ID is missing',
+        $required = [
+            "id" => "Product ID is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $model = $this->di["db"]->getExistingModelById(
+            "Product",
+            $data["id"],
+            "Product not found"
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->di['db']->getExistingModelById('Product', $data['id'], 'Product not found');
-
-        if(!isset($_FILES['file_data'])) {
-            throw new \Box_Exception('File was not uploaded');
+        if (!isset($_FILES["file_data"])) {
+            throw new \Box_Exception("File was not uploaded");
         }
 
         $service = $this->getService();
@@ -56,17 +60,21 @@ class Admin extends \Api_Abstract
      */
     public function update($data)
     {
-        $required = array(
-            'order_id' => 'Order ID is missing',
+        $required = [
+            "order_id" => "Order ID is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $order = $this->di["db"]->getExistingModelById(
+            "ClientOrder",
+            $data["order_id"],
+            "Order not found"
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $order = $this->di['db']->getExistingModelById('ClientOrder', $data['order_id'], 'Order not found');
-
-        $orderService = $this->di['mod_service']('order');
+        $orderService = $this->di["mod_service"]("order");
         $serviceDownloadable = $orderService->getOrderService($order);
-        if(!$serviceDownloadable instanceof \Model_ServiceDownloadable) {
-            throw new \Box_Exception('Order is not activated');
+        if (!$serviceDownloadable instanceof \Model_ServiceDownloadable) {
+            throw new \Box_Exception("Order is not activated");
         }
 
         $service = $this->getService();

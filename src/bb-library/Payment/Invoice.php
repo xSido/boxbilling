@@ -12,13 +12,13 @@
 
 class Payment_Invoice
 {
-    private $id             = NULL; // BoxBilling Invoice Id
-    private $number         = NULL; // Invoice number for accounting
-    private $currency       = 'USD';
-    private $items          = array();
-    private $subscription   = NULL;
-    private $buyer          = NULL;
-    private $title          = 'Payment for invoice';
+    private $id = null; // BoxBilling Invoice Id
+    private $number = null; // Invoice number for accounting
+    private $currency = "USD";
+    private $items = [];
+    private $subscription = null;
+    private $buyer = null;
+    private $title = "Payment for invoice";
 
     public function setId($param)
     {
@@ -58,7 +58,7 @@ class Payment_Invoice
         $this->buyer = $param;
         return $this;
     }
-    
+
     public function getBuyer()
     {
         return $this->buyer;
@@ -66,8 +66,8 @@ class Payment_Invoice
 
     public function setItems(array $items)
     {
-        foreach($items as $item) {
-            if($item instanceof Payment_Invoice_Item) {
+        foreach ($items as $item) {
+            if ($item instanceof Payment_Invoice_Item) {
                 $this->items[] = $item;
             }
         }
@@ -107,7 +107,7 @@ class Payment_Invoice
     public function getTotal()
     {
         $total = 0;
-        foreach ($this->items as $item)  {
+        foreach ($this->items as $item) {
             $total += $item->getTotal();
         }
         return $total;
@@ -121,10 +121,9 @@ class Payment_Invoice
     public function getTax()
     {
         $tax = 0;
-        foreach ($this->items as $item)  {
+        foreach ($this->items as $item) {
             $tax += $item->getTax() * $item->getQuantity();
         }
         return $tax;
     }
-
 }

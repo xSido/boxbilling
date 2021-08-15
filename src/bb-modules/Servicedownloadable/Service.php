@@ -39,21 +39,21 @@ class Service implements InjectionAwareInterface
     public function attachOrderConfig(\Model_Product $product, array &$data)
     {
         $c = json_decode($product->config, 1);
-        $required = array(
-            'filename' => 'Product is not configured completely.',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $c);
+        $required = [
+            "filename" => "Product is not configured completely.",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $c);
 
-        $data['filename'] = $c['filename'];
+        $data["filename"] = $c["filename"];
         return array_merge($c, $data);
     }
-    
+
     public function validateOrderData(array &$data)
     {
-        $required = array(
-            'filename' => 'Filename is missing in product config',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "filename" => "Filename is missing in product config",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
     }
 
     /**
@@ -63,18 +63,20 @@ class Service implements InjectionAwareInterface
     public function action_create(\Model_ClientOrder $order)
     {
         $c = json_decode($order->config, 1);
-        if (!is_array($c)){
-            throw new \Box_Exception(sprintf('Order #%s config is missing', $order->id));
+        if (!is_array($c)) {
+            throw new \Box_Exception(
+                sprintf("Order #%s config is missing", $order->id)
+            );
         }
         $this->validateOrderData($c);
 
-        $model = $this->di['db']->dispense('ServiceDownloadable');
+        $model = $this->di["db"]->dispense("ServiceDownloadable");
         $model->client_id = $order->client_id;
-        $model->filename = $c['filename'];
+        $model->filename = $c["filename"];
         $model->downloads = 0;
-        $model->created_at = date('Y-m-d H:i:s');
-        $model->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($model);
+        $model->created_at = date("Y-m-d H:i:s");
+        $model->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($model);
 
         return $model;
     }
@@ -147,57 +149,66 @@ class Service implements InjectionAwareInterface
      */
     public function action_delete(\Model_ClientOrder $order)
     {
-        $orderService = $this->di['mod_service']('order');
+        $orderService = $this->di["mod_service"]("order");
         $service = $orderService->getOrderService($order);
-        if($service instanceof \Model_ServiceDownloadable) {
-            $this->di['db']->trash($service);
+        if ($service instanceof \Model_ServiceDownloadable) {
+            $this->di["db"]->trash($service);
         }
     }
 
     public function hitDownload(\Model_ServiceDownloadable $model)
     {
         $model->downloads += 1;
-        $model->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($model);
+        $model->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($model);
     }
 
-    public function toApiArray(\Model_ServiceDownloadable $model, $deep = false, $identity = null)
-    {
-        $productService = $this->di['mod_service']('product');
-        $result = array(
-            'path'          => $productService->getSavePath($model->filename),
-            'filename'      => $model->filename,
-        );
-        
-        if($identity instanceof \Model_Admin) {
-            $result['downloads'] = $model->downloads;
+    public function toApiArray(
+        \Model_ServiceDownloadable $model,
+        $deep = false,
+        $identity = null
+    ) {
+        $productService = $this->di["mod_service"]("product");
+        $result = [
+            "path" => $productService->getSavePath($model->filename),
+            "filename" => $model->filename,
+        ];
+
+        if ($identity instanceof \Model_Admin) {
+            $result["downloads"] = $model->downloads;
         }
-        
+
         return $result;
     }
 
     public function uploadProductFile(\Model_Product $productModel)
     {
-        $request = $this->di['request'];
+        $request = $this->di["request"];
         if ($request->hasFiles() == 0) {
-            throw new \Box_Exception('Error uploading file');
+            throw new \Box_Exception("Error uploading file");
         }
         $files = $request->getUploadedFiles();
         $file = $files[0];
 
-        $productService = $this->di['mod_service']('product');
-        move_uploaded_file($file->getRealPath(), $productService->getSavePath($file->getName()));
+        $productService = $this->di["mod_service"]("product");
+        move_uploaded_file(
+            $file->getRealPath(),
+            $productService->getSavePath($file->getName())
+        );
         // End upload
 
         $config = json_decode($productModel->config, 1);
         $productService->removeOldFile($config);
 
-        $config['filename'] = $file->getName();
+        $config["filename"] = $file->getName();
         $productModel->config = json_encode($config);
-        $productModel->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($productModel);
+        $productModel->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($productModel);
 
-        $this->di['logger']->info('Uploaded new file for product %s', $productModel->id);
+        $this->di["logger"]->info(
+            "Uploaded new file for product %s",
+            $productModel->id
+        );
         return true;
     }
 
@@ -207,23 +218,28 @@ class Service implements InjectionAwareInterface
      * @return bool
      * @throws \Box_Exception
      */
-    public function updateProductFile(\Model_ServiceDownloadable $serviceDownloadable, \Model_ClientOrder $order)
-    {
-        $request = $this->di['request'];
+    public function updateProductFile(
+        \Model_ServiceDownloadable $serviceDownloadable,
+        \Model_ClientOrder $order
+    ) {
+        $request = $this->di["request"];
         if ($request->hasFiles() == 0) {
-            throw new \Box_Exception('Error uploading file');
+            throw new \Box_Exception("Error uploading file");
         }
-        $productService = $this->di['mod_service']('product');
+        $productService = $this->di["mod_service"]("product");
         $files = $request->getUploadedFiles();
         $file = $files[0];
-        move_uploaded_file($file->getRealPath(), $productService->getSavePath($file->getName()));
+        move_uploaded_file(
+            $file->getRealPath(),
+            $productService->getSavePath($file->getName())
+        );
         // End upload
 
         $serviceDownloadable->filename = $file->getName();
-        $serviceDownloadable->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($serviceDownloadable);
+        $serviceDownloadable->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($serviceDownloadable);
 
-        $this->di['logger']->info('Uploaded new file for order %s', $order->id);
+        $this->di["logger"]->info("Uploaded new file for order %s", $order->id);
         return true;
     }
 
@@ -231,34 +247,35 @@ class Service implements InjectionAwareInterface
     {
         switch ($error_code) {
             case UPLOAD_ERR_INI_SIZE:
-                return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
+                return "The uploaded file exceeds the upload_max_filesize directive in php.ini";
             case UPLOAD_ERR_FORM_SIZE:
-                return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
+                return "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
             case UPLOAD_ERR_PARTIAL:
-                return 'The uploaded file was only partially uploaded';
+                return "The uploaded file was only partially uploaded";
             case UPLOAD_ERR_NO_FILE:
-                return 'No file was uploaded';
+                return "No file was uploaded";
             case UPLOAD_ERR_NO_TMP_DIR:
-                return 'Missing a temporary folder';
+                return "Missing a temporary folder";
             case UPLOAD_ERR_CANT_WRITE:
-                return 'Failed to write file to disk';
+                return "Failed to write file to disk";
             case UPLOAD_ERR_EXTENSION:
-                return 'File upload stopped by extension';
+                return "File upload stopped by extension";
             default:
-                return 'Unknown upload error';
+                return "Unknown upload error";
         }
     }
 
-    public function sendDownload($filename, $path) {
-        if(APPLICATION_ENV == 'testing') {
-            return ;
+    public function sendDownload($filename, $path)
+    {
+        if (APPLICATION_ENV == "testing") {
+            return;
         }
 
         header("Content-Type: application/force-download");
         header("Content-Type: application/octet-stream");
         header("Content-Type: application/download");
         header("Content-Description: File Transfer");
-        header("Content-Disposition: attachment; filename=$filename".";");
+        header("Content-Disposition: attachment; filename=$filename" . ";");
         header("Content-Transfer-Encoding: binary");
         readfile($path);
         flush();
@@ -267,15 +284,22 @@ class Service implements InjectionAwareInterface
     public function sendFile(\Model_ServiceDownloadable $serviceDownloadable)
     {
         $info = $this->toApiArray($serviceDownloadable);
-        $filename = $info['filename'];
-        $path = $info['path'];
-        if(!$this->di['tools']->fileExists($path)) {
-            throw new \Box_Exception('File can not be downloaded at the moment. Please contact support', null, 404);
+        $filename = $info["filename"];
+        $path = $info["path"];
+        if (!$this->di["tools"]->fileExists($path)) {
+            throw new \Box_Exception(
+                "File can not be downloaded at the moment. Please contact support",
+                null,
+                404
+            );
         }
         $this->hitDownload($serviceDownloadable);
         $this->sendDownload($filename, $path);
 
-        $this->di['logger']->info('Downloaded service %s file', $serviceDownloadable->id);
+        $this->di["logger"]->info(
+            "Downloaded service %s file",
+            $serviceDownloadable->id
+        );
         return true;
     }
 }

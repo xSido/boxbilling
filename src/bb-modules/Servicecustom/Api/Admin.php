@@ -24,15 +24,18 @@ class Admin extends \Api_Abstract
      */
     public function update($data)
     {
-        if (!isset($data['order_id'])) {
-            throw new \Box_Exception('Order id is required');
+        if (!isset($data["order_id"])) {
+            throw new \Box_Exception("Order id is required");
         }
 
-        if (isset($data['config']) && is_array($data['config'])) {
-            $this->getService()->updateConfig($data['order_id'], $data['config']);
+        if (isset($data["config"]) && is_array($data["config"])) {
+            $this->getService()->updateConfig(
+                $data["order_id"],
+                $data["config"]
+            );
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -46,18 +49,22 @@ class Admin extends \Api_Abstract
     public function __call($name, $arguments)
     {
         if (!isset($arguments[0])) {
-            throw new \Box_Exception('API call is missing arguments', null, 7103);
+            throw new \Box_Exception(
+                "API call is missing arguments",
+                null,
+                7103
+            );
         }
 
         $data = $arguments[0];
 
-        if (!isset($data['order_id'])) {
-            throw new \Box_Exception('Order id is required');
+        if (!isset($data["order_id"])) {
+            throw new \Box_Exception("Order id is required");
         }
-        $model = $this->getService()->getServiceCustomByOrderId($data['order_id']);
+        $model = $this->getService()->getServiceCustomByOrderId(
+            $data["order_id"]
+        );
 
         return $this->getService()->customCall($model, $name, $data);
     }
-
-
 }

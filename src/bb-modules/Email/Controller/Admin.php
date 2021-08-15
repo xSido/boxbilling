@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Email\Controller;
 
 class Admin implements \Box\InjectionAwareInterface
@@ -35,45 +34,55 @@ class Admin implements \Box\InjectionAwareInterface
 
     public function fetchNavigation()
     {
-        return array(
-            'subpages' => array(
-                array(
-                    'location'  => 'activity',
-                    'index'     => 200,
-                    'label' => 'Email history',
-                    'uri'   => $this->di['url']->adminLink('email/history'),
-                    'class' => '',
-                ),
-            ),
-        );
+        return [
+            "subpages" => [
+                [
+                    "location" => "activity",
+                    "index" => 200,
+                    "label" => "Email history",
+                    "uri" => $this->di["url"]->adminLink("email/history"),
+                    "class" => "",
+                ],
+            ],
+        ];
     }
-    
+
     public function register(\Box_App &$app)
     {
-        $app->get('/email/history/', 'get_history', array(), get_class($this));
-        $app->get('/email/history', 'get_history', array(), get_class($this));
-        $app->get('/email/templates', 'get_index', array(), get_class($this));
-        $app->get('/email/template/:id', 'get_template', array('id'=>'[0-9]+'), get_class($this));
-        $app->get('/email/:id', 'get_email', array('id'=>'[0-9]+'), get_class($this));
+        $app->get("/email/history/", "get_history", [], get_class($this));
+        $app->get("/email/history", "get_history", [], get_class($this));
+        $app->get("/email/templates", "get_index", [], get_class($this));
+        $app->get(
+            "/email/template/:id",
+            "get_template",
+            ["id" => "[0-9]+"],
+            get_class($this)
+        );
+        $app->get(
+            "/email/:id",
+            "get_email",
+            ["id" => "[0-9]+"],
+            get_class($this)
+        );
     }
 
     public function get_history(\Box_App $app)
     {
-        $this->di['is_admin_logged'];
-        return $app->render('mod_email_history');
+        $this->di["is_admin_logged"];
+        return $app->render("mod_email_history");
     }
-    
+
     public function get_template(\Box_App $app, $id)
     {
-        $api = $this->di['api_admin'];
-        $template = $api->email_template_get(array('id'=>$id));
-        return $app->render('mod_email_template', array('template'=>$template));
+        $api = $this->di["api_admin"];
+        $template = $api->email_template_get(["id" => $id]);
+        return $app->render("mod_email_template", ["template" => $template]);
     }
-    
+
     public function get_email(\Box_App $app, $id)
     {
-        $api = $this->di['api_admin'];
-        $template = $api->email_email_get(array('id'=>$id));
-        return $app->render('mod_email_details', array('email'=>$template));
+        $api = $this->di["api_admin"];
+        $template = $api->email_email_get(["id" => $id]);
+        return $app->render("mod_email_details", ["email" => $template]);
     }
 }

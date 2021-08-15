@@ -6,7 +6,7 @@ class Box_TranslateTest extends PHPUnit\Framework\TestCase
 {
     public function testsetLocale()
     {
-        $locale = 'en_US';
+        $locale = "en_US";
         $translateObj = new \Box_Translate();
         $translateObj->setLocale($locale);
         $result = $translateObj->getLocale();
@@ -27,11 +27,11 @@ class Box_TranslateTest extends PHPUnit\Framework\TestCase
     {
         $translateObj = new \Box_Translate();
 
-        $default = 'messages';
+        $default = "messages";
         $result = $translateObj->getDomain();
         $this->assertEquals($default, $result);
 
-        $newDomain = 'admin';
+        $newDomain = "admin";
         $result = $translateObj->setDomain($newDomain)->getDomain();
         $this->assertEquals($newDomain, $result);
     }
@@ -40,10 +40,9 @@ class Box_TranslateTest extends PHPUnit\Framework\TestCase
     {
         global $di;
 
-        $text = 'Translate ME';
-        $result = $di['translate']()->__($text);
+        $text = "Translate ME";
+        $result = $di["translate"]()->__($text);
 
         $this->assertEquals($text, $result);
     }
-
 }

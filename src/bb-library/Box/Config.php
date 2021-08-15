@@ -10,8 +10,9 @@
  * with this source code in the file LICENSE
  */
 
-
 /**
  * Class Box_Config
  */
-class Box_Config extends Pimple\Container {}
+class Box_Config extends Pimple\Container
+{
+}

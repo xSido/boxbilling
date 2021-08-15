@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Page;
 
 use Box\InjectionAwareInterface;
@@ -40,18 +39,32 @@ class Service implements InjectionAwareInterface
 
     public function getPairs()
     {
-        $themeService = $this->di['mod_service']('theme');
+        $themeService = $this->di["mod_service"]("theme");
         $code = $themeService->getCurrentClientAreaThemeCode();
-        $paths = array(
-            BB_PATH_THEMES . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR,
-            BB_PATH_MODS . DIRECTORY_SEPARATOR . 'mod_page' . DIRECTORY_SEPARATOR . 'html_client' . DIRECTORY_SEPARATOR,
-        );
+        $paths = [
+            BB_PATH_THEMES .
+            DIRECTORY_SEPARATOR .
+            $code .
+            DIRECTORY_SEPARATOR .
+            "html" .
+            DIRECTORY_SEPARATOR,
+            BB_PATH_MODS .
+            DIRECTORY_SEPARATOR .
+            "mod_page" .
+            DIRECTORY_SEPARATOR .
+            "html_client" .
+            DIRECTORY_SEPARATOR,
+        ];
 
-        $list = array();
-        foreach($paths as $path) {
-            foreach(glob($path.'mod_page_*.phtml') as $file) {
-                $file = str_replace('mod_page_', '', pathinfo($file, PATHINFO_FILENAME));
-                $list[$file] = ucwords(strtr($file, array('-'=>' ', '_'=>' ')));
+        $list = [];
+        foreach ($paths as $path) {
+            foreach (glob($path . "mod_page_*.phtml") as $file) {
+                $file = str_replace(
+                    "mod_page_",
+                    "",
+                    pathinfo($file, PATHINFO_FILENAME)
+                );
+                $list[$file] = ucwords(strtr($file, ["-" => " ", "_" => " "]));
             }
         }
 

@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_Requirements implements \Box\InjectionAwareInterface
 {
     protected $di;
@@ -27,32 +26,30 @@ class Box_Requirements implements \Box\InjectionAwareInterface
 
     private $_all_ok = true;
     private $_app_path = BB_PATH_ROOT;
-    private $_options = array();
+    private $_options = [];
 
     public function __construct()
     {
-        $this->_options = array(
-            'php'   =>  array(
-                'extensions' => array(
-                    'pdo_mysql',
-                    'curl',
-                    'zlib',
-                    'gettext',
-                    'openssl',
-                 ),
-                'version'       =>  PHP_VERSION,
-                'min_version'   =>  '7.2',
-                'safe_mode'     =>  ini_get('safe_mode'),
-            ),
-            'writable_folders' => array(
-                $this->_app_path . '/bb-data/cache',
-                $this->_app_path . '/bb-data/log',
-                $this->_app_path . '/bb-data/uploads',
-            ),
-            'writable_files' => array(
-                $this->_app_path . '/bb-config.php',
-            ),
-        );
+        $this->_options = [
+            "php" => [
+                "extensions" => [
+                    "pdo_mysql",
+                    "curl",
+                    "zlib",
+                    "gettext",
+                    "openssl",
+                ],
+                "version" => PHP_VERSION,
+                "min_version" => "7.2",
+                "safe_mode" => ini_get("safe_mode"),
+            ],
+            "writable_folders" => [
+                $this->_app_path . "/bb-data/cache",
+                $this->_app_path . "/bb-data/log",
+                $this->_app_path . "/bb-data/uploads",
+            ],
+            "writable_files" => [$this->_app_path . "/bb-config.php"],
+        ];
     }
 
     public function getOptions()
@@ -62,52 +59,63 @@ class Box_Requirements implements \Box\InjectionAwareInterface
 
     public function getInfo()
     {
-        $data = array();
-        $data['ip']             = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : null;
-        $data['PHP_OS']         = PHP_OS;
-        $data['PHP_VERSION']    = PHP_VERSION;
+        $data = [];
+        $data["ip"] = isset($_SERVER["SERVER_ADDR"])
+            ? $_SERVER["SERVER_ADDR"]
+            : null;
+        $data["PHP_OS"] = PHP_OS;
+        $data["PHP_VERSION"] = PHP_VERSION;
 
-        $data['bb']    = array(
-            'BB_LOCALE'     =>  $this->di['config']['locale'],
-            'BB_SEF_URLS'   =>  BB_SEF_URLS,
-            'version'       =>  Box_Version::VERSION,
-        );
+        $data["bb"] = [
+            "BB_LOCALE" => $this->di["config"]["locale"],
+            "BB_SEF_URLS" => BB_SEF_URLS,
+            "version" => Box_Version::VERSION,
+        ];
 
-        $data['ini']    = array(
-            'allow_url_fopen'   =>  ini_get('allow_url_fopen'),
-            'safe_mode'         =>  ini_get('safe_mode'),
-            'memory_limit'      =>  ini_get('memory_limit'),
-        );
+        $data["ini"] = [
+            "allow_url_fopen" => ini_get("allow_url_fopen"),
+            "safe_mode" => ini_get("safe_mode"),
+            "memory_limit" => ini_get("memory_limit"),
+        ];
 
-        $data['permissions']    = array(
-            BB_PATH_UPLOADS     =>  substr(sprintf('%o', fileperms(BB_PATH_UPLOADS)), -4),
-            BB_PATH_DATA        =>  substr(sprintf('%o', fileperms(BB_PATH_DATA)), -4),
-            BB_PATH_CACHE       =>  substr(sprintf('%o', fileperms(BB_PATH_CACHE)), -4),
-            BB_PATH_LOG         =>  substr(sprintf('%o', fileperms(BB_PATH_LOG)), -4),
-        );
-        
-        $data['extensions']    = array(
-            'apc'           => extension_loaded('apc'),
-            'curl'          => extension_loaded('curl'),
-            'pdo_mysql'     => extension_loaded('pdo_mysql'),
-            'zlib'          => extension_loaded('zlib'),
-            'mbstring'      => extension_loaded('mbstring'),
-            'openssl'        => extension_loaded('openssl'),
-            'gettext'       => extension_loaded('gettext'),
-        );
-        
+        $data["permissions"] = [
+            BB_PATH_UPLOADS => substr(
+                sprintf("%o", fileperms(BB_PATH_UPLOADS)),
+                -4
+            ),
+            BB_PATH_DATA => substr(sprintf("%o", fileperms(BB_PATH_DATA)), -4),
+            BB_PATH_CACHE => substr(
+                sprintf("%o", fileperms(BB_PATH_CACHE)),
+                -4
+            ),
+            BB_PATH_LOG => substr(sprintf("%o", fileperms(BB_PATH_LOG)), -4),
+        ];
+
+        $data["extensions"] = [
+            "apc" => extension_loaded("apc"),
+            "curl" => extension_loaded("curl"),
+            "pdo_mysql" => extension_loaded("pdo_mysql"),
+            "zlib" => extension_loaded("zlib"),
+            "mbstring" => extension_loaded("mbstring"),
+            "openssl" => extension_loaded("openssl"),
+            "gettext" => extension_loaded("gettext"),
+        ];
+
         //determine php username
-        if(function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
-            $data['posix_getpwuid'] = posix_getpwuid(posix_geteuid());
+        if (
+            function_exists("posix_getpwuid") &&
+            function_exists("posix_geteuid")
+        ) {
+            $data["posix_getpwuid"] = posix_getpwuid(posix_geteuid());
         }
         return $data;
     }
-    
+
     public function isPhpVersionOk()
     {
-        $current = $this->_options['php']['version'];
-        $required = $this->_options['php']['min_version'];
-        return version_compare($current, $required, '>=');
+        $current = $this->_options["php"]["version"];
+        $required = $this->_options["php"]["min_version"];
+        return version_compare($current, $required, ">=");
     }
 
     public function isBoxVersionOk()
@@ -124,11 +132,11 @@ class Box_Requirements implements \Box\InjectionAwareInterface
      */
     public function extensions()
     {
-        $exts = $this->_options['php']['extensions'];
+        $exts = $this->_options["php"]["extensions"];
 
-        $result = array();
-        foreach($exts as $ext) {
-            if(extension_loaded($ext)) {
+        $result = [];
+        foreach ($exts as $ext) {
+            if (extension_loaded($ext)) {
                 $result[$ext] = true;
             } else {
                 $result[$ext] = false;
@@ -144,14 +152,14 @@ class Box_Requirements implements \Box\InjectionAwareInterface
      */
     public function files()
     {
-        $files = $this->_options['writable_files'];
-        $result = array();
+        $files = $this->_options["writable_files"];
+        $result = [];
 
-        foreach($files as $file) {
+        foreach ($files as $file) {
             if ($this->checkPerms($file)) {
                 $result[$file] = true;
-            } else if (is_writable($file)) {
-            	$result[$file] = true;
+            } elseif (is_writable($file)) {
+                $result[$file] = true;
             } else {
                 $result[$file] = false;
                 $this->_all_ok = false;
@@ -166,14 +174,14 @@ class Box_Requirements implements \Box\InjectionAwareInterface
      */
     public function folders()
     {
-        $folders = $this->_options['writable_folders'];
+        $folders = $this->_options["writable_folders"];
 
-        $result = array();
-        foreach($folders as $folder) {
-            if($this->checkPerms($folder)) {
+        $result = [];
+        foreach ($folders as $folder) {
+            if ($this->checkPerms($folder)) {
                 $result[$folder] = true;
-            } else if (is_writable($folder)) {
-            	$result[$folder] = true;
+            } elseif (is_writable($folder)) {
+                $result[$folder] = true;
             } else {
                 $result[$folder] = false;
                 $this->_all_ok = false;
@@ -201,11 +209,10 @@ class Box_Requirements implements \Box\InjectionAwareInterface
      * @param string $perm
      * @return bool
      */
-    public function checkPerms($path, $perm = '0777')
+    public function checkPerms($path, $perm = "0777")
     {
         clearstatcache();
-        $configmod = substr(sprintf('%o', @fileperms($path)), -4);
-        return ($configmod == $perm);
+        $configmod = substr(sprintf("%o", @fileperms($path)), -4);
+        return $configmod == $perm;
     }
-
 }

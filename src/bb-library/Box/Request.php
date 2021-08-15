@@ -10,18 +10,17 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_Request implements \Box\InjectionAwareInterface
 {
     protected $di;
-    protected $_data = array();
-    protected $_header = array();
-    protected $_server = array();
-    protected $_request = array();
-    protected $_post = array();
-    protected $_get = array();
-    protected $_cookie = array();
-    protected $_method = 'post';
+    protected $_data = [];
+    protected $_header = [];
+    protected $_server = [];
+    protected $_request = [];
+    protected $_post = [];
+    protected $_get = [];
+    protected $_cookie = [];
+    protected $_method = "post";
 
     public function __construct()
     {
@@ -46,7 +45,9 @@ class Box_Request implements \Box\InjectionAwareInterface
         if (empty($name)) {
             return $this->_request;
         }
-        $value = isset($this->_request[$name]) ? $this->_request[$name] : $defaultValue;
+        $value = isset($this->_request[$name])
+            ? $this->_request[$name]
+            : $defaultValue;
         return $this->_filterValue($value, $filters);
     }
 
@@ -55,12 +56,17 @@ class Box_Request implements \Box\InjectionAwareInterface
         if (empty($name)) {
             return $this->_post;
         }
-        $value = isset($this->_post[$name]) ? $this->_post[$name] : $defaultValue;
+        $value = isset($this->_post[$name])
+            ? $this->_post[$name]
+            : $defaultValue;
         return $this->_filterValue($value, $filters);
     }
 
-    public function getQuery($name = null, $filters = null, $defaultValue = null)
-    {
+    public function getQuery(
+        $name = null,
+        $filters = null,
+        $defaultValue = null
+    ) {
         if (empty($name)) {
             return $this->_get;
         }
@@ -76,13 +82,13 @@ class Box_Request implements \Box\InjectionAwareInterface
     public function getHeaders()
     {
         $list = getallheaders();
-        return is_array($list) ? $list : array();
+        return is_array($list) ? $list : [];
     }
 
     public function getPut($name = null, $filters = null, $defaultValue = null)
     {
         parse_str($this->getRawBody(), $put);
-        if(empty($name)) {
+        if (empty($name)) {
             return $put;
         }
 
@@ -111,7 +117,7 @@ class Box_Request implements \Box\InjectionAwareInterface
     public function hasPut($name)
     {
         parse_str($this->getRawBody(), $put);
-        if(is_array($put) && isset($put[$name])) {
+        if (is_array($put) && isset($put[$name])) {
             return true;
         }
         return false;
@@ -147,16 +153,16 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getScheme()
     {
-        return $this->getServer('HTTPS') ? 'https' : 'http';
+        return $this->getServer("HTTPS") ? "https" : "http";
     }
-    
+
     /**
      * Checks whether request has been made using ajax. Checks if $_SERVER[‘HTTP_X_REQUESTED_WITH’]==’XMLHttpRequest’
      * @return bool
      */
     public function isAjax()
     {
-        return ($this->getServer('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest');
+        return $this->getServer("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest";
     }
 
     /**
@@ -165,11 +171,11 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function isSoapRequested()
     {
-        if($this->hasServer('HTTP_SOAPACTION')) {
+        if ($this->hasServer("HTTP_SOAPACTION")) {
             return true;
         }
 
-        if($this->getServer('CONTENT_TYPE') == 'application/soap+xml') {
+        if ($this->getServer("CONTENT_TYPE") == "application/soap+xml") {
             return true;
         }
 
@@ -182,7 +188,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function isSecureRequest()
     {
-        return ($this->getScheme() == 'https');
+        return $this->getScheme() == "https";
     }
 
     /**
@@ -191,7 +197,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getRawBody()
     {
-        return file_get_contents('php://input');
+        return file_get_contents("php://input");
     }
 
     /**
@@ -201,20 +207,22 @@ class Box_Request implements \Box\InjectionAwareInterface
     public function getJsonRawBody()
     {
         $result = json_decode($this->getRawBody(), 1);
-        if($result) {
+        if ($result) {
             return $result;
         }
 
-        $_messages = array(
-            JSON_ERROR_NONE => 'No error has occurred',
-            JSON_ERROR_DEPTH => 'The maximum stack depth has been exceeded',
-            JSON_ERROR_STATE_MISMATCH => 'Invalid or malformed JSON',
-            JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded',
-            JSON_ERROR_SYNTAX => 'Syntax error',
-            JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded'
-        );
+        $_messages = [
+            JSON_ERROR_NONE => "No error has occurred",
+            JSON_ERROR_DEPTH => "The maximum stack depth has been exceeded",
+            JSON_ERROR_STATE_MISMATCH => "Invalid or malformed JSON",
+            JSON_ERROR_CTRL_CHAR => "Control character error, possibly incorrectly encoded",
+            JSON_ERROR_SYNTAX => "Syntax error",
+            JSON_ERROR_UTF8 => "Malformed UTF-8 characters, possibly incorrectly encoded",
+        ];
         $error = json_last_error();
-        $msg = isset($_messages[$error]) ? $_messages[$error] : 'Error decoding json';
+        $msg = isset($_messages[$error])
+            ? $_messages[$error]
+            : "Error decoding json";
         throw new RuntimeException($msg);
     }
 
@@ -224,8 +232,8 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getServerAddress()
     {
-        $address = $this->getServer('SERVER_ADDR');
-        return ($address) ? $address : '127.0.0.1';
+        $address = $this->getServer("SERVER_ADDR");
+        return $address ? $address : "127.0.0.1";
     }
 
     /**
@@ -234,8 +242,8 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getServerName()
     {
-        $address = $this->getServer('SERVER_NAME');
-        return ($address) ? $address : 'localhost';
+        $address = $this->getServer("SERVER_NAME");
+        return $address ? $address : "localhost";
     }
 
     /**
@@ -244,7 +252,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getHttpHost()
     {
-        return $this->getServer('HTTP_HOST');
+        return $this->getServer("HTTP_HOST");
     }
 
     /**
@@ -256,15 +264,15 @@ class Box_Request implements \Box\InjectionAwareInterface
     public function getClientAddress($trustForwardedHeader = false)
     {
         $address = null;
-        if($trustForwardedHeader) {
-            $address = $this->getServer('HTTP_X_FORWARDED_FOR');
+        if ($trustForwardedHeader) {
+            $address = $this->getServer("HTTP_X_FORWARDED_FOR");
         }
-        if(is_null($address)) {
-            $address = $this->getServer('REMOTE_ADDR');
+        if (is_null($address)) {
+            $address = $this->getServer("REMOTE_ADDR");
         }
-        if(is_string($address)) {
-            if(strpos($address, ',') !== false) {
-                list($address) = explode(',', $address);
+        if (is_string($address)) {
+            if (strpos($address, ",") !== false) {
+                [$address] = explode(",", $address);
             }
         }
         return $address;
@@ -276,7 +284,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getMethod()
     {
-        return $this->getServer('REQUEST_METHOD');
+        return $this->getServer("REQUEST_METHOD");
     }
 
     /**
@@ -285,7 +293,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getURI()
     {
-        return $this->getServer('REQUEST_URI');
+        return $this->getServer("REQUEST_URI");
     }
 
     /**
@@ -294,7 +302,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getUserAgent()
     {
-        return $this->getServer('HTTP_USER_AGENT');
+        return $this->getServer("HTTP_USER_AGENT");
     }
 
     /**
@@ -305,15 +313,15 @@ class Box_Request implements \Box\InjectionAwareInterface
     public function isMethod($methods)
     {
         $current = $this->getMethod();
-        if(is_array($methods)) {
-            foreach($methods as $method) {
-                if($current == $method) {
+        if (is_array($methods)) {
+            foreach ($methods as $method) {
+                if ($current == $method) {
                     return true;
                 }
             }
             return false;
         }
-        return ($current == $methods);
+        return $current == $methods;
     }
 
     /**
@@ -322,7 +330,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function isPost()
     {
-        return ($this->getMethod() == 'POST');
+        return $this->getMethod() == "POST";
     }
 
     /**
@@ -331,7 +339,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function isGet()
     {
-        return ($this->getMethod() == 'GET');
+        return $this->getMethod() == "GET";
     }
 
     /**
@@ -340,7 +348,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function isPut()
     {
-        return ($this->getMethod() == 'PUT');
+        return $this->getMethod() == "PUT";
     }
 
     /**
@@ -349,7 +357,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function isPatch()
     {
-        return ($this->getMethod() == 'PATCH');
+        return $this->getMethod() == "PATCH";
     }
 
     /**
@@ -358,7 +366,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function isHead()
     {
-        return ($this->getMethod() == 'HEAD');
+        return $this->getMethod() == "HEAD";
     }
 
     /**
@@ -367,7 +375,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function isDelete()
     {
-        return ($this->getMethod() == 'DELETE');
+        return $this->getMethod() == "DELETE";
     }
 
     /**
@@ -376,7 +384,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function isOptions()
     {
-        return ($this->getMethod() == 'OPTIONS');
+        return $this->getMethod() == "OPTIONS";
     }
 
     /**
@@ -387,13 +395,13 @@ class Box_Request implements \Box\InjectionAwareInterface
     {
         $number_of_files = 0;
         $number_of_successful_files = 0;
-        foreach($_FILES as $file) {
+        foreach ($_FILES as $file) {
             $number_of_files++;
-            if(isset($file['error']) && $file['error'] == 0) {
+            if (isset($file["error"]) && $file["error"] == 0) {
                 $number_of_successful_files++;
             }
         }
-        return ($onlySuccessful)  ? $number_of_successful_files : $number_of_files;
+        return $onlySuccessful ? $number_of_successful_files : $number_of_files;
     }
 
     /**
@@ -402,11 +410,11 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getUploadedFiles($onlySuccessful = true)
     {
-        $files = array();
-        foreach($_FILES as $file) {
+        $files = [];
+        foreach ($_FILES as $file) {
             $f = new Box_RequestFile($file);
-            if($onlySuccessful) {
-                if($file['error'] == 0) {
+            if ($onlySuccessful) {
+                if ($file["error"] == 0) {
                     $files[] = $f;
                 }
             } else {
@@ -422,7 +430,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getHTTPReferer()
     {
-        return $this->getServer('HTTP_REFERER');
+        return $this->getServer("HTTP_REFERER");
     }
 
     /**
@@ -431,7 +439,7 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getAcceptableContent()
     {
-        return $this->getServer('HTTP_ACCEPT');
+        return $this->getServer("HTTP_ACCEPT");
     }
 
     /**
@@ -467,8 +475,8 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     public function getLanguages()
     {
-        $language_header = $this->getServer('HTTP_ACCEPT_LANGUAGE');
-        return $this->_getQualityHeader($language_header, 'language');
+        $language_header = $this->getServer("HTTP_ACCEPT_LANGUAGE");
+        return $this->_getQualityHeader($language_header, "language");
     }
 
     /**
@@ -489,20 +497,23 @@ class Box_Request implements \Box\InjectionAwareInterface
         $username = null;
         $password = null;
 
-        if ($this->hasServer('PHP_AUTH_USER')) {
-            $username = $_SERVER['PHP_AUTH_USER'];
-            $password = $_SERVER['PHP_AUTH_PW'];
-        } elseif ($this->hasServer('HTTP_AUTHENTICATION')) {
-            $auth = $this->getServer('HTTP_AUTHENTICATION');
-            if (strpos(strtolower($auth), 'basic') === 0) {
-                list($username,$password) = explode(':',base64_decode(substr($auth, 6)));
+        if ($this->hasServer("PHP_AUTH_USER")) {
+            $username = $_SERVER["PHP_AUTH_USER"];
+            $password = $_SERVER["PHP_AUTH_PW"];
+        } elseif ($this->hasServer("HTTP_AUTHENTICATION")) {
+            $auth = $this->getServer("HTTP_AUTHENTICATION");
+            if (strpos(strtolower($auth), "basic") === 0) {
+                [$username, $password] = explode(
+                    ":",
+                    base64_decode(substr($auth, 6))
+                );
             }
         }
 
-        return array(
-            'username'  =>  $username,
-            'password'  =>  $password,
-        );
+        return [
+            "username" => $username,
+            "password" => $password,
+        ];
     }
 
     /**
@@ -512,22 +523,35 @@ class Box_Request implements \Box\InjectionAwareInterface
     public function getDigestAuth()
     {
         // mod_php
-        if ($this->hasServer('PHP_AUTH_DIGEST')) {
-            $digest = $this->getServer('PHP_AUTH_DIGEST');
+        if ($this->hasServer("PHP_AUTH_DIGEST")) {
+            $digest = $this->getServer("PHP_AUTH_DIGEST");
             // most other servers
-        } elseif ($this->hasServer('HTTP_AUTHENTICATION')) {
-            $auth = $this->getServer('HTTP_AUTHENTICATION');
-            if (strpos(strtolower($auth),'digest')===0) {
+        } elseif ($this->hasServer("HTTP_AUTHENTICATION")) {
+            $auth = $this->getServer("HTTP_AUTHENTICATION");
+            if (strpos(strtolower($auth), "digest") === 0) {
                 $digest = substr($auth, 7);
             }
         }
 
         // protect against missing data
-        $needed_parts = array('nonce'=>1, 'nc'=>1, 'cnonce'=>1, 'qop'=>1, 'username'=>1, 'uri'=>1, 'response'=>1);
-        $data = array();
-        $keys = implode('|', array_keys($needed_parts));
+        $needed_parts = [
+            "nonce" => 1,
+            "nc" => 1,
+            "cnonce" => 1,
+            "qop" => 1,
+            "username" => 1,
+            "uri" => 1,
+            "response" => 1,
+        ];
+        $data = [];
+        $keys = implode("|", array_keys($needed_parts));
 
-        preg_match_all('@(' . $keys . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', $digest, $matches, PREG_SET_ORDER);
+        preg_match_all(
+            "@(" . $keys . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@',
+            $digest,
+            $matches,
+            PREG_SET_ORDER
+        );
 
         foreach ((array) $matches as $m) {
             $data[$m[1]] = $m[3] ? $m[3] : $m[4];
@@ -544,18 +568,18 @@ class Box_Request implements \Box\InjectionAwareInterface
      */
     protected function _getQualityHeader($header, $q)
     {
-        $return = array();
-        $parts = preg_split('/,\\s*/', $header);
+        $return = [];
+        $parts = preg_split("/,\\s*/", $header);
 
-        foreach($parts as $part) {
-            $headerParts = explode(';', $part);
-            if(isset($headerParts[1]) === true) {
+        foreach ($parts as $part) {
+            $headerParts = explode(";", $part);
+            if (isset($headerParts[1]) === true) {
                 $quality = substr($headerParts[1], 2);
             } else {
                 $quality = 1;
             }
 
-            $return[] = array($q => $headerParts[0], 'quality' => $quality);
+            $return[] = [$q => $headerParts[0], "quality" => $quality];
         }
 
         return $return;
@@ -581,17 +605,21 @@ class Box_Request implements \Box\InjectionAwareInterface
     }
 }
 
-
-if (!function_exists('getallheaders'))
-{
+if (!function_exists("getallheaders")) {
     function getallheaders()
     {
-        $headers = '';
-        foreach ($_SERVER as $name => $value)
-        {
-            if (substr($name, 0, 5) == 'HTTP_')
-            {
-                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+        $headers = "";
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == "HTTP_") {
+                $headers[
+                    str_replace(
+                        " ",
+                        "-",
+                        ucwords(
+                            strtolower(str_replace("_", " ", substr($name, 5)))
+                        )
+                    )
+                ] = $value;
             }
         }
         return $headers;

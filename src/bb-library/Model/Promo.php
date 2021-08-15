@@ -10,9 +10,8 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_Promo extends RedBean_SimpleModel
 {
-	const PERCENTAGE    = 'percentage';
-	const ABSOLUTE      = 'absolute';
+    const PERCENTAGE = "percentage";
+    const ABSOLUTE = "absolute";
 }

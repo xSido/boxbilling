@@ -36,147 +36,156 @@ class Service implements InjectionAwareInterface
 
     public function getSummary()
     {
-        $stats = array();
+        $stats = [];
 
-        $pdo = $this->di['pdo'];
+        $pdo = $this->di["pdo"];
 
         $total_query = "SELECT COUNT(1) FROM :table";
-        $yeste_query = "SELECT COUNT(1) FROM :table WHERE DATE_FORMAT(`created_at`, '%Y-%m-%d') = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
-        $today_query = "SELECT COUNT(1) FROM :table WHERE DATE_FORMAT(`created_at`, '%Y-%m-%d') = CURDATE()";
-        $month_query = "SELECT COUNT(1) FROM :table WHERE DATE_FORMAT(`created_at`, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')";
-        $last_month_query = "SELECT COUNT(1) FROM :table WHERE created_at BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01') AND DATE_FORMAT(NOW() ,'%Y-%m-01')";
+        $yeste_query =
+            "SELECT COUNT(1) FROM :table WHERE DATE_FORMAT(`created_at`, '%Y-%m-%d') = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+        $today_query =
+            "SELECT COUNT(1) FROM :table WHERE DATE_FORMAT(`created_at`, '%Y-%m-%d') = CURDATE()";
+        $month_query =
+            "SELECT COUNT(1) FROM :table WHERE DATE_FORMAT(`created_at`, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')";
+        $last_month_query =
+            "SELECT COUNT(1) FROM :table WHERE created_at BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01') AND DATE_FORMAT(NOW() ,'%Y-%m-01')";
 
         // client stats
-        $table = 'client';
-        $stmt = $pdo->prepare(str_replace(':table', $table, $total_query));
+        $table = "client";
+        $stmt = $pdo->prepare(str_replace(":table", $table, $total_query));
         $stmt->execute();
-        $stats['clients_total'] = $stmt->fetchColumn();
+        $stats["clients_total"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $today_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $today_query));
         $stmt->execute();
-        $stats['clients_today'] = $stmt->fetchColumn();
+        $stats["clients_today"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $yeste_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $yeste_query));
         $stmt->execute();
-        $stats['clients_yesterday'] = $stmt->fetchColumn();
+        $stats["clients_yesterday"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $month_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $month_query));
         $stmt->execute();
-        $stats['clients_this_month'] = $stmt->fetchColumn();
+        $stats["clients_this_month"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $last_month_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $last_month_query));
         $stmt->execute();
-        $stats['clients_last_month'] = $stmt->fetchColumn();
+        $stats["clients_last_month"] = $stmt->fetchColumn();
 
         // orders stats
-        $table = 'client_order';
-        $stmt = $pdo->prepare(str_replace(':table', $table, $total_query));
+        $table = "client_order";
+        $stmt = $pdo->prepare(str_replace(":table", $table, $total_query));
         $stmt->execute();
-        $stats['orders_total'] = $stmt->fetchColumn();
+        $stats["orders_total"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $today_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $today_query));
         $stmt->execute();
-        $stats['orders_today'] = $stmt->fetchColumn();
+        $stats["orders_today"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $yeste_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $yeste_query));
         $stmt->execute();
-        $stats['orders_yesterday'] = $stmt->fetchColumn();
+        $stats["orders_yesterday"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $month_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $month_query));
         $stmt->execute();
-        $stats['orders_this_month'] = $stmt->fetchColumn();
+        $stats["orders_this_month"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $last_month_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $last_month_query));
         $stmt->execute();
-        $stats['orders_last_month'] = $stmt->fetchColumn();
+        $stats["orders_last_month"] = $stmt->fetchColumn();
 
         // invoice stats
-        $table = 'invoice';
-        $stmt = $pdo->prepare(str_replace(':table', $table, $total_query));
+        $table = "invoice";
+        $stmt = $pdo->prepare(str_replace(":table", $table, $total_query));
         $stmt->execute();
-        $stats['invoices_total'] = $stmt->fetchColumn();
+        $stats["invoices_total"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $today_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $today_query));
         $stmt->execute();
-        $stats['invoices_today'] = $stmt->fetchColumn();
+        $stats["invoices_today"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $yeste_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $yeste_query));
         $stmt->execute();
-        $stats['invoices_yesterday'] = $stmt->fetchColumn();
+        $stats["invoices_yesterday"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $month_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $month_query));
         $stmt->execute();
-        $stats['invoices_this_month'] = $stmt->fetchColumn();
+        $stats["invoices_this_month"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $last_month_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $last_month_query));
         $stmt->execute();
-        $stats['invoices_last_month'] = $stmt->fetchColumn();
+        $stats["invoices_last_month"] = $stmt->fetchColumn();
 
         // ticket stats
-        $table = 'support_ticket';
-        $stmt = $pdo->prepare(str_replace(':table', $table, $total_query));
+        $table = "support_ticket";
+        $stmt = $pdo->prepare(str_replace(":table", $table, $total_query));
         $stmt->execute();
-        $stats['tickets_total'] = $stmt->fetchColumn();
+        $stats["tickets_total"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $today_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $today_query));
         $stmt->execute();
-        $stats['tickets_today'] = $stmt->fetchColumn();
+        $stats["tickets_today"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $yeste_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $yeste_query));
         $stmt->execute();
-        $stats['tickets_yesterday'] = $stmt->fetchColumn();
+        $stats["tickets_yesterday"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $month_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $month_query));
         $stmt->execute();
-        $stats['tickets_this_month'] = $stmt->fetchColumn();
+        $stats["tickets_this_month"] = $stmt->fetchColumn();
 
-        $stmt = $pdo->prepare(str_replace(':table', $table, $last_month_query));
+        $stmt = $pdo->prepare(str_replace(":table", $table, $last_month_query));
         $stmt->execute();
-        $stats['tickets_last_month'] = $stmt->fetchColumn();
+        $stats["tickets_last_month"] = $stmt->fetchColumn();
 
         return $stats;
     }
 
     public function getSummaryIncome()
     {
-        $stats = array();
+        $stats = [];
 
-        $pdo = $this->di['pdo'];
+        $pdo = $this->di["pdo"];
 
-        $total_query = "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded')";
-        $yeste_query = "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded') AND DATE_FORMAT(`paid_at`, '%Y-%m-%d') = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
-        $today_query = "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded') AND DATE_FORMAT(`paid_at`, '%Y-%m-%d') = CURDATE()";
-        $month_query = "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded') AND DATE_FORMAT(`paid_at`, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')";
-        $last_month_query = "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded') AND paid_at BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01') AND DATE_FORMAT(NOW() ,'%Y-%m-01')";
+        $total_query =
+            "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded')";
+        $yeste_query =
+            "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded') AND DATE_FORMAT(`paid_at`, '%Y-%m-%d') = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+        $today_query =
+            "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded') AND DATE_FORMAT(`paid_at`, '%Y-%m-%d') = CURDATE()";
+        $month_query =
+            "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded') AND DATE_FORMAT(`paid_at`, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')";
+        $last_month_query =
+            "SELECT (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS income FROM invoice WHERE approved = 1 AND (status = 'paid' OR status = 'refunded') AND paid_at BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01') AND DATE_FORMAT(NOW() ,'%Y-%m-01')";
 
         $stmt = $pdo->prepare($total_query);
         $stmt->execute();
-        $stats['total'] = $stmt->fetchColumn();
+        $stats["total"] = $stmt->fetchColumn();
 
         $stmt = $pdo->prepare($today_query);
         $stmt->execute();
-        $stats['today'] = $stmt->fetchColumn();
+        $stats["today"] = $stmt->fetchColumn();
 
         $stmt = $pdo->prepare($yeste_query);
         $stmt->execute();
-        $stats['yesterday'] = $stmt->fetchColumn();
+        $stats["yesterday"] = $stmt->fetchColumn();
 
         $stmt = $pdo->prepare($month_query);
         $stmt->execute();
-        $stats['this_month'] = $stmt->fetchColumn();
+        $stats["this_month"] = $stmt->fetchColumn();
 
         $stmt = $pdo->prepare($last_month_query);
         $stmt->execute();
-        $stats['last_month'] = $stmt->fetchColumn();
+        $stats["last_month"] = $stmt->fetchColumn();
 
         return $stats;
     }
 
     public function getOrdersStatuses($data)
     {
-        $orderService = $this->di['mod_service']('order');
+        $orderService = $this->di["mod_service"]("order");
         $c = $orderService->counter();
-        unset($c['total']);
+        unset($c["total"]);
         return $c;
     }
 
@@ -189,14 +198,14 @@ class Service implements InjectionAwareInterface
                 GROUP BY o.product_id
                 ORDER BY orders DESC
                 ";
-        return $this->di['db']->getAll($query);
+        return $this->di["db"]->getAll($query);
     }
 
     public function getProductSales($data)
     {
-        list($time_from, $time_to) = $this->_getDateInterval($data);
+        [$time_from, $time_to] = $this->_getDateInterval($data);
 
-        $pdo = $this->di['pdo'];
+        $pdo = $this->di["pdo"];
 
         $query = "SELECT title, COUNT(product_id) as sales
                 FROM `client_order`
@@ -206,20 +215,18 @@ class Service implements InjectionAwareInterface
                 ";
 
         $stmt = $pdo->prepare($query);
-        $stmt->execute(
-            array(
-                'status'    => 'active',
-                'date_from' => date('Y-m-d', $time_from),
-                'date_to'   => date('Y-m-d', $time_to),
-            )
-        );
+        $stmt->execute([
+            "status" => "active",
+            "date_from" => date("Y-m-d", $time_from),
+            "date_to" => date("Y-m-d", $time_to),
+        ]);
 
         return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
 
     public function incomeAndRefundStats($data)
     {
-        $pdo = $this->di['pdo'];
+        $pdo = $this->di["pdo"];
 
         $query = "SELECT COALESCE(SUM(base_refund), 0) AS `refund`, COALESCE(SUM(base_income), 0) AS `income`
                 FROM `invoice`
@@ -228,10 +235,10 @@ class Service implements InjectionAwareInterface
                 ";
 
         $stmt = $pdo->prepare($query);
-        $stmt->execute(array(
-            'status1'    =>  \Model_Invoice::STATUS_PAID,
-            'status2'    =>  \Model_Invoice::STATUS_REFUNDED,
-        ));
+        $stmt->execute([
+            "status1" => \Model_Invoice::STATUS_PAID,
+            "status2" => \Model_Invoice::STATUS_REFUNDED,
+        ]);
 
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return $results[0];
@@ -239,18 +246,18 @@ class Service implements InjectionAwareInterface
 
     public function getRefunds($data)
     {
-        $time_from = strtotime('-1 month');
-        $time_to = strtotime('+1 day');
+        $time_from = strtotime("-1 month");
+        $time_to = strtotime("+1 day");
 
-        if(isset($data['date_from']) && !empty($data['date_from'])) {
-            $time_from = strtotime($data['date_from']);
+        if (isset($data["date_from"]) && !empty($data["date_from"])) {
+            $time_from = strtotime($data["date_from"]);
         }
 
-        if(isset($data['date_to']) && !empty($data['date_to'])) {
-            $time_to = strtotime($data['date_to']);
+        if (isset($data["date_to"]) && !empty($data["date_to"])) {
+            $time_to = strtotime($data["date_to"]);
         }
 
-        $pdo = $this->di['pdo'];
+        $pdo = $this->di["pdo"];
 
         $query = "SELECT DATE_FORMAT(`created_at`, '%Y-%m-%d') AS `date`, COALESCE(SUM(base_refund), 0) AS `refund`
                 FROM `invoice`
@@ -260,13 +267,11 @@ class Service implements InjectionAwareInterface
                 GROUP BY `date`";
 
         $stmt = $pdo->prepare($query);
-        $stmt->execute(
-            array(
-                'status'    => \Model_Invoice::STATUS_REFUNDED,
-                'date_from' => date('Y-m-d', $time_from),
-                'date_to'   => date('Y-m-d', $time_to),
-            )
-        );
+        $stmt->execute([
+            "status" => \Model_Invoice::STATUS_REFUNDED,
+            "date_from" => date("Y-m-d", $time_from),
+            "date_to" => date("Y-m-d", $time_to),
+        ]);
 
         $results = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
         return $this->_genFlotArray($results, $time_from, $time_to);
@@ -274,18 +279,18 @@ class Service implements InjectionAwareInterface
 
     public function getIncome($data)
     {
-        $time_from = strtotime('-1 month');
-        $time_to = strtotime('+1 day');
+        $time_from = strtotime("-1 month");
+        $time_to = strtotime("+1 day");
 
-        if(isset($data['date_from']) && !empty($data['date_from'])) {
-            $time_from = strtotime($data['date_from']);
+        if (isset($data["date_from"]) && !empty($data["date_from"])) {
+            $time_from = strtotime($data["date_from"]);
         }
 
-        if(isset($data['date_to']) && !empty($data['date_to'])) {
-            $time_to = strtotime($data['date_to']);
+        if (isset($data["date_to"]) && !empty($data["date_to"])) {
+            $time_to = strtotime($data["date_to"]);
         }
 
-        $pdo = $this->di['pdo'];
+        $pdo = $this->di["pdo"];
 
         $query = "SELECT DATE_FORMAT(`paid_at`, '%Y-%m-%d') AS `date`, (COALESCE(SUM(base_income), 0) - COALESCE(SUM(base_refund), 0)) AS `income`
                 FROM `invoice`
@@ -295,13 +300,11 @@ class Service implements InjectionAwareInterface
                 GROUP BY `date`";
 
         $stmt = $pdo->prepare($query);
-        $stmt->execute(
-            array(
-                'status'    => \Model_Invoice::STATUS_PAID,
-                'date_from' => date('Y-m-d', $time_from),
-                'date_to'   => date('Y-m-d', $time_to),
-            )
-        );
+        $stmt->execute([
+            "status" => \Model_Invoice::STATUS_PAID,
+            "date_from" => date("Y-m-d", $time_from),
+            "date_to" => date("Y-m-d", $time_to),
+        ]);
 
         $results = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
         return $this->_genFlotArray($results, $time_from, $time_to);
@@ -309,15 +312,15 @@ class Service implements InjectionAwareInterface
 
     public function getClientCountries($data)
     {
-        $limit = (int) $this->di['array_get']($data, 'limit', 10);
-        $q="
+        $limit = (int) $this->di["array_get"]($data, "limit", 10);
+        $q = "
             SELECT country, COUNT(id) as clients
             FROM `client`
             GROUP BY `country`
             ORDER BY clients DESC
             LIMIT $limit
         ";
-        $pdo = $this->di['pdo'];
+        $pdo = $this->di["pdo"];
         $stmt = $pdo->prepare($q);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
@@ -325,8 +328,8 @@ class Service implements InjectionAwareInterface
 
     public function getSalesByCountry($data)
     {
-        $limit = (int) $this->di['array_get']($data, 'limit', 10);
-        $q="
+        $limit = (int) $this->di["array_get"]($data, "limit", 10);
+        $q = "
             SELECT buyer_country, COUNT(id) as sales
             FROM `invoice`
             WHERE status = 'paid'
@@ -334,7 +337,7 @@ class Service implements InjectionAwareInterface
             ORDER BY sales DESC
             LIMIT $limit
         ";
-        $pdo = $this->di['pdo'];
+        $pdo = $this->di["pdo"];
         $stmt = $pdo->prepare($q);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
@@ -342,34 +345,34 @@ class Service implements InjectionAwareInterface
 
     private function _getDateInterval($data)
     {
-        $time_from = strtotime('-1 month');
-        $time_to = strtotime('+1 day');
+        $time_from = strtotime("-1 month");
+        $time_to = strtotime("+1 day");
 
-        if(isset($data['date_from']) && !empty($data['date_from'])) {
-            $time_from = strtotime($data['date_from']);
+        if (isset($data["date_from"]) && !empty($data["date_from"])) {
+            $time_from = strtotime($data["date_from"]);
         }
 
-        if(isset($data['date_to']) && !empty($data['date_to'])) {
-            $time_to = strtotime($data['date_to']);
+        if (isset($data["date_to"]) && !empty($data["date_to"])) {
+            $time_to = strtotime($data["date_to"]);
         }
 
-        return array($time_from, $time_to);
+        return [$time_from, $time_to];
     }
 
-    public function getTableStats($table, $data = array())
+    public function getTableStats($table, $data = [])
     {
-        $time_from = strtotime('-1 month');
-        $time_to = strtotime('+1 day');
+        $time_from = strtotime("-1 month");
+        $time_to = strtotime("+1 day");
 
-        if(isset($data['date_from']) && !empty($data['date_from'])) {
-            $time_from = strtotime($data['date_from']);
+        if (isset($data["date_from"]) && !empty($data["date_from"])) {
+            $time_from = strtotime($data["date_from"]);
         }
 
-        if(isset($data['date_to']) && !empty($data['date_to'])) {
-            $time_to = strtotime($data['date_to']);
+        if (isset($data["date_to"]) && !empty($data["date_to"])) {
+            $time_to = strtotime($data["date_to"]);
         }
 
-        $pdo = $this->di['pdo'];
+        $pdo = $this->di["pdo"];
 
         $query = "SELECT DATE_FORMAT(`created_at`, '%Y-%m-%d') AS `date`, COUNT(1) AS `count`
                 FROM `$table`
@@ -377,12 +380,10 @@ class Service implements InjectionAwareInterface
                 GROUP BY `date`";
 
         $stmt = $pdo->prepare($query);
-        $stmt->execute(
-            array(
-                'date_from' => date('Y-m-d', $time_from),
-                'date_to'   => date('Y-m-d', $time_to),
-            )
-        );
+        $stmt->execute([
+            "date_from" => date("Y-m-d", $time_from),
+            "date_to" => date("Y-m-d", $time_to),
+        ]);
 
         $results = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
         return $this->_genFlotArray($results, $time_from, $time_to);
@@ -394,16 +395,15 @@ class Service implements InjectionAwareInterface
      */
     private function _genFlotArray($results, $time_from, $time_to)
     {
-        $data = array();
+        $data = [];
         // Loop between timestamps, 1 day at a time
         do {
-            $time_from = strtotime('+1 day',$time_from);
-            $dom = date('Y-m-d', $time_from);
-            $c = $this->di['array_get']($results, $dom, 0);
-            $data[] = array($time_from * 1000, (int)$c);
+            $time_from = strtotime("+1 day", $time_from);
+            $dom = date("Y-m-d", $time_from);
+            $c = $this->di["array_get"]($results, $dom, 0);
+            $data[] = [$time_from * 1000, (int) $c];
         } while ($time_to > $time_from);
         array_pop($data);
         return $data;
     }
 }
- 

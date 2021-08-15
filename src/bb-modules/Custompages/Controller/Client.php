@@ -46,19 +46,23 @@ class Client implements \Box\InjectionAwareInterface
      */
     public function register(\Box_App &$app)
     {
-        $app->get('/custompages/:slug', 'get_page', array('slug' => '[a-z0-9-]+'), get_class($this));
+        $app->get(
+            "/custompages/:slug",
+            "get_page",
+            ["slug" => "[a-z0-9-]+"],
+            get_class($this)
+        );
     }
 
     public function get_page(\Box_App $app, $slug)
     {
         $service = new \Box\Mod\Custompages\Service();
         $service->setDi($this->di);
-        $page = $service->getPage($slug, 'slug');
-        if(isset($page['id'])) {
-            return $app->render('mod_custompages_content', array('page' => $page));
-        }
-        else {
-            die(header('Location: '.$this->di['url']->get('')));
+        $page = $service->getPage($slug, "slug");
+        if (isset($page["id"])) {
+            return $app->render("mod_custompages_content", ["page" => $page]);
+        } else {
+            die(header("Location: " . $this->di["url"]->get("")));
         }
     }
 }

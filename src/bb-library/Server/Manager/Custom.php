@@ -14,63 +14,64 @@ class Server_Manager_Custom extends Server_Manager
 {
     /**
      * Method is called just after obejct contruct is complete.
-     * Add required parameters checks here. 
+     * Add required parameters checks here.
      */
-	public function init()
+    public function init()
     {
-        
-	}
+    }
 
     /**
      * Return server manager parameters.
-     * @return type 
+     * @return type
      */
     public static function getForm()
     {
-        return array(
-            'label'     =>  'Custom Server Manager',
-        );
+        return [
+            "label" => "Custom Server Manager",
+        ];
     }
 
     /**
      * Returns link to account management page
-     * 
-     * @return string 
+     *
+     * @return string
      */
     public function getLoginUrl()
     {
-        return 'http://www.google.com?q=cpanel';
+        return "http://www.google.com?q=cpanel";
     }
 
     /**
      * Returns link to reseller account management
-     * @return string 
+     * @return string
      */
     public function getResellerLoginUrl()
     {
-        return 'http://www.google.com?q=whm';
+        return "http://www.google.com?q=whm";
     }
 
     /**
      * This method is called to check if configuration is correct
      * and class can connect to server
-     * 
-     * @return boolean 
+     *
+     * @return boolean
      */
     public function testConnection()
     {
-        return TRUE;
+        return true;
     }
 
     /**
      * MEthods retrieves information from server, assignes new values to
      * cloned Server_Account object and returns it.
      * @param Server_Account $a
-     * @return Server_Account 
+     * @return Server_Account
      */
     public function synchronizeAccount(Server_Account $a)
     {
-        $this->getLog()->info('Synchronizing account with server '.$a->getUsername());
+        $this->getLog()->info(
+            "Synchronizing account with server " . $a->getUsername()
+        );
         $new = clone $a;
         //@example - retrieve username from server and set it to cloned object
         //$new->setUsername('newusername');
@@ -79,70 +80,70 @@ class Server_Manager_Custom extends Server_Manager
 
     /**
      * Create new account on server
-     * 
-     * @param Server_Account $a 
+     *
+     * @param Server_Account $a
      */
-	public function createAccount(Server_Account $a)
+    public function createAccount(Server_Account $a)
     {
-        if($a->getReseller()) {
-            $this->getLog()->info('Creating reseller hosting account');
+        if ($a->getReseller()) {
+            $this->getLog()->info("Creating reseller hosting account");
         } else {
-            $this->getLog()->info('Creating shared hosting account');
+            $this->getLog()->info("Creating shared hosting account");
         }
-	}
+    }
 
     /**
      * Suspend account on server
-     * @param Server_Account $a 
+     * @param Server_Account $a
      */
-	public function suspendAccount(Server_Account $a)
+    public function suspendAccount(Server_Account $a)
     {
-        if($a->getReseller()) {
-            $this->getLog()->info('Suspending reseller hosting account');
+        if ($a->getReseller()) {
+            $this->getLog()->info("Suspending reseller hosting account");
         } else {
-            $this->getLog()->info('Suspending shared hosting account');
+            $this->getLog()->info("Suspending shared hosting account");
         }
-	}
+    }
 
     /**
      * Unsuspend account on server
-     * @param Server_Account $a 
+     * @param Server_Account $a
      */
-	public function unsuspendAccount(Server_Account $a)
+    public function unsuspendAccount(Server_Account $a)
     {
-        if($a->getReseller()) {
-            $this->getLog()->info('Unsuspending reseller hosting account');
+        if ($a->getReseller()) {
+            $this->getLog()->info("Unsuspending reseller hosting account");
         } else {
-            $this->getLog()->info('Unsuspending shared hosting account');
+            $this->getLog()->info("Unsuspending shared hosting account");
         }
-	}
+    }
 
     /**
      * Cancel account on server
-     * @param Server_Account $a 
+     * @param Server_Account $a
      */
-	public function cancelAccount(Server_Account $a)
+    public function cancelAccount(Server_Account $a)
     {
-        if($a->getReseller()) {
-            $this->getLog()->info('Canceling reseller hosting account');
+        if ($a->getReseller()) {
+            $this->getLog()->info("Canceling reseller hosting account");
         } else {
-            $this->getLog()->info('Canceling shared hosting account');
+            $this->getLog()->info("Canceling shared hosting account");
         }
-	}
+    }
 
     /**
      * Change account package on server
      * @param Server_Account $a
-     * @param Server_Package $p 
+     * @param Server_Package $p
      */
-	public function changeAccountPackage(Server_Account $a, Server_Package $p)
+    public function changeAccountPackage(Server_Account $a, Server_Package $p)
     {
-        if($a->getReseller()) {
-            $this->getLog()->info('Updating reseller hosting account');
+        if ($a->getReseller()) {
+            $this->getLog()->info("Updating reseller hosting account");
         } else {
-            $this->getLog()->info('Updating shared hosting account');
+            $this->getLog()->info("Updating shared hosting account");
         }
-        
+
         $p->getName();
         $p->getQuota();
         $p->getBandwidth();
@@ -152,9 +153,9 @@ class Server_Manager_Custom extends Server_Manager
         $p->getMaxFtp();
         $p->getMaxSql();
         $p->getMaxPop();
-        
-        $p->getCustomValue('param_name');
-	}
+
+        $p->getCustomValue("param_name");
+    }
 
     /**
      * Change account username on server
@@ -163,10 +164,10 @@ class Server_Manager_Custom extends Server_Manager
      */
     public function changeAccountUsername(Server_Account $a, $new)
     {
-        if($a->getReseller()) {
-            $this->getLog()->info('Changing reseller hosting account username');
+        if ($a->getReseller()) {
+            $this->getLog()->info("Changing reseller hosting account username");
         } else {
-            $this->getLog()->info('Changing shared hosting account username');
+            $this->getLog()->info("Changing shared hosting account username");
         }
     }
 
@@ -177,10 +178,10 @@ class Server_Manager_Custom extends Server_Manager
      */
     public function changeAccountDomain(Server_Account $a, $new)
     {
-        if($a->getReseller()) {
-            $this->getLog()->info('Changing reseller hosting account domain');
+        if ($a->getReseller()) {
+            $this->getLog()->info("Changing reseller hosting account domain");
         } else {
-            $this->getLog()->info('Changing shared hosting account domain');
+            $this->getLog()->info("Changing shared hosting account domain");
         }
     }
 
@@ -191,10 +192,10 @@ class Server_Manager_Custom extends Server_Manager
      */
     public function changeAccountPassword(Server_Account $a, $new)
     {
-        if($a->getReseller()) {
-            $this->getLog()->info('Changing reseller hosting account password');
+        if ($a->getReseller()) {
+            $this->getLog()->info("Changing reseller hosting account password");
         } else {
-            $this->getLog()->info('Changing shared hosting account password');
+            $this->getLog()->info("Changing shared hosting account password");
         }
     }
 
@@ -205,10 +206,10 @@ class Server_Manager_Custom extends Server_Manager
      */
     public function changeAccountIp(Server_Account $a, $new)
     {
-        if($a->getReseller()) {
-            $this->getLog()->info('Changing reseller hosting account ip');
+        if ($a->getReseller()) {
+            $this->getLog()->info("Changing reseller hosting account ip");
         } else {
-            $this->getLog()->info('Changing shared hosting account ip');
+            $this->getLog()->info("Changing shared hosting account ip");
         }
     }
 }

@@ -4,7 +4,7 @@
  */
 class Api_Admin_ProfileTest extends BBDbApiTestCase
 {
-    protected $_initialSeedFile = 'admins.xml';
+    protected $_initialSeedFile = "admins.xml";
 
     public function testProfile()
     {
@@ -14,11 +14,11 @@ class Api_Admin_ProfileTest extends BBDbApiTestCase
         $bool = $this->api_admin->profile_logout();
         $this->assertTrue($bool);
 
-        $data = array(
-            'email'     =>  'demo@boxbilling.com',
-            'name'      =>  'Demo Admin',
-            'signature' =>  'New Signature',
-        );
+        $data = [
+            "email" => "demo@boxbilling.com",
+            "name" => "Demo Admin",
+            "signature" => "New Signature",
+        ];
         $bool = $this->api_admin->profile_update($data);
         $this->assertTrue($bool);
 
@@ -28,16 +28,21 @@ class Api_Admin_ProfileTest extends BBDbApiTestCase
 
     public function testPassword()
     {
-        $data = array(
-            'password' =>  'demo12313123A',
-            'password_confirm' =>  'demo12313123A',
-        );
+        $data = [
+            "password" => "demo12313123A",
+            "password_confirm" => "demo12313123A",
+        ];
         $bool = $this->api_admin->profile_change_password($data);
         $this->assertTrue($bool);
 
         $array = $this->api_admin->profile_get();
-        $password = $this->di['db']->getCell('Select pass from admin where id = ?', array($array['id']));
+        $password = $this->di["db"]->getCell(
+            "Select pass from admin where id = ?",
+            [$array["id"]]
+        );
 
-        $this->assertTrue($this->di['password']->verify($data['password'], $password));
+        $this->assertTrue(
+            $this->di["password"]->verify($data["password"], $password)
+        );
     }
 }

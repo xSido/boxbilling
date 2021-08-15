@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Cookieconsent;
 
 use Box\InjectionAwareInterface;
@@ -31,8 +30,12 @@ class Service implements InjectionAwareInterface
 
     public function getMessage()
     {
-        $config = $this->di['mod_config']('cookieconsent');
+        $config = $this->di["mod_config"]("cookieconsent");
 
-        return $this->di['array_get']($config, 'message', 'This website uses cookies. By continuing to use this website, you consent to our use of these cookies.');
+        return $this->di["array_get"](
+            $config,
+            "message",
+            "This website uses cookies. By continuing to use this website, you consent to our use of these cookies."
+        );
     }
 }

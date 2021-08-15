@@ -12,5 +12,4 @@
 
 class Model_ActivityClientEmail extends \RedBean_SimpleModel
 {
-
 }

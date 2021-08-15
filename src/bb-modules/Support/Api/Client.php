@@ -27,15 +27,31 @@ class Client extends \Api_Abstract
      */
     public function ticket_get_list($data)
     {
-        $identity          = $this->getIdentity();
-        $data['client_id'] = $identity->id;
+        $identity = $this->getIdentity();
+        $data["client_id"] = $identity->id;
 
-        list($sql, $bindings) = $this->getService()->getSearchQuery($data);
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $pager =  $this->di['pager']->getAdvancedResultSet($sql, $bindings, $per_page);
-        foreach($pager['list'] as $key => $ticketArr){
-            $ticket = $this->di['db']->getExistingModelById('SupportTicket', $ticketArr['id'], 'Ticket not found');
-            $pager['list'][$key] = $this->getService()->toApiArray($ticket, true, $this->getIdentity());
+        [$sql, $bindings] = $this->getService()->getSearchQuery($data);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $pager = $this->di["pager"]->getAdvancedResultSet(
+            $sql,
+            $bindings,
+            $per_page
+        );
+        foreach ($pager["list"] as $key => $ticketArr) {
+            $ticket = $this->di["db"]->getExistingModelById(
+                "SupportTicket",
+                $ticketArr["id"],
+                "Ticket not found"
+            );
+            $pager["list"][$key] = $this->getService()->toApiArray(
+                $ticket,
+                true,
+                $this->getIdentity()
+            );
         }
 
         return $pager;
@@ -50,12 +66,15 @@ class Client extends \Api_Abstract
      */
     public function ticket_get($data)
     {
-        $required = array(
-            'id' => 'Ticket id required',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket id required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $ticket = $this->getService()->findOneByClient($this->getIdentity(), $data['id']);
+        $ticket = $this->getService()->findOneByClient(
+            $this->getIdentity(),
+            $data["id"]
+        );
 
         return $this->getService()->toApiArray($ticket);
     }
@@ -87,21 +106,32 @@ class Client extends \Api_Abstract
      */
     public function ticket_create($data)
     {
-        $required = array(
-            'content'             => 'Ticket content required',
-            'subject'             => 'Ticket subject required',
-            'support_helpdesk_id' => 'Ticket support_helpdesk_id required',
+        $required = [
+            "content" => "Ticket content required",
+            "subject" => "Ticket subject required",
+            "support_helpdesk_id" => "Ticket support_helpdesk_id required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $data["content"] = preg_replace(
+            "/javascript:\/\/|\%0(d|a)/i",
+            "",
+            $data["content"]
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
 
-        $data['content'] = preg_replace('/javascript:\/\/|\%0(d|a)/i', '', $data['content']);
-
-        $helpdesk = $this->di['db']->getExistingModelById('SupportHelpdesk', $data['support_helpdesk_id'], 'Helpdesk invalid');
+        $helpdesk = $this->di["db"]->getExistingModelById(
+            "SupportHelpdesk",
+            $data["support_helpdesk_id"],
+            "Helpdesk invalid"
+        );
 
         $client = $this->getIdentity();
 
-        return $this->getService()->ticketCreateForClient($client, $helpdesk, $data);
-
+        return $this->getService()->ticketCreateForClient(
+            $client,
+            $helpdesk,
+            $data
+        );
     }
 
     /**
@@ -114,32 +144,44 @@ class Client extends \Api_Abstract
      */
     public function ticket_reply($data)
     {
-        $required = array(
-            'id'      => 'Ticket ID required',
-            'content' => 'Ticket content required',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket ID required",
+            "content" => "Ticket content required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $data['content'] = preg_replace('/javascript:\/\/|\%0(d|a)/i', '', $data['content']);
+        $data["content"] = preg_replace(
+            "/javascript:\/\/|\%0(d|a)/i",
+            "",
+            $data["content"]
+        );
 
         $client = $this->getIdentity();
 
-        $bindings = array(
-            ':id'        => $data['id'],
-            ':client_id' => $client->id
+        $bindings = [
+            ":id" => $data["id"],
+            ":client_id" => $client->id,
+        ];
+        $ticket = $this->di["db"]->findOne(
+            "SupportTicket",
+            "id = :id AND client_id = :client_id",
+            $bindings
         );
-        $ticket = $this->di['db']->findOne('SupportTicket', 'id = :id AND client_id = :client_id', $bindings);
 
-        if (!$ticket instanceof \Model_SupportTicket){
-            throw new \Box_Exception('Ticket not found');
+        if (!$ticket instanceof \Model_SupportTicket) {
+            throw new \Box_Exception("Ticket not found");
         }
 
         if (!$this->getService()->canBeReopened($ticket)) {
-            throw new \Box_Exception('Ticket can not be reopened.');
+            throw new \Box_Exception("Ticket can not be reopened.");
         }
 
-        $result = $this->getService()->ticketReply($ticket, $client, $data['content']);
-        return ($result > 0) ? true : false;
+        $result = $this->getService()->ticketReply(
+            $ticket,
+            $client,
+            $data["content"]
+        );
+        return $result > 0 ? true : false;
     }
 
     /**
@@ -151,14 +193,14 @@ class Client extends \Api_Abstract
      */
     public function ticket_close($data)
     {
-        $required = array(
-            'id' => 'Ticket ID required',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Ticket ID required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
         $client = $this->getIdentity();
 
-        $ticket = $this->getService()->findOneByClient($client, $data['id']);
+        $ticket = $this->getService()->findOneByClient($client, $data["id"]);
 
         return $this->getService()->closeTicket($ticket, $this->getIdentity());
     }

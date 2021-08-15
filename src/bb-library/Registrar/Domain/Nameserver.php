@@ -26,10 +26,11 @@ class Registrar_Domain_Nameserver
         return $this->ip;
     }
 
-    public function __toString() {
-        $c = '';
-        $c .= sprintf("Host: %s", $this->getHost()).PHP_EOL;
-        $c .= sprintf("Ip: %s", $this->getIp()).PHP_EOL;
+    public function __toString()
+    {
+        $c = "";
+        $c .= sprintf("Host: %s", $this->getHost()) . PHP_EOL;
+        $c .= sprintf("Ip: %s", $this->getIp()) . PHP_EOL;
         return $c;
     }
 }

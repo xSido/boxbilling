@@ -10,11 +10,10 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_Invoice extends RedBean_SimpleModel
 {
-    const STATUS_PAID   = 'paid';
-    const STATUS_UNPAID = 'unpaid';
-    const STATUS_REFUNDED = 'refunded';
-    const STATUS_CANCELED = 'canceled';
+    const STATUS_PAID = "paid";
+    const STATUS_UNPAID = "unpaid";
+    const STATUS_REFUNDED = "refunded";
+    const STATUS_CANCELED = "canceled";
 }

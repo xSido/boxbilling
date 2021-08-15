@@ -18,7 +18,7 @@ class Admin extends \Api_Abstract
 {
     /**
      * Return summary of your system
-     * 
+     *
      * @return array
      */
     public function get_summary()
@@ -28,7 +28,7 @@ class Admin extends \Api_Abstract
 
     /**
      * Return income statistics
-     * 
+     *
      * @return array
      */
     public function get_summary_income()
@@ -45,7 +45,7 @@ class Admin extends \Api_Abstract
     {
         return $this->getService()->getOrdersStatuses($data);
     }
-    
+
     /**
      * Get active orders stats grouped by products
      *
@@ -53,9 +53,9 @@ class Admin extends \Api_Abstract
      */
     public function get_product_summary($data)
     {
-       return $this->getService()->getProductSummary($data);
+        return $this->getService()->getProductSummary($data);
     }
-    
+
     /**
      * Get product sales
      *
@@ -63,7 +63,7 @@ class Admin extends \Api_Abstract
      */
     public function get_product_sales($data)
     {
-       return $this->getService()->getProductSales($data);
+        return $this->getService()->getProductSales($data);
     }
 
     /**
@@ -87,7 +87,7 @@ class Admin extends \Api_Abstract
      */
     public function get_refunds($data)
     {
-      return $this->getService()->getRefunds($data);
+        return $this->getService()->getRefunds($data);
     }
 
     /**
@@ -101,7 +101,7 @@ class Admin extends \Api_Abstract
      */
     public function get_income($data)
     {
-       return $this->getService()->getIncome($data);
+        return $this->getService()->getIncome($data);
     }
 
     /**
@@ -114,7 +114,7 @@ class Admin extends \Api_Abstract
      */
     public function get_orders($data)
     {
-        return $this->getService()->getTableStats('client_order', $data);
+        return $this->getService()->getTableStats("client_order", $data);
     }
 
     /**
@@ -128,22 +128,22 @@ class Admin extends \Api_Abstract
      */
     public function get_clients($data)
     {
-        return $this->getService()->getTableStats('client', $data);
+        return $this->getService()->getTableStats("client", $data);
     }
-    
+
     /**
      * Get number of clients in country
-     * 
+     *
      * @return array
      */
     public function client_countries($data)
     {
         return $this->getService()->getClientCountries($data);
     }
-    
+
     /**
      * Get number of sales by country
-     * 
+     *
      * @return array
      */
     public function sales_countries($data)
@@ -162,7 +162,7 @@ class Admin extends \Api_Abstract
      */
     public function get_invoices($data)
     {
-        return $this->getService()->getTableStats('invoice', $data);
+        return $this->getService()->getTableStats("invoice", $data);
     }
 
     /**
@@ -176,6 +176,6 @@ class Admin extends \Api_Abstract
      */
     public function get_tickets($data)
     {
-        return $this->getService()->getTableStats('support_ticket', $data);
+        return $this->getService()->getTableStats("support_ticket", $data);
     }
 }

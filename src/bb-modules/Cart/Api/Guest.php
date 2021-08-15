@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Cart\Api;
 
 /**
@@ -51,15 +50,15 @@ class Guest extends \Api_Abstract
      */
     public function set_currency($data)
     {
-        $required = array(
-            'currency' => 'Currency code not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "currency" => "Currency code not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $currencyService = $this->di['mod_service']('currency');
-        $currency        = $currencyService->getByCode($data['currency']);
+        $currencyService = $this->di["mod_service"]("currency");
+        $currency = $currencyService->getByCode($data["currency"]);
         if (!$currency instanceof \Model_Currency) {
-            throw new \Box_Exception('Currency not found');
+            throw new \Box_Exception("Currency not found");
         }
         $cart = $this->getService()->getSessionCart();
 
@@ -75,8 +74,8 @@ class Guest extends \Api_Abstract
     {
         $cart = $this->getService()->getSessionCart();
 
-        $currencyService = $this->di['mod_service']('currency');
-        $currency        = $this->di['db']->load('Currency', $cart->currency_id);
+        $currencyService = $this->di["mod_service"]("currency");
+        $currency = $this->di["db"]->load("Currency", $cart->currency_id);
         if (!$currency instanceof \Model_Currency) {
             $currency = $currencyService->getDefault();
         }
@@ -93,23 +92,24 @@ class Guest extends \Api_Abstract
      */
     public function apply_promo($data)
     {
-        $required = array(
-            'promocode' => 'Promo code not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "promocode" => "Promo code not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-
-        $promo = $this->getService()->findActivePromoByCode($data['promocode']);
+        $promo = $this->getService()->findActivePromoByCode($data["promocode"]);
         if (!$promo instanceof \Model_Promo) {
-            throw new \Box_Exception('Promo code is expired or does not exist');
+            throw new \Box_Exception("Promo code is expired or does not exist");
         }
 
-        if (!$this->getService()->isPromoAvailableForClientGroup($promo)){
-            throw new \Box_Exception('Promo can not be applied to your account');
+        if (!$this->getService()->isPromoAvailableForClientGroup($promo)) {
+            throw new \Box_Exception(
+                "Promo can not be applied to your account"
+            );
         }
 
         if (!$this->getService()->promoCanBeApplied($promo)) {
-            throw new \Box_Exception('Promo code is expired or does not exist');
+            throw new \Box_Exception("Promo code is expired or does not exist");
         }
 
         $cart = $this->getService()->getSessionCart();
@@ -138,14 +138,14 @@ class Guest extends \Api_Abstract
      */
     public function remove_item($data)
     {
-        $required = array(
-            'id' => 'Cart item id not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Cart item id not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
         $cart = $this->getService()->getSessionCart();
 
-        return $this->getService()->removeProduct($cart, $data['id'], true);
+        return $this->getService()->removeProduct($cart, $data["id"], true);
     }
 
     /**
@@ -163,17 +163,21 @@ class Guest extends \Api_Abstract
      */
     public function add_item($data)
     {
-        $required = array(
-            'id' => 'Product id not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Product id not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
         $cart = $this->getService()->getSessionCart();
 
-        $product = $this->di['db']->getExistingModelById('Product', $data['id'], 'Product not found');
+        $product = $this->di["db"]->getExistingModelById(
+            "Product",
+            $data["id"],
+            "Product not found"
+        );
 
         //reset cart by default
-        if (!isset($data['multiple']) || !$data['multiple']) {
+        if (!isset($data["multiple"]) || !$data["multiple"]) {
             $this->reset();
         }
 

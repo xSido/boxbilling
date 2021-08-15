@@ -10,18 +10,15 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_RequestFile extends SplFileInfo
 {
     protected $name;
 
-
     public function __construct(array $file)
     {
-        $this->name = $file['name'];
-        parent::__construct($file['tmp_name']);
+        $this->name = $file["name"];
+        parent::__construct($file["tmp_name"]);
     }
-
 
     public function getName()
     {

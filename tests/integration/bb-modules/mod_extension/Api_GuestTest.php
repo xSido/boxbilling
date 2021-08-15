@@ -4,8 +4,8 @@
  */
 class Api_Guest_ExtensionTest extends BBDbApiTestCase
 {
-    protected $_initialSeedFile = 'extensions.xml';
-    
+    protected $_initialSeedFile = "extensions.xml";
+
     public function testLists()
     {
         $array = $this->api_guest->extension_languages();
@@ -14,13 +14,13 @@ class Api_Guest_ExtensionTest extends BBDbApiTestCase
         $array = $this->api_guest->extension_theme();
         $this->assertIsArray($array);
 
-        $bool = $this->api_guest->extension_is_on(array('mod'=>'system'));
+        $bool = $this->api_guest->extension_is_on(["mod" => "system"]);
         $this->assertTrue($bool);
 
-        $bool = $this->api_guest->extension_is_on(array('mod'=>'forum'));
+        $bool = $this->api_guest->extension_is_on(["mod" => "forum"]);
         $this->assertTrue($bool);
 
-        $arr = $this->api_guest->extension_settings(array('ext'=>'mod_email'));
+        $arr = $this->api_guest->extension_settings(["ext" => "mod_email"]);
         $this->assertIsArray($arr);
     }
 }

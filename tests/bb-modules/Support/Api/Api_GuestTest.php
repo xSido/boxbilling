@@ -2,7 +2,6 @@
 
 namespace Box\Tests\Mod\Support\Api;
 
-
 class Api_GuestTest extends \BBTestCase
 {
     /**
@@ -17,29 +16,34 @@ class Api_GuestTest extends \BBTestCase
 
     public function testTicket_create()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Support\Service')
-            ->setMethods(array('ticketCreateForGuest'))->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('ticketCreateForGuest')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Support\Service")
+            ->setMethods(["ticketCreateForGuest"])
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("ticketCreateForGuest")
             ->will($this->returnValue(sha1(uniqid())));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
+        $di = new \Box_Di();
+        $di["validator"] = $validatorMock;
+        $this->guestApi->setDi($di);
 
-        $di              = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $this->guestApi ->setDi($di);
+        $this->guestApi->setService($serviceMock);
 
-        $this->guestApi ->setService($serviceMock);
-
-        $data   = array(
-            'name'    => 'Name',
-            'email'   => 'email@wxample.com',
-            'subject' => 'Subject',
-            'message' => 'Message',
-        );
+        $data = [
+            "name" => "Name",
+            "email" => "email@wxample.com",
+            "subject" => "Subject",
+            "message" => "Message",
+        ];
         $result = $this->guestApi->ticket_create($data);
 
         $this->assertIsString($result);
@@ -48,29 +52,34 @@ class Api_GuestTest extends \BBTestCase
 
     public function testTicket_createMessageTooShortException()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Support\Service')
-            ->setMethods(array('ticketCreateForGuest'))->getMock();
-        $serviceMock->expects($this->never())->method('ticketCreateForGuest')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Support\Service")
+            ->setMethods(["ticketCreateForGuest"])
+            ->getMock();
+        $serviceMock
+            ->expects($this->never())
+            ->method("ticketCreateForGuest")
             ->will($this->returnValue(sha1(uniqid())));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
+        $di = new \Box_Di();
+        $di["validator"] = $validatorMock;
+        $this->guestApi->setDi($di);
 
-        $di              = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $this->guestApi ->setDi($di);
+        $this->guestApi->setService($serviceMock);
 
-        $this->guestApi ->setService($serviceMock);
-
-        $data   = array(
-            'name'    => 'Name',
-            'email'   => 'email@wxample.com',
-            'subject' => 'Subject',
-            'message' => '',
-        );
+        $data = [
+            "name" => "Name",
+            "email" => "email@wxample.com",
+            "subject" => "Subject",
+            "message" => "",
+        ];
 
         $this->expectException(\Box_Exception::class);
         $result = $this->guestApi->ticket_create($data);
@@ -81,28 +90,35 @@ class Api_GuestTest extends \BBTestCase
 
     public function testTicket_get()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Support\Service')
-            ->setMethods(array('publicFindOneByHash', 'publicToApiArray'))->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('publicFindOneByHash')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Support\Service")
+            ->setMethods(["publicFindOneByHash", "publicToApiArray"])
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("publicFindOneByHash")
             ->will($this->returnValue(new \Model_SupportPTicket()));
-        $serviceMock->expects($this->atLeastOnce())->method('publicToApiArray')
-            ->will($this->returnValue(array()));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("publicToApiArray")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
+        $di = new \Box_Di();
+        $di["validator"] = $validatorMock;
+        $this->guestApi->setDi($di);
 
-        $di              = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $this->guestApi ->setDi($di);
+        $this->guestApi->setService($serviceMock);
 
-        $this->guestApi ->setService($serviceMock);
-
-        $data   = array(
-            'hash' => sha1(uniqid()),
-        );
+        $data = [
+            "hash" => sha1(uniqid()),
+        ];
         $result = $this->guestApi->ticket_get($data);
 
         $this->assertIsArray($result);
@@ -110,28 +126,35 @@ class Api_GuestTest extends \BBTestCase
 
     public function testTicket_close()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Support\Service')
-            ->setMethods(array('publicFindOneByHash', 'publicCloseTicket'))->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('publicFindOneByHash')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Support\Service")
+            ->setMethods(["publicFindOneByHash", "publicCloseTicket"])
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("publicFindOneByHash")
             ->will($this->returnValue(new \Model_SupportPTicket()));
-        $serviceMock->expects($this->atLeastOnce())->method('publicCloseTicket')
-            ->will($this->returnValue(array()));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("publicCloseTicket")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
+        $di = new \Box_Di();
+        $di["validator"] = $validatorMock;
+        $this->guestApi->setDi($di);
 
-        $di              = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $this->guestApi ->setDi($di);
+        $this->guestApi->setService($serviceMock);
 
-        $this->guestApi ->setService($serviceMock);
-
-        $data   = array(
-            'hash' => sha1(uniqid()),
-        );
+        $data = [
+            "hash" => sha1(uniqid()),
+        ];
         $result = $this->guestApi->ticket_close($data);
 
         $this->assertIsArray($result);
@@ -139,32 +162,38 @@ class Api_GuestTest extends \BBTestCase
 
     public function testTicket_reply()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Support\Service')
-            ->setMethods(array('publicFindOneByHash', 'publicTicketReplyForGuest'))->getMock();
-        $serviceMock->expects($this->atLeastOnce())->method('publicFindOneByHash')
+        $serviceMock = $this->getMockBuilder("\Box\Mod\Support\Service")
+            ->setMethods(["publicFindOneByHash", "publicTicketReplyForGuest"])
+            ->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("publicFindOneByHash")
             ->will($this->returnValue(new \Model_SupportPTicket()));
-        $serviceMock->expects($this->atLeastOnce())->method('publicTicketReplyForGuest')
-            ->will($this->returnValue(array()));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("publicTicketReplyForGuest")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
 
+        $di = new \Box_Di();
+        $di["validator"] = $validatorMock;
+        $this->guestApi->setDi($di);
 
-        $di              = new \Box_Di();
-        $di['validator'] = $validatorMock;
-        $this->guestApi ->setDi($di);
+        $this->guestApi->setService($serviceMock);
 
-        $this->guestApi ->setService($serviceMock);
-
-        $data   = array(
-            'hash'    => sha1(uniqid()),
-            'message' => 'Message'
-        );
+        $data = [
+            "hash" => sha1(uniqid()),
+            "message" => "Message",
+        ];
         $result = $this->guestApi->ticket_reply($data);
 
         $this->assertIsArray($result);
     }
 }
- 

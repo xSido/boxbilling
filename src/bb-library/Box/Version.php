@@ -10,13 +10,12 @@
  * with this source code in the file LICENSE
  */
 
-
 final class Box_Version
 {
-    const VERSION = '0.0.1';
+    const VERSION = "0.0.1";
 
-    const TYPE_FREE = 'free';
-    const TYPE_PRO  = 'pro';
+    const TYPE_FREE = "free";
+    const TYPE_PRO = "pro";
 
     /**
      * Compare the specified BoxBilling version string $version
@@ -31,7 +30,7 @@ final class Box_Version
     public static function compareVersion($version)
     {
         $version = strtolower($version);
-        $version = preg_replace('/(\d)pr(\d?)/', '$1a$2', $version);
+        $version = preg_replace("/(\d)pr(\d?)/", '$1a$2', $version);
         return version_compare($version, strtolower(self::VERSION));
     }
 }

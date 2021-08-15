@@ -6,38 +6,38 @@ class Box_ModTest extends PHPUnit\Framework\TestCase
 {
     public function testEmptyConfig()
     {
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(null));
 
         $di = new Box_Di();
-        $di['config'] = array('salt'=>'salt');
-        $di['db'] = $db;
+        $di["config"] = ["salt" => "salt"];
+        $di["db"] = $db;
 
-        $mod = new Box_Mod('api');
+        $mod = new Box_Mod("api");
         $mod->setDi($di);
         $array = $mod->getConfig();
-        $this->assertEquals(array(), $array);
+        $this->assertEquals([], $array);
     }
 
     public function testCoreMod()
     {
-        $mod = new Box_Mod('api');
+        $mod = new Box_Mod("api");
         $this->assertTrue($mod->isCore());
-        
+
         $array = $mod->getCoreModules();
         $this->assertIsArray($array);
-        
-        $mod = new Box_Mod('example');
+
+        $mod = new Box_Mod("example");
         $this->assertFalse($mod->isCore());
     }
-    
+
     public function testExampleMod()
     {
-        $mod = new Box_Mod('exaMple');
+        $mod = new Box_Mod("exaMple");
 
-        $this->assertEquals('example', $mod->getName());
+        $this->assertEquals("example", $mod->getName());
 
         $bool = $mod->hasService();
         $this->assertTrue($bool);
@@ -64,9 +64,9 @@ class Box_ModTest extends PHPUnit\Framework\TestCase
     public function testManifest()
     {
         $di = new Box_Di();
-        $di['url'] = new Box_Url();
+        $di["url"] = new Box_Url();
 
-        $mod = new Box_Mod('exaMplE');
+        $mod = new Box_Mod("exaMplE");
         $mod->setDi($di);
 
         $bool = $mod->hasManifest();
@@ -78,16 +78,17 @@ class Box_ModTest extends PHPUnit\Framework\TestCase
 
     public function testInstall()
     {
-        $db_mock = $this->getMockBuilder('Box_Database')->getMock();
-        $db_mock->expects($this->atLeastOnce())
-            ->method('exec')
+        $db_mock = $this->getMockBuilder("Box_Database")->getMock();
+        $db_mock
+            ->expects($this->atLeastOnce())
+            ->method("exec")
             ->will($this->returnValue(true));
 
         $di = new Box_Di();
-        $di['db'] = $db_mock;
-        $di['url'] = new Box_Url();
+        $di["db"] = $db_mock;
+        $di["url"] = new Box_Url();
 
-        $mod = new Box_Mod('example');
+        $mod = new Box_Mod("example");
         $mod->setDi($di);
 
         $bool = $mod->install();
@@ -102,12 +103,13 @@ class Box_ModTest extends PHPUnit\Framework\TestCase
 
     public function testgetServiceSub()
     {
-        $mod = new Box_Mod('Invoice');
-        $subServiceName = 'transaction';
+        $mod = new Box_Mod("Invoice");
+        $subServiceName = "transaction";
 
         $subService = $mod->getService($subServiceName);
-        $this->assertInstanceOf(\Box\Mod\Invoice\ServiceTransaction::class, $subService);
-
+        $this->assertInstanceOf(
+            \Box\Mod\Invoice\ServiceTransaction::class,
+            $subService
+        );
     }
-
 }

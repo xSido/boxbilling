@@ -13,7 +13,7 @@ class Payment_Adapter_Dummy
 
     public function getConfig()
     {
-        return array();
+        return [];
     }
 
     public function getType()
@@ -23,17 +23,17 @@ class Payment_Adapter_Dummy
 
     public function getServiceUrl()
     {
-		return 'https://www.google.com/?q=dummy';
+        return "https://www.google.com/?q=dummy";
     }
 
     public function singlePayment(Payment_Invoice $invoice)
     {
-        return array();
+        return [];
     }
 
     public function recurrentPayment(Payment_Invoice $invoice)
     {
-        return array();
+        return [];
     }
 
     public function ipn($data, Payment_Invoice $invoice)

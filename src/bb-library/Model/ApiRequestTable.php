@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_ApiRequestTable implements \Box\InjectionAwareInterface
 {
     /**
@@ -36,28 +35,28 @@ class Model_ApiRequestTable implements \Box\InjectionAwareInterface
 
     public function logRequest($request, $ip)
     {
-        $r = $this->di['db']->dispense('ApiRequest');
+        $r = $this->di["db"]->dispense("ApiRequest");
         $r->ip = $ip;
         $r->request = $request;
-        $r->created_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($r);
+        $r->created_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($r);
     }
 
     public function getRequestCount($since, $ip = null)
     {
-        $sinceIso = date('Y-m-d H:i:s', $since);
+        $sinceIso = date("Y-m-d H:i:s", $since);
 
         $sql = 'SELECT count(id) as cc
                 WHERE created_at > :since';
 
-        $params = array(':since' => $sinceIso);
+        $params = [":since" => $sinceIso];
 
-        if(NULL !== $ip) {
-            $sql .= ' AND ip = :ip';
-            $params[':ip'] = $ip;
+        if (null !== $ip) {
+            $sql .= " AND ip = :ip";
+            $params[":ip"] = $ip;
         }
 
-        $stmt = $this->di['pdo']->prepare($sql);
+        $stmt = $this->di["pdo"]->prepare($sql);
         $stmt->execute($params);
 
         return $stmt->fetchColumn($stmt);

@@ -6,7 +6,6 @@
 // of the GNU GPL
 // $Id: UnlockDomain.php,v 1.2 2011/05/13 13:21:26 gavin Exp $
 
-class CNic_Toolkit_Response_UnlockDomain extends CNic_Toolkit_Response {
-
+class CNic_Toolkit_Response_UnlockDomain extends CNic_Toolkit_Response
+{
 }
-

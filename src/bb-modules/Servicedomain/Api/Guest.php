@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Servicedomain\Api;
 
 /**
@@ -26,28 +25,28 @@ class Guest extends \Api_Abstract
      *
      * @return array - list of TLDs
      */
-    public function tlds($data = array())
+    public function tlds($data = [])
     {
-        $allow_register = $this->di['array_get']($data, 'allow_register');
-        $allow_transfer = $this->di['array_get']($data, 'allow_transfer');
+        $allow_register = $this->di["array_get"]($data, "allow_register");
+        $allow_transfer = $this->di["array_get"]($data, "allow_transfer");
 
-        $where = array();
+        $where = [];
         $where[] = "active = 1";
 
-        if (NULL !== $allow_register) {
+        if (null !== $allow_register) {
             $where[] = "allow_register = 1";
         }
 
-        if (NULL !== $allow_transfer) {
+        if (null !== $allow_transfer) {
             $where[] = "allow_transfer = 1";
         }
 
         if (!empty($where)) {
-            $query = implode(' AND ', $where);
+            $query = implode(" AND ", $where);
         }
 
-        $tlds   = $this->di['db']->find('Tld', $query, array());
-        $result = array();
+        $tlds = $this->di["db"]->find("Tld", $query, []);
+        $result = [];
         foreach ($tlds as $model) {
             $result[] = $this->getService()->tldToApiArray($model);
         }
@@ -64,14 +63,14 @@ class Guest extends \Api_Abstract
      */
     public function pricing($data)
     {
-        $required = array(
-            'tld' => 'TLD is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "tld" => "TLD is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $model = $this->getService()->tldFindOneByTld($data['tld']);
+        $model = $this->getService()->tldFindOneByTld($data["tld"]);
         if (!$model instanceof \Model_Tld) {
-            throw new \Box_Exception('TLD not found');
+            throw new \Box_Exception("TLD not found");
         }
 
         return $this->getService()->tldToApiArray($model);
@@ -88,28 +87,32 @@ class Guest extends \Api_Abstract
      */
     public function check($data)
     {
-        $required = array(
-            'tld' => 'TLD is missing',
-            'sld' => 'SLD is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "tld" => "TLD is missing",
+            "sld" => "SLD is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $sld       = htmlspecialchars($data['sld'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $validator = $this->di['validator'];
+        $sld = htmlspecialchars($data["sld"], ENT_QUOTES | ENT_HTML5, "UTF-8");
+        $validator = $this->di["validator"];
         if (!$validator->isSldValid($sld)) {
-            throw new \Box_Exception('Domain :domain is not valid', array(':domain' => $sld));
+            throw new \Box_Exception("Domain :domain is not valid", [
+                ":domain" => $sld,
+            ]);
         }
 
-        $tld = $this->getService()->tldFindOneByTld($data['tld']);
+        $tld = $this->getService()->tldFindOneByTld($data["tld"]);
         if (!$tld instanceof \Model_Tld) {
-            throw new \Box_Exception('Domain availability could not be determined. TLD is not active.');
+            throw new \Box_Exception(
+                "Domain availability could not be determined. TLD is not active."
+            );
         }
 
         if (!$this->getService()->isDomainAvailable($tld, $sld)) {
-            throw new \Box_Exception('Domain is not available.');
+            throw new \Box_Exception("Domain is not available.");
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -123,20 +126,20 @@ class Guest extends \Api_Abstract
      */
     public function can_be_transferred($data)
     {
-        $required = array(
-            'tld' => 'TLD is missing',
-            'sld' => 'SLD is missing',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "tld" => "TLD is missing",
+            "sld" => "SLD is missing",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $tld = $this->getService()->tldFindOneByTld($data['tld']);
+        $tld = $this->getService()->tldFindOneByTld($data["tld"]);
         if (!$tld instanceof \Model_Tld) {
-            throw new \Box_Exception('TLD is not active.');
+            throw new \Box_Exception("TLD is not active.");
         }
-        if (!$this->getService()->canBeTransfered($tld, $data['sld'])) {
-            throw new \Box_Exception('Domain can not be transferred.');
+        if (!$this->getService()->canBeTransfered($tld, $data["sld"])) {
+            throw new \Box_Exception("Domain can not be transferred.");
         }
 
-        return TRUE;
+        return true;
     }
 }

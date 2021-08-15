@@ -10,10 +10,9 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_TwigLoader extends Twig\Loader\FilesystemLoader
 {
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Constructor.
@@ -22,28 +21,27 @@ class Box_TwigLoader extends Twig\Loader\FilesystemLoader
      */
     public function __construct(array $options)
     {
-        if(!isset($options['mods'])) {
-            throw new \Box_Exception('Missing mods param for Box_TwigLoader');
+        if (!isset($options["mods"])) {
+            throw new \Box_Exception("Missing mods param for Box_TwigLoader");
         }
 
-        if(!isset($options['theme'])) {
-            throw new \Box_Exception('Missing theme param for Box_TwigLoader');
+        if (!isset($options["theme"])) {
+            throw new \Box_Exception("Missing theme param for Box_TwigLoader");
         }
 
-        if(!isset($options['type'])) {
-            throw new \Box_Exception('Missing type param for Box_TwigLoader');
+        if (!isset($options["type"])) {
+            throw new \Box_Exception("Missing type param for Box_TwigLoader");
         }
 
         $this->options = $options;
-        $paths_arr = array($options['mods'], $options['theme']);
+        $paths_arr = [$options["mods"], $options["theme"]];
         $this->setPaths($paths_arr);
     }
-
 
     protected function findTemplate($name, $throw = true)
     {
         // normalize name
-        $name = preg_replace('#/{2,}#', '/', strtr($name, '\\', '/'));
+        $name = preg_replace("#/{2,}#", "/", strtr($name, "\\", "/"));
 
         if (isset($this->cache[$name])) {
             return $this->cache[$name];
@@ -51,18 +49,30 @@ class Box_TwigLoader extends Twig\Loader\FilesystemLoader
 
         $name_split = explode("_", $name);
 
-        $paths = array();
+        $paths = [];
         $paths[] = $this->options["theme"] . DIRECTORY_SEPARATOR . "html";
-        if(isset($name_split[1])) {
-            $paths[] = $this->options["mods"] . DIRECTORY_SEPARATOR . ucfirst($name_split[1]). DIRECTORY_SEPARATOR . "html_" . $this->options["type"];
+        if (isset($name_split[1])) {
+            $paths[] =
+                $this->options["mods"] .
+                DIRECTORY_SEPARATOR .
+                ucfirst($name_split[1]) .
+                DIRECTORY_SEPARATOR .
+                "html_" .
+                $this->options["type"];
         }
 
-        foreach($paths as $path) {
-            if(file_exists($path . DIRECTORY_SEPARATOR . $name)) {
-                return $this->cache[$name] = $path . '/' . $name;
+        foreach ($paths as $path) {
+            if (file_exists($path . DIRECTORY_SEPARATOR . $name)) {
+                return $this->cache[$name] = $path . "/" . $name;
             }
         }
 
-        throw new \Twig\Error\LoaderError(sprintf('Unable to find template "%s" (looked into: %s).', $name,  implode(', ', $paths)));
+        throw new \Twig\Error\LoaderError(
+            sprintf(
+                'Unable to find template "%s" (looked into: %s).',
+                $name,
+                implode(", ", $paths)
+            )
+        );
     }
 }

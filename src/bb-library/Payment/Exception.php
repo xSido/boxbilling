@@ -18,7 +18,7 @@ class Payment_Exception extends Exception
      * @param   string   error message
      * @param   array    translation variables
      */
-    public function __construct($message, array $variables = NULL, $code = 0)
+    public function __construct($message, array $variables = null, $code = 0)
     {
         // Set the message
         $message = __($message, $variables);

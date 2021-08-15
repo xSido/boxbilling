@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Servicelicense\Plugin;
 
 class Simple
@@ -41,19 +40,22 @@ class Simple
      * @param array $config
      * @return string
      */
-    public function generate(\Model_ServiceLicense $service, \Model_ClientOrder $order, array $config)
-    {
+    public function generate(
+        \Model_ServiceLicense $service,
+        \Model_ClientOrder $order,
+        array $config
+    ) {
         // Optional: to get customer data
         //$client = $this->di['db']->load('Client', $order->client_id);
 
-        $length = isset($config['length']) ? $config['length'] : 25;
-        $prefix = isset($config['prefix']) ? $config['prefix'] : NULL;
+        $length = isset($config["length"]) ? $config["length"] : 25;
+        $prefix = isset($config["prefix"]) ? $config["prefix"] : null;
 
-        $character_array = array_merge(range('A', 'Z'), range(1, 9));
+        $character_array = array_merge(range("A", "Z"), range(1, 9));
         $size = count($character_array) - 1;
-        $string = '';
-        for($i = 1; $i < $length; $i++) {
-            $string .= ($i % 5 == 0) ? '-' : $character_array[rand(0, $size)];
+        $string = "";
+        for ($i = 1; $i < $length; $i++) {
+            $string .= $i % 5 == 0 ? "-" : $character_array[rand(0, $size)];
         }
         return $prefix . $string;
     }

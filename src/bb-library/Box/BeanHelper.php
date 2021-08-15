@@ -10,8 +10,9 @@
  * with this source code in the file LICENSE
  */
 
-
-class Box_BeanHelper extends \RedBeanPHP\BeanHelper\SimpleFacadeBeanHelper implements \Box\InjectionAwareInterface
+class Box_BeanHelper
+    extends \RedBeanPHP\BeanHelper\SimpleFacadeBeanHelper
+    implements \Box\InjectionAwareInterface
 {
     protected $di;
 
@@ -31,33 +32,34 @@ class Box_BeanHelper extends \RedBeanPHP\BeanHelper\SimpleFacadeBeanHelper imple
         return $this->di;
     }
 
-    public function getModelForBean( \RedBeanPHP\OODBBean $bean )
+    public function getModelForBean(\RedBeanPHP\OODBBean $bean)
     {
-        $prefix    = '\\Model_';
-        $model     = $bean->getMeta( 'type' );
-        $modelName = $prefix.$this->underscoreToCamelCase($model);
+        $prefix = "\\Model_";
+        $model = $bean->getMeta("type");
+        $modelName = $prefix . $this->underscoreToCamelCase($model);
 
-        if ( !class_exists( $modelName ) ) {
+        if (!class_exists($modelName)) {
             return null;
         }
 
         $model = new $modelName();
-        if($model instanceof \Box\InjectionAwareInterface) {
-            $model->setDi( $this->di );
+        if ($model instanceof \Box\InjectionAwareInterface) {
+            $model->setDi($this->di);
         }
 
-        $model->loadBean( $bean );
+        $model->loadBean($bean);
 
         return $model;
     }
 
-    private function underscoreToCamelCase( $string, $first_char_caps = true)
+    private function underscoreToCamelCase($string, $first_char_caps = true)
     {
-        if( $first_char_caps === true )
-        {
+        if ($first_char_caps === true) {
             $string[0] = strtoupper($string[0]);
         }
-        $func = function($c){ return strtoupper($c[1]); };
-        return preg_replace_callback('/_([a-z])/', $func, $string);
+        $func = function ($c) {
+            return strtoupper($c[1]);
+        };
+        return preg_replace_callback("/_([a-z])/", $func, $string);
     }
-} 
+}

@@ -1,11 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Hook\Api;
 
-
-class AdminTest extends \BBTestCase {
-
+class AdminTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Hook\Api\Admin
      */
@@ -15,7 +13,6 @@ class AdminTest extends \BBTestCase {
     {
         $this->api = new \Box\Mod\Hook\Api\Admin();
     }
-
 
     public function testgetDi()
     {
@@ -27,48 +24,63 @@ class AdminTest extends \BBTestCase {
 
     public function testget_list()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Hook\Service')->getMock();
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Hook\Service"
+        )->getMock();
 
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getSearchQuery')
-            ->will($this->returnValue(array('SqlString', array())));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getSearchQuery")
+            ->will($this->returnValue(["SqlString", []]));
 
-        $paginatorMock = $this->getMockBuilder('\Box_Pagination')->disableOriginalConstructor()->getMock();
-        $paginatorMock->expects($this->atLeastOnce())
-            ->method('getSimpleResultSet')
-            ->will($this->returnValue(array()));
+        $paginatorMock = $this->getMockBuilder("\Box_Pagination")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $paginatorMock
+            ->expects($this->atLeastOnce())
+            ->method("getSimpleResultSet")
+            ->will($this->returnValue([]));
 
         $di = new \Box_Di();
-        $di['pager'] = $paginatorMock;
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["pager"] = $paginatorMock;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
         $this->api->setDi($di);
         $this->api->setService($serviceMock);
-        $result = $this->api->get_list(array());
+        $result = $this->api->get_list([]);
         $this->assertIsArray($result);
     }
 
     public function testcall()
     {
-        $data['event'] = 'testEvent';
+        $data["event"] = "testEvent";
 
-        $configMock = array('debug' => true);
+        $configMock = ["debug" => true];
 
-        $logMock = $this->getMockBuilder('\Box_log')->getMock();
+        $logMock = $this->getMockBuilder("\Box_log")->getMock();
 
-        $eventManager = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventManager->expects($this->atLeastOnce())
-            ->method('fire')
+        $eventManager = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventManager
+            ->expects($this->atLeastOnce())
+            ->method("fire")
             ->will($this->returnValue(1));
 
         $di = new \Box_Di();
-        $di['config'] = $configMock;
-        $di['logger'] = new \Box_Log();
-        $di['events_manager'] = $eventManager;
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["config"] = $configMock;
+        $di["logger"] = new \Box_Log();
+        $di["events_manager"] = $eventManager;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
         $this->api->setDi($di);
@@ -78,7 +90,7 @@ class AdminTest extends \BBTestCase {
 
     public function testcallMissingEventParam()
     {
-        $data['event'] = null;
+        $data["event"] = null;
 
         $result = $this->api->call($data);
         $this->assertIsBool($result);
@@ -87,21 +99,27 @@ class AdminTest extends \BBTestCase {
 
     public function testbatch_connect()
     {
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Hook\Service')->getMock();
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Hook\Service"
+        )->getMock();
 
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('batchConnect')
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("batchConnect")
             ->will($this->returnValue(1));
 
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->api->setDi($di);
 
         $this->api->setService($serviceMock);
-        $result = $this->api->batch_connect(array());
+        $result = $this->api->batch_connect([]);
         $this->assertNotEmpty($result);
     }
 }
- 

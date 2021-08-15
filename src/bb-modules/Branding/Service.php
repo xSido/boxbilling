@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Branding;
 
 class Service implements \Box\InjectionAwareInterface
@@ -37,5 +36,4 @@ class Service implements \Box\InjectionAwareInterface
     {
         return true;
     }
-
 }

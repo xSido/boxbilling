@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Activity\Controller;
 
 class Admin implements \Box\InjectionAwareInterface
@@ -35,34 +34,34 @@ class Admin implements \Box\InjectionAwareInterface
 
     public function fetchNavigation()
     {
-        return array(
-            'group'=> array(
-                'index'     => 700,
-                'location'  =>  'activity',
-                'label' => 'Activity',
-                'class'     => 'graphs',
-                'sprite_class' => 'dark-sprite-icon sprite-graph',
-                ),
-            'subpages'=> array(
-                array(
-                    'location'  =>  'activity',
-                    'label' => 'Events history',
-                    'index'     => 100,
-                    'uri' => $this->di['url']->adminLink('activity'),
-                    'class'     => '',
-                ),
-            ),
-        );
+        return [
+            "group" => [
+                "index" => 700,
+                "location" => "activity",
+                "label" => "Activity",
+                "class" => "graphs",
+                "sprite_class" => "dark-sprite-icon sprite-graph",
+            ],
+            "subpages" => [
+                [
+                    "location" => "activity",
+                    "label" => "Events history",
+                    "index" => 100,
+                    "uri" => $this->di["url"]->adminLink("activity"),
+                    "class" => "",
+                ],
+            ],
+        ];
     }
-    
+
     public function register(\Box_App &$app)
     {
-        $app->get('/activity',           'get_index', array(), get_class($this));
+        $app->get("/activity", "get_index", [], get_class($this));
     }
 
     public function get_index(\Box_App $app)
     {
-        $this->di['is_admin_logged'];
-        return $app->render('mod_activity_index');
+        $this->di["is_admin_logged"];
+        return $app->render("mod_activity_index");
     }
 }

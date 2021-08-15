@@ -12,5 +12,4 @@
 
 class Model_TldRegistrar extends RedBean_SimpleModel
 {
-
 }

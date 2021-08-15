@@ -10,10 +10,9 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_SupportPTicket extends RedBean_SimpleModel
 {
-    const OPENED = 'open';
-    const ONHOLD = 'on_hold';
-    const CLOSED = 'closed';
+    const OPENED = "open";
+    const ONHOLD = "on_hold";
+    const CLOSED = "closed";
 }

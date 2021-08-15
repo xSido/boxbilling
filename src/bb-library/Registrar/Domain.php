@@ -36,7 +36,7 @@ class Registrar_Domain
 
     public function setRegistrationPeriod($years)
     {
-        $this->_period = (int)$years;
+        $this->_period = (int) $years;
         return $this;
     }
 
@@ -129,7 +129,7 @@ class Registrar_Domain
 
     public function setPrivacyEnabled($param)
     {
-        $this->_privacy = (bool)$param;
+        $this->_privacy = (bool) $param;
         return $this;
     }
 
@@ -146,8 +146,8 @@ class Registrar_Domain
 
     public function getTld($with_dot = true)
     {
-        if($with_dot === false && $this->_tld[0] == '.') {
-            return ltrim($this->_tld, '.');
+        if ($with_dot === false && $this->_tld[0] == ".") {
+            return ltrim($this->_tld, ".");
         }
         return $this->_tld;
     }
@@ -218,35 +218,44 @@ class Registrar_Domain
         return $this->_locked;
     }
 
-    public function __toString() {
-        $c = '';
-        $c .= sprintf("Name: %s", $this->getName()).PHP_EOL;
-        $c .= sprintf("TLD: %s", $this->getTld()).PHP_EOL;
-        $c .= sprintf("SLD: %s", $this->getSld()).PHP_EOL;
+    public function __toString()
+    {
+        $c = "";
+        $c .= sprintf("Name: %s", $this->getName()) . PHP_EOL;
+        $c .= sprintf("TLD: %s", $this->getTld()) . PHP_EOL;
+        $c .= sprintf("SLD: %s", $this->getSld()) . PHP_EOL;
 
-        $c .= sprintf("EPP: %s", $this->getEpp()).PHP_EOL;
-        $c .= sprintf("Registration period: %s year(s)", $this->getRegistrationPeriod()).PHP_EOL;
+        $c .= sprintf("EPP: %s", $this->getEpp()) . PHP_EOL;
+        $c .=
+            sprintf(
+                "Registration period: %s year(s)",
+                $this->getRegistrationPeriod()
+            ) . PHP_EOL;
 
-        $registered_at = ($this->getRegistrationTime()) ? date('Y-m-d', $this->getRegistrationTime()) : '-';
-        $c .= sprintf("Registered at: %s", $registered_at).PHP_EOL;
+        $registered_at = $this->getRegistrationTime()
+            ? date("Y-m-d", $this->getRegistrationTime())
+            : "-";
+        $c .= sprintf("Registered at: %s", $registered_at) . PHP_EOL;
 
-        $expires_at = ($this->getExpirationTime()) ? date('Y-m-d', $this->getExpirationTime()) : '-';
-        $c .= sprintf("Expires at: %s", $expires_at).PHP_EOL;
+        $expires_at = $this->getExpirationTime()
+            ? date("Y-m-d", $this->getExpirationTime())
+            : "-";
+        $c .= sprintf("Expires at: %s", $expires_at) . PHP_EOL;
 
-        $privacy = ($this->getPrivacyEnabled()) ? 'Yes' : 'No';
+        $privacy = $this->getPrivacyEnabled() ? "Yes" : "No";
         $c .= sprintf("WHOIS Privacy Protection enabled: %s", $privacy);
-        $c .=PHP_EOL;
-        $c .=PHP_EOL;
-        
-        $c .= sprintf("Nameserver #1: %s", $this->getNs1()).PHP_EOL;
-        $c .= sprintf("Nameserver #2: %s", $this->getNs2()).PHP_EOL;
-        $c .= sprintf("Nameserver #3: %s", $this->getNs3()).PHP_EOL;
-        $c .= sprintf("Nameserver #4: %s", $this->getNs4()).PHP_EOL;
+        $c .= PHP_EOL;
+        $c .= PHP_EOL;
 
-        if($this->getContactRegistrar() instanceof Registrar_Domain_Contact) {
-            $c .=PHP_EOL;
-            $c .=PHP_EOL;
-            $c .= sprintf("Contact Registrar").PHP_EOL;
+        $c .= sprintf("Nameserver #1: %s", $this->getNs1()) . PHP_EOL;
+        $c .= sprintf("Nameserver #2: %s", $this->getNs2()) . PHP_EOL;
+        $c .= sprintf("Nameserver #3: %s", $this->getNs3()) . PHP_EOL;
+        $c .= sprintf("Nameserver #4: %s", $this->getNs4()) . PHP_EOL;
+
+        if ($this->getContactRegistrar() instanceof Registrar_Domain_Contact) {
+            $c .= PHP_EOL;
+            $c .= PHP_EOL;
+            $c .= sprintf("Contact Registrar") . PHP_EOL;
             $c .= $this->getContactRegistrar()->__toString();
         }
 

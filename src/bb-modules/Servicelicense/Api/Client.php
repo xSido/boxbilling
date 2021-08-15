@@ -18,9 +18,9 @@ class Client extends \Api_Abstract
 {
     /**
      * Reset license validation rules.
-     * 
+     *
      * @param int $order_id - License service order id
-     * @return boolean 
+     * @return boolean
      */
     public function reset($data)
     {
@@ -30,28 +30,32 @@ class Client extends \Api_Abstract
 
     public function _getService(array $data)
     {
-        $required = array('order_id' => 'Order id is required');
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = ["order_id" => "Order id is required"];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
         $client = $this->getIdentity();
 
-        $bindings = array(
-            ':id'        => $data['order_id'],
-            ':client_id' => $client->id
+        $bindings = [
+            ":id" => $data["order_id"],
+            ":client_id" => $client->id,
+        ];
+
+        $order = $this->di["db"]->findOne(
+            "ClientOrder",
+            "id = :id AND client_id = :client_id",
+            $bindings
         );
 
-        $order = $this->di['db']->findOne('ClientOrder', 'id = :id AND client_id = :client_id', $bindings);
-
         if (!$order instanceof \Model_ClientOrder) {
-            throw new \Box_Exception('Order not found');
+            throw new \Box_Exception("Order not found");
         }
 
-        $orderService = $this->di['mod_service']('order');
+        $orderService = $this->di["mod_service"]("order");
         $s = $orderService->getOrderService($order);
-        if(!$s instanceof \Model_ServiceLicense) {
-            throw new \Box_Exception('Order is not activated');
+        if (!$s instanceof \Model_ServiceLicense) {
+            throw new \Box_Exception("Order is not activated");
         }
-        
+
         return $s;
     }
 }

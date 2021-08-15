@@ -45,7 +45,7 @@ class Service
     public function install()
     {
         // execute sql script if needed
-        $db = $this->di['db'];
+        $db = $this->di["db"];
         $db->exec("SELECT NOW()");
 
         //throw new \Box_Exception("Throw exception to terminate module installation process with a message", array(), 123);
@@ -88,20 +88,20 @@ class Service
      */
     public function getSearchQuery($data)
     {
-        $params = array();
-        $sql="SELECT meta_key, meta_value
+        $params = [];
+        $sql = "SELECT meta_key, meta_value
             FROM extension_meta
             WHERE extension = 'example' ";
 
-        $client_id = $this->di['array_get']($data, 'client_id', NULL);
+        $client_id = $this->di["array_get"]($data, "client_id", null);
 
-        if(NULL !== $client_id) {
-            $sql .= ' AND client_id = :client_id';
-            $params[':client_id'] = $client_id;
+        if (null !== $client_id) {
+            $sql .= " AND client_id = :client_id";
+            $params[":client_id"] = $client_id;
         }
 
-        $sql .= ' ORDER BY created_at DESC';
-        return array($sql, $params);
+        $sql .= " ORDER BY created_at DESC";
+        return [$sql, $params];
     }
 
     /**
@@ -113,7 +113,7 @@ class Service
      *
      * @return array
      */
-    public function toApiArray($row, $role = 'guest', $deep = true)
+    public function toApiArray($row, $role = "guest", $deep = true)
     {
         return $row;
     }
@@ -141,7 +141,7 @@ class Service
         $di = $event->getDi();
 
         //@note almost in all cases you will need Admin API
-        $api = $di['api_admin'];
+        $api = $di["api_admin"];
 
         //sometimes you may need guest API
         //$api_guest = $di['api_guest'];
@@ -154,36 +154,47 @@ class Service
         // Use RedBean ORM in any place of BoxBilling where API call is not enough
         // First we need to find if we already have a counter for this IP
         // We will use extension_meta table to store this data.
-        $values = array(
-            'ext'        =>  'example',
-            'rel_type'   =>  'ip',
-            'rel_id'     =>  $params['ip'],
-            'meta_key'   =>  'counter',
+        $values = [
+            "ext" => "example",
+            "rel_type" => "ip",
+            "rel_id" => $params["ip"],
+            "meta_key" => "counter",
+        ];
+        $meta = $di["db"]->findOne(
+            "extension_meta",
+            "extension = :ext AND rel_type = :rel_type AND rel_id = :rel_id AND meta_key = :meta_key",
+            $values
         );
-        $meta = $di['db']->findOne('extension_meta', 'extension = :ext AND rel_type = :rel_type AND rel_id = :rel_id AND meta_key = :meta_key', $values);
-        if(!$meta) {
-            $meta = $di['db']->dispense('extension_meta');
+        if (!$meta) {
+            $meta = $di["db"]->dispense("extension_meta");
             //$count->client_id = null; // client id is not known in this situation
-            $meta->extension  = 'mod_example';
-            $meta->rel_type   = 'ip';
-            $meta->rel_id     = $params['ip'];
-            $meta->meta_key   = 'counter';
-            $meta->created_at = date('Y-m-d H:i:s');
+            $meta->extension = "mod_example";
+            $meta->rel_type = "ip";
+            $meta->rel_id = $params["ip"];
+            $meta->meta_key = "counter";
+            $meta->created_at = date("Y-m-d H:i:s");
         }
         $meta->meta_value = $meta->meta_value + 1;
-        $meta->updated_at = date('Y-m-d H:i:s');
-        $di['db']->store($meta);
+        $meta->updated_at = date("Y-m-d H:i:s");
+        $di["db"]->store($meta);
 
         // Now we can perform task depending on how many times wrong details were entered
 
         // We can log event if it repeats for 2 time
-        if($meta->meta_value > 2) {
-            $api->activity_log(array('m' => 'Client failed to enter correct login details ' . $meta->meta_value . ' time(s)'));
+        if ($meta->meta_value > 2) {
+            $api->activity_log([
+                "m" =>
+                    "Client failed to enter correct login details " .
+                    $meta->meta_value .
+                    " time(s)",
+            ]);
         }
 
         // if client gets funky, we block him
-        if($meta->meta_value > 30) {
-            throw new \Box_Exception('You have failed to login too many times. Contact support.');
+        if ($meta->meta_value > 30) {
+            throw new \Box_Exception(
+                "You have failed to login too many times. Contact support."
+            );
         }
     }
 
@@ -198,13 +209,13 @@ class Service
         $di = $event->getDi();
         $params = $event->getParameters();
 
-        $meta             = $di['db']->dispense('extension_meta');
-        $meta->extension  = 'mod_example';
-        $meta->meta_key   = 'event_params';
+        $meta = $di["db"]->dispense("extension_meta");
+        $meta->extension = "mod_example";
+        $meta->meta_key = "event_params";
         $meta->meta_value = json_encode($params);
-        $meta->created_at = date('Y-m-d H:i:s');
-        $meta->updated_at = date('Y-m-d H:i:s');
-        $di['db']->store($meta);
+        $meta->created_at = date("Y-m-d H:i:s");
+        $meta->updated_at = date("Y-m-d H:i:s");
+        $di["db"]->store($meta);
     }
 
     /**
@@ -213,7 +224,7 @@ class Service
      */
     public static function onBeforeGuestPublicTicketOpen(\Box_Event $event)
     {
-       /* Uncomment lines below in order to see this function in action */
+        /* Uncomment lines below in order to see this function in action */
 
         /*
         $data            = $event->getParameters();

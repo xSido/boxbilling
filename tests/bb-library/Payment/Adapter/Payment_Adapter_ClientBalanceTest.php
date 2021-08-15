@@ -1,23 +1,25 @@
 <?php
 
-
-class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
-
+class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase
+{
     public function testDi()
     {
         $di = new \Box_Di();
 
-        $adapterMock = $this->getMockBuilder('\Payment_Adapter_Interkassa')->disableOriginalConstructor()
-            ->setMethods(array('setDi', 'getDi'))
+        $adapterMock = $this->getMockBuilder("\Payment_Adapter_Interkassa")
+            ->disableOriginalConstructor()
+            ->setMethods(["setDi", "getDi"])
             ->getMock();
 
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('setDi')
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("setDi")
             ->with($di);
         $adapterMock->setDi($di);
 
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->willReturn($di);
 
         $getDi = $adapterMock->getDi();
@@ -28,7 +30,7 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
     {
         $adapter = new \Payment_Adapter_ClientBalance();
         $result = $adapter->getConfig();
-        $this->assertEquals(array(), $result);
+        $this->assertEquals([], $result);
     }
 
     public function testgetHtml_NotEnoughInBalance()
@@ -37,21 +39,22 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
         $invoiceModel->loadBean(new \RedBeanPHP\OODBBean());
 
         $di = new \Box_Di();
-        $dbMock = $this->getMockBuilder('\Box_Database')
-            ->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->with('Invoice')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->with("Invoice")
             ->willReturn($invoiceModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $adapterMock = $this->getMockBuilder('Payment_Adapter_ClientBalance')
+        $adapterMock = $this->getMockBuilder("Payment_Adapter_ClientBalance")
             ->disableOriginalConstructor()
-            ->setMethods(array('enoughInBalanceToCoverInvoice'))
+            ->setMethods(["enoughInBalanceToCoverInvoice"])
             ->getMock();
 
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('enoughInBalanceToCoverInvoice')
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("enoughInBalanceToCoverInvoice")
             ->with($invoiceModel)
             ->willReturn(false);
 
@@ -59,7 +62,7 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
         $invoiceId = 1;
         $result = $adapterMock->getHtml(null, $invoiceId, null);
         $this->assertIsString($result);
-        $this->assertEquals('Not enough in balance', $result);
+        $this->assertEquals("Not enough in balance", $result);
     }
 
     public function testgetHtml_InvoiceTypeDeposit()
@@ -68,31 +71,37 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
         $invoiceModel->loadBean(new \RedBeanPHP\OODBBean());
 
         $di = new \Box_Di();
-        $dbMock = $this->getMockBuilder('\Box_Database')
-            ->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->with('Invoice')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->with("Invoice")
             ->willReturn($invoiceModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $adapterMock = $this->getMockBuilder('Payment_Adapter_ClientBalance')
+        $adapterMock = $this->getMockBuilder("Payment_Adapter_ClientBalance")
             ->disableOriginalConstructor()
-            ->setMethods(array('enoughInBalanceToCoverInvoice'))
+            ->setMethods(["enoughInBalanceToCoverInvoice"])
             ->getMock();
 
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('enoughInBalanceToCoverInvoice')
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("enoughInBalanceToCoverInvoice")
             ->with($invoiceModel)
             ->willReturn(true);
 
-        $invoiceServiceMock = $this->getMockBuilder('\Box\Mod\Invoice\Service')->getMock();
-        $invoiceServiceMock->expects($this->atLeastOnce())
-            ->method('isInvoiceTypeDeposit')
+        $invoiceServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Invoice\Service"
+        )->getMock();
+        $invoiceServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isInvoiceTypeDeposit")
             ->with($invoiceModel)
             ->willReturn(true);
-        $di['mod_service'] = $di->protect(function($serviceName) use($invoiceServiceMock){
-            if ($serviceName == 'Invoice'){
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $invoiceServiceMock
+        ) {
+            if ($serviceName == "Invoice") {
                 return $invoiceServiceMock;
             }
         });
@@ -101,7 +110,10 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
         $invoiceId = 1;
         $result = $adapterMock->getHtml(null, $invoiceId, null);
         $this->assertIsString($result);
-        $this->assertEquals('Forbidden to pay deposit invoice with this gateway', $result);
+        $this->assertEquals(
+            "Forbidden to pay deposit invoice with this gateway",
+            $result
+        );
     }
 
     public function testgetHtml()
@@ -110,52 +122,59 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
         $invoiceModel->loadBean(new \RedBeanPHP\OODBBean());
 
         $di = new \Box_Di();
-        $dbMock = $this->getMockBuilder('\Box_Database')
-            ->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->with('Invoice')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->with("Invoice")
             ->willReturn($invoiceModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $adapterMock = $this->getMockBuilder('Payment_Adapter_ClientBalance')
+        $adapterMock = $this->getMockBuilder("Payment_Adapter_ClientBalance")
             ->disableOriginalConstructor()
-            ->setMethods(array('getServiceUrl', 'enoughInBalanceToCoverInvoice'))
+            ->setMethods(["getServiceUrl", "enoughInBalanceToCoverInvoice"])
             ->getMock();
 
         $invoiceId = 1;
-        $url = 'http://www.boxbilling.com/bb-ipn.php?bb-gateway_id=0&bb_invoice_id='.$invoiceId;
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('getServiceUrl')
+        $url =
+            "http://www.boxbilling.com/bb-ipn.php?bb-gateway_id=0&bb_invoice_id=" .
+            $invoiceId;
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("getServiceUrl")
             ->with($invoiceId)
             ->willReturn($url);
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('enoughInBalanceToCoverInvoice')
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("enoughInBalanceToCoverInvoice")
             ->with($invoiceModel)
             ->willReturn(true);
-        $invoiceServiceMock = $this->getMockBuilder('\Box\Mod\Invoice\Service')->getMock();
-        $invoiceServiceMock->expects($this->atLeastOnce())
-            ->method('isInvoiceTypeDeposit')
+        $invoiceServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Invoice\Service"
+        )->getMock();
+        $invoiceServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isInvoiceTypeDeposit")
             ->with($invoiceModel)
             ->willReturn(false);
-        $di['mod_service'] = $di->protect(function($serviceName) use($invoiceServiceMock){
-            if ($serviceName == 'Invoice'){
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $invoiceServiceMock
+        ) {
+            if ($serviceName == "Invoice") {
                 return $invoiceServiceMock;
             }
         });
 
-        $toolsMock = $this->getMockBuilder('\Box_Tools')
-            ->getMock();
-        $toolsMock->expects($this->atLeastOnce())
-            ->method('url');
-        $di['tools'] = $toolsMock;
+        $toolsMock = $this->getMockBuilder("\Box_Tools")->getMock();
+        $toolsMock->expects($this->atLeastOnce())->method("url");
+        $di["tools"] = $toolsMock;
 
         $adapterMock->setDi($di);
         $result = $adapterMock->getHtml(null, $invoiceId, null);
 
         $this->assertIsString($result);
         $this->assertTrue(strpos($result, $url) !== false);
-        $this->assertTrue(strpos($result, '<script') !== false);
+        $this->assertTrue(strpos($result, "<script") !== false);
     }
 
     public function testprocessTransaction_IpnIsInValid()
@@ -163,34 +182,41 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
         $invoiceModel = new \Model_Invoice();
         $invoiceModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $adapterMock = $this->getMockBuilder('Payment_Adapter_ClientBalance')
+        $adapterMock = $this->getMockBuilder("Payment_Adapter_ClientBalance")
             ->disableOriginalConstructor()
-            ->setMethods(array('isIpnValid'))
+            ->setMethods(["isIpnValid"])
             ->getMock();
 
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('isIpnValid')
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("isIpnValid")
             ->willReturn(false);
 
         $transactionId = 1;
-        $data = array();
+        $data = [];
         $gatewayId = 1;
 
         $this->expectException(Payment_Exception::class);
-        $this->expectExceptionMessage('IPN is not valid');
+        $this->expectExceptionMessage("IPN is not valid");
 
-        $adapterMock->processTransaction(null, $transactionId, $data, $gatewayId);
+        $adapterMock->processTransaction(
+            null,
+            $transactionId,
+            $data,
+            $gatewayId
+        );
     }
 
     public function testprocessTransaction_InvoiceTypeDeposit()
     {
-        $adapterMock = $this->getMockBuilder('Payment_Adapter_ClientBalance')
+        $adapterMock = $this->getMockBuilder("Payment_Adapter_ClientBalance")
             ->disableOriginalConstructor()
-            ->setMethods(array('isIpnValid'))
+            ->setMethods(["isIpnValid"])
             ->getMock();
 
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('isIpnValid')
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("isIpnValid")
             ->willReturn(true);
 
         $di = new \Box_Di();
@@ -199,46 +225,60 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
         $transactionModel->loadBean(new \RedBeanPHP\OODBBean());
         $invoiceModel = new \Model_Invoice();
         $invoiceModel->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock = $this->getMockBuilder('\Box_Database')
-            ->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->withConsecutive(array('Transaction'), array('Invoice'))
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->withConsecutive(["Transaction"], ["Invoice"])
             ->willReturnOnConsecutiveCalls($transactionModel, $invoiceModel);
 
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $invoiceServiceMock = $this->getMockBuilder('\Box\Mod\Invoice\Service')->getMock();
-        $invoiceServiceMock->expects($this->atLeastOnce())
-            ->method('isInvoiceTypeDeposit')
+        $invoiceServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Invoice\Service"
+        )->getMock();
+        $invoiceServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isInvoiceTypeDeposit")
             ->with($invoiceModel)
             ->willReturn(true);
 
-        $di['mod_service'] = $di->protect(function ($serviceName) use($invoiceServiceMock){
-            if ('Invoice' == $serviceName)
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $invoiceServiceMock
+        ) {
+            if ("Invoice" == $serviceName) {
                 return $invoiceServiceMock;
+            }
         });
 
         $this->expectException(Payment_Exception::class);
         $this->expectExceptionCode(303);
-        $this->expectExceptionMessage('Forbidden to pay deposit invoice with this gateway');
+        $this->expectExceptionMessage(
+            "Forbidden to pay deposit invoice with this gateway"
+        );
 
         $transactionId = 1;
-        $data = array();
+        $data = [];
         $gatewayId = 1;
         $adapterMock->setDi($di);
-        $adapterMock->processTransaction(null, $transactionId, $data, $gatewayId);
+        $adapterMock->processTransaction(
+            null,
+            $transactionId,
+            $data,
+            $gatewayId
+        );
     }
 
     public function testprocessTransaction_invoiceIdIsSet()
     {
-        $adapterMock = $this->getMockBuilder('Payment_Adapter_ClientBalance')
+        $adapterMock = $this->getMockBuilder("Payment_Adapter_ClientBalance")
             ->disableOriginalConstructor()
-            ->setMethods(array('isIpnValid'))
+            ->setMethods(["isIpnValid"])
             ->getMock();
 
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('isIpnValid')
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("isIpnValid")
             ->willReturn(true);
 
         $di = new \Box_Di();
@@ -247,54 +287,69 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
         $transactionModel->loadBean(new \RedBeanPHP\OODBBean());
         $invoiceModel = new \Model_Invoice();
         $invoiceModel->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock = $this->getMockBuilder('\Box_Database')
-            ->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->withConsecutive(array('Transaction'), array('Invoice'))
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->withConsecutive(["Transaction"], ["Invoice"])
             ->willReturnOnConsecutiveCalls($transactionModel, $invoiceModel);
-        $dbMock->expects($this->atLeastOnce())
-            ->method('store')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("store")
             ->with($transactionModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $invoiceServiceMock = $this->getMockBuilder('\Box\Mod\Invoice\Service')->getMock();
-        $invoiceServiceMock->expects($this->atLeastOnce())
-            ->method('isInvoiceTypeDeposit')
+        $invoiceServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Invoice\Service"
+        )->getMock();
+        $invoiceServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isInvoiceTypeDeposit")
             ->with($invoiceModel)
             ->willReturn(false);
-        $invoiceServiceMock->expects($this->once())
-            ->method('payInvoiceWithCredits')
+        $invoiceServiceMock
+            ->expects($this->once())
+            ->method("payInvoiceWithCredits")
             ->with($invoiceModel);
-        $invoiceServiceMock->expects($this->once())
-            ->method('doBatchPayWithCredits');
+        $invoiceServiceMock
+            ->expects($this->once())
+            ->method("doBatchPayWithCredits");
 
-        $di['mod_service'] = $di->protect(function ($serviceName) use($invoiceServiceMock){
-            if ('Invoice' == $serviceName)
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $invoiceServiceMock
+        ) {
+            if ("Invoice" == $serviceName) {
                 return $invoiceServiceMock;
+            }
         });
 
         $transactionId = 1;
-        $data = array(
-            'get'=> array(
-                'bb_invoice_id' => 1
-            )
-        );
+        $data = [
+            "get" => [
+                "bb_invoice_id" => 1,
+            ],
+        ];
         $gatewayId = 1;
         $adapterMock->setDi($di);
-        $result = $adapterMock->processTransaction(null, $transactionId, $data, $gatewayId);
+        $result = $adapterMock->processTransaction(
+            null,
+            $transactionId,
+            $data,
+            $gatewayId
+        );
         $this->assertTrue($result);
     }
 
     public function testprocessTransaction_invoiceIdIsNotSet()
     {
-        $adapterMock = $this->getMockBuilder('Payment_Adapter_ClientBalance')
+        $adapterMock = $this->getMockBuilder("Payment_Adapter_ClientBalance")
             ->disableOriginalConstructor()
-            ->setMethods(array('isIpnValid'))
+            ->setMethods(["isIpnValid"])
             ->getMock();
 
-        $adapterMock->expects($this->atLeastOnce())
-            ->method('isIpnValid')
+        $adapterMock
+            ->expects($this->atLeastOnce())
+            ->method("isIpnValid")
             ->willReturn(true);
 
         $di = new \Box_Di();
@@ -303,48 +358,61 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
         $transactionModel->loadBean(new \RedBeanPHP\OODBBean());
         $invoiceModel = new \Model_Invoice();
         $invoiceModel->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock = $this->getMockBuilder('\Box_Database')
-            ->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->withConsecutive(array('Transaction'), array('Invoice'))
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->withConsecutive(["Transaction"], ["Invoice"])
             ->willReturnOnConsecutiveCalls($transactionModel, $invoiceModel);
-        $dbMock->expects($this->atLeastOnce())
-            ->method('store')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("store")
             ->with($transactionModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $invoiceServiceMock = $this->getMockBuilder('\Box\Mod\Invoice\Service')->getMock();
-        $invoiceServiceMock->expects($this->atLeastOnce())
-            ->method('isInvoiceTypeDeposit')
+        $invoiceServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Invoice\Service"
+        )->getMock();
+        $invoiceServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isInvoiceTypeDeposit")
             ->with($invoiceModel)
             ->willReturn(false);
-        $invoiceServiceMock->expects($this->never())
-            ->method('payInvoiceWithCredits')
+        $invoiceServiceMock
+            ->expects($this->never())
+            ->method("payInvoiceWithCredits")
             ->with($invoiceModel);
-        $invoiceServiceMock->expects($this->once())
-            ->method('doBatchPayWithCredits');
+        $invoiceServiceMock
+            ->expects($this->once())
+            ->method("doBatchPayWithCredits");
 
-        $di['mod_service'] = $di->protect(function ($serviceName) use($invoiceServiceMock){
-            if ('Invoice' == $serviceName)
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $invoiceServiceMock
+        ) {
+            if ("Invoice" == $serviceName) {
                 return $invoiceServiceMock;
+            }
         });
 
         $transactionId = 1;
-        $data = array(
-            'get'=> array(
-            )
-        );
+        $data = [
+            "get" => [],
+        ];
         $gatewayId = 1;
         $adapterMock->setDi($di);
-        $result = $adapterMock->processTransaction(null, $transactionId, $data, $gatewayId);
+        $result = $adapterMock->processTransaction(
+            null,
+            $transactionId,
+            $data,
+            $gatewayId
+        );
         $this->assertTrue($result);
     }
 
     public function testisIpnValid()
     {
         $adapter = new \Payment_Adapter_ClientBalance();
-        $result = $adapter->isIpnValid(array());
+        $result = $adapter->isIpnValid([]);
         $this->assertTrue($result);
     }
 
@@ -352,24 +420,24 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
     {
         $di = new \Box_Di();
 
-        $dbMock = $this->getMockBuilder('\Box_Database')
-            ->getMock();
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
 
         $payGatewayModel = new \Model_PayGateway();
         $payGatewayModel->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->with('PayGateway')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
+            ->with("PayGateway")
             ->willReturn(null);
 
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
         $adapter = new \Payment_Adapter_ClientBalance();
         $adapter->setDi($di);
 
         $this->expectException(Payment_Exception::class);
         $this->expectExceptionCode(301);
-        $this->expectExceptionMessage('ClientBalance gateway is not enabled');
+        $this->expectExceptionMessage("ClientBalance gateway is not enabled");
 
         $adapter->getServiceUrl();
     }
@@ -378,31 +446,38 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
     {
         $di = new \Box_Di();
 
-        $dbMock = $this->getMockBuilder('\Box_Database')
-            ->getMock();
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
 
         $payGatewayModel = new \Model_PayGateway();
         $payGatewayModel->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->with('PayGateway')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("findOne")
+            ->with("PayGateway")
             ->willReturn($payGatewayModel);
         $invoiceModel = new \Model_Invoice();
         $invoiceModel->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->with('Invoice')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->with("Invoice")
             ->willReturn($invoiceModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $invoiceServiceMock = $this->getMockBuilder('\Box\Mod\Invoice\Service')->getMock();
-        $invoiceServiceMock->expects($this->atLeastOnce())
-            ->method('isInvoiceTypeDeposit')
+        $invoiceServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Invoice\Service"
+        )->getMock();
+        $invoiceServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("isInvoiceTypeDeposit")
             ->with($invoiceModel)
             ->willReturn(true);
-        $di['mod_service'] = $di->protect(function ($serviceName) use($invoiceServiceMock){
-            if ('Invoice' == $serviceName)
+        $di["mod_service"] = $di->protect(function ($serviceName) use (
+            $invoiceServiceMock
+        ) {
+            if ("Invoice" == $serviceName) {
                 return $invoiceServiceMock;
+            }
         });
 
         $adapter = new \Payment_Adapter_ClientBalance();
@@ -410,63 +485,66 @@ class Payment_Adapter_ClientBalanceTest extends PHPUnit\Framework\TestCase {
 
         $this->expectException(Payment_Exception::class);
         $this->expectExceptionCode(302);
-        $this->expectExceptionMessage('Forbidden to pay deposit invoice with this gateway');
+        $this->expectExceptionMessage(
+            "Forbidden to pay deposit invoice with this gateway"
+        );
 
         $adapter->getServiceUrl();
     }
 
     public function amountsProvider()
     {
-        return array(
-            array(
-                4.25, 2.00, true,
-            ),
-            array(
-                1.00, 20.00, false,
-            ),
-            array(
-                2.00, 2.00, true,
-            ),
-        );
+        return [[4.25, 2.0, true], [1.0, 20.0, false], [2.0, 2.0, true]];
     }
 
     /**
      * @dataProvider amountsProvider
      */
-    public function testenoughInBalanceToCoverInvoice($inBalance, $invoiceSum, $expectedResult)
-    {
+    public function testenoughInBalanceToCoverInvoice(
+        $inBalance,
+        $invoiceSum,
+        $expectedResult
+    ) {
         $di = new \Box_Di();
 
-        $dbMock = $this->getMockBuilder('\Box_Database')
-            ->getMock();
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
         $clientModel = new Model_Client();
         $clientModel->loadBean(new \RedBeanPHP\OODBBean());
-        $dbMock->expects($this->atLeastOnce())
-            ->method('load')
-            ->with('Client')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("load")
+            ->with("Client")
             ->willReturn($clientModel);
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $clientBalanceServiceMock = $this->getMockBuilder('\Box\Mod\Client\ServiceBalance')
-            ->getMock();
+        $clientBalanceServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Client\ServiceBalance"
+        )->getMock();
 
-        $clientBalanceServiceMock->expects($this->atLeastOnce())
-            ->method('getClientBalance')
+        $clientBalanceServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getClientBalance")
             ->with($clientModel)
             ->willReturn($inBalance);
 
         $invoiceModel = new \Model_Invoice();
         $invoiceModel->loadBean(new \RedBeanPHP\OODBBean());
-        $invoiceServiceMock = $this->getMockBuilder('\Box\Mod\Invoice\Service')->getMock();
-        $invoiceServiceMock->expects($this->atLeastOnce())
-            ->method('getTotalWithTax')
+        $invoiceServiceMock = $this->getMockBuilder(
+            "\Box\Mod\Invoice\Service"
+        )->getMock();
+        $invoiceServiceMock
+            ->expects($this->atLeastOnce())
+            ->method("getTotalWithTax")
             ->with($invoiceModel)
             ->willReturn($invoiceSum);
-        $di['mod_service'] = $di->protect(function ($serviceName, $sub = '') use($invoiceServiceMock, $clientBalanceServiceMock){
-            if ('Invoice' == $serviceName){
+        $di["mod_service"] = $di->protect(function (
+            $serviceName,
+            $sub = ""
+        ) use ($invoiceServiceMock, $clientBalanceServiceMock) {
+            if ("Invoice" == $serviceName) {
                 return $invoiceServiceMock;
             }
-            if ('Client' == $serviceName && $sub == 'Balance'){
+            if ("Client" == $serviceName && $sub == "Balance") {
                 return $clientBalanceServiceMock;
             }
         });

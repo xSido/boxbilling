@@ -10,23 +10,24 @@
  * with this source code in the file LICENSE
  */
 
-
 class FileCache
 {
-    protected $_cacheDir = '';
+    protected $_cacheDir = "";
 
     /**
      * Constructor
      */
     public function __construct($cacheDir = null)
     {
-        if(is_null($cacheDir)) {
+        if (is_null($cacheDir)) {
             $cacheDir = BB_PATH_CACHE;
         }
 
         if ($cacheDir) {
             if (!is_dir($cacheDir)) {
-                throw new FileCacheException('The specified cache directory is invalid.');
+                throw new FileCacheException(
+                    "The specified cache directory is invalid."
+                );
             }
             $this->_cacheDir = $cacheDir;
         }
@@ -39,7 +40,9 @@ class FileCache
     {
         $cacheFile = $this->getCacheFile($key);
         if (!file_put_contents($cacheFile, json_encode($data))) {
-            throw new FileCacheException('Error saving data with the key ' . $key . ' to the cache file.');
+            throw new FileCacheException(
+                "Error saving data with the key " . $key . " to the cache file."
+            );
         }
         return $this;
     }
@@ -51,8 +54,12 @@ class FileCache
     {
         if ($this->exists($key)) {
             $cacheFile = $this->getCacheFile($key);
-            if (!$data = json_decode(file_get_contents($cacheFile), true)) {
-                throw new FileCacheException('Error reading data with the key ' . $key . ' from the cache file.');
+            if (!($data = json_decode(file_get_contents($cacheFile), true))) {
+                throw new FileCacheException(
+                    "Error reading data with the key " .
+                        $key .
+                        " from the cache file."
+                );
             }
             return $data;
         }
@@ -67,7 +74,9 @@ class FileCache
         if ($this->exists($key)) {
             $cacheFile = $this->getCacheFile($key);
             if (!unlink($cacheFile)) {
-                throw new FileCacheException('Error deleting the file cache with key ' . $key);
+                throw new FileCacheException(
+                    "Error deleting the file cache with key " . $key
+                );
             }
             return true;
         }
@@ -89,7 +98,7 @@ class FileCache
     protected function getCacheFile($key)
     {
         $key = $this->getCacheKey($key);
-        return $this->_cacheDir . DIRECTORY_SEPARATOR . $key . '.cache';
+        return $this->_cacheDir . DIRECTORY_SEPARATOR . $key . ".cache";
     }
 
     /**
@@ -97,6 +106,6 @@ class FileCache
      */
     protected function getCacheKey($raw)
     {
-        return strtolower(md5($raw . 'Iip6tPwfNi95gugl0e6'));
+        return strtolower(md5($raw . "Iip6tPwfNi95gugl0e6"));
     }
 }

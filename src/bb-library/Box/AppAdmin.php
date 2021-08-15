@@ -10,48 +10,46 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_AppAdmin extends Box_App
 {
     public function init()
     {
-        $m = $this->di['mod']($this->mod);
+        $m = $this->di["mod"]($this->mod);
         $controller = $m->getAdminController();
         $controller->register($this);
     }
 
-    public function render($fileName, $variableArray = array())
+    public function render($fileName, $variableArray = [])
     {
-        $template = $this->getTwig()->load($fileName.'.phtml');
+        $template = $this->getTwig()->load($fileName . ".phtml");
         return $template->render($variableArray);
     }
 
     public function redirect($path)
     {
-        $location = $this->di['url']->adminLink($path);
+        $location = $this->di["url"]->adminLink($path);
         header("Location: $location");
-        exit;
+        exit();
     }
 
     protected function getTwig()
     {
-        $service = $this->di['mod_service']('theme');
+        $service = $this->di["mod_service"]("theme");
         $theme = $service->getCurrentAdminAreaTheme();
 
-        $loader = new Box_TwigLoader(array(
-                "mods"  => BB_PATH_MODS,
-                "theme" => BB_PATH_THEMES . DIRECTORY_SEPARATOR . $theme['code'],
-                "type"  => "admin"
-            )
-        );
+        $loader = new Box_TwigLoader([
+            "mods" => BB_PATH_MODS,
+            "theme" => BB_PATH_THEMES . DIRECTORY_SEPARATOR . $theme["code"],
+            "type" => "admin",
+        ]);
 
-        $twig = $this->di['twig'];
+        $twig = $this->di["twig"];
         $twig->setLoader($loader);
 
-        $twig->addGlobal('theme', $theme);
+        $twig->addGlobal("theme", $theme);
 
-        if($this->di['auth']->isAdminLoggedIn()) {
-            $twig->addGlobal('admin', $this->di['api_admin']);
+        if ($this->di["auth"]->isAdminLoggedIn()) {
+            $twig->addGlobal("admin", $this->di["api_admin"]);
         }
 
         return $twig;

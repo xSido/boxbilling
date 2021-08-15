@@ -10,17 +10,18 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_Crypt implements \Box\InjectionAwareInterface
 {
-    protected $di = NULL;
+    protected $di = null;
 
-    const METHOD = 'aes-256-cbc';
+    const METHOD = "aes-256-cbc";
 
     public function __construct()
     {
-        if (!extension_loaded('openssl')) {
-            throw new Box_Exception('php openssl extension must be enabled on your server');
+        if (!extension_loaded("openssl")) {
+            throw new Box_Exception(
+                "php openssl extension must be enabled on your server"
+            );
         }
     }
 
@@ -54,7 +55,7 @@ class Box_Crypt implements \Box\InjectionAwareInterface
 
     public function decrypt($text, $pass = null)
     {
-        if (is_null($text)){
+        if (is_null($text)) {
             return false;
         }
         $key = $this->_getSalt($pass);
@@ -62,8 +63,8 @@ class Box_Crypt implements \Box\InjectionAwareInterface
         $text = base64_decode($text);
 
         $ivsize = openssl_cipher_iv_length(self::METHOD);
-        $iv = mb_substr($text, 0, $ivsize, '8bit');
-        $ciphertext = mb_substr($text, $ivsize, null, '8bit');
+        $iv = mb_substr($text, 0, $ivsize, "8bit");
+        $ciphertext = mb_substr($text, $ivsize, null, "8bit");
 
         $result = openssl_decrypt(
             $ciphertext,
@@ -81,8 +82,8 @@ class Box_Crypt implements \Box\InjectionAwareInterface
     private function _getSalt($pass = null)
     {
         if (null == $pass) {
-            $pass = $this->di['config']['salt'];
+            $pass = $this->di["config"]["salt"];
         }
-        return pack('H*', hash('md5', $pass));
+        return pack("H*", hash("md5", $pass));
     }
 }

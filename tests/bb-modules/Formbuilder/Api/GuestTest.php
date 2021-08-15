@@ -1,16 +1,13 @@
 <?php
 
-
 namespace Box\Mod\Formbuilder\Api;
 
-
-class GuestTest extends \BBTestCase {
-
+class GuestTest extends \BBTestCase
+{
     public function setup(): void
     {
         $this->api = new \Box\Mod\Formbuilder\Api\Guest();
     }
-
 
     public function testgetDi()
     {
@@ -22,24 +19,28 @@ class GuestTest extends \BBTestCase {
 
     public function testget()
     {
-        $data['id'] = 1;
+        $data["id"] = 1;
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Formbuilder\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getForm')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Formbuilder\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getForm")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
 
         $this->api->setService($serviceMock);
         $result = $this->api->get($data);
         $this->assertIsArray($result);
     }
-
 }
- 

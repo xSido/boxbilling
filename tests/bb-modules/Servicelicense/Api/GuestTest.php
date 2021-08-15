@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Servicelicense\Api;
 
-
-class GuestTest extends \BBTestCase {
+class GuestTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Servicelicense\Api\Guest
      */
@@ -12,7 +11,7 @@ class GuestTest extends \BBTestCase {
 
     public function setup(): void
     {
-        $this->api= new \Box\Mod\Servicelicense\Api\Guest();
+        $this->api = new \Box\Mod\Servicelicense\Api\Guest();
     }
 
     public function testgetDi()
@@ -25,21 +24,24 @@ class GuestTest extends \BBTestCase {
 
     public function testcheckLicenseDetails()
     {
-        $data = array(
-            'license' => 'license1234',
-            'host' => 'boxbilling.com',
-            'version' => 1,
-        );
+        $data = [
+            "license" => "license1234",
+            "host" => "boxbilling.com",
+            "version" => 1,
+        ];
 
-        $licenseResult =  array(
-            'licensed_to' => 'boxbilling.com',
-            'created_at' => '2011-12-31',
-            'expires_at' => '2020-01+01',
-            'valid' => true,
-        );
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Servicelicense\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('checkLicenseDetails')
+        $licenseResult = [
+            "licensed_to" => "boxbilling.com",
+            "created_at" => "2011-12-31",
+            "expires_at" => "2020-01+01",
+            "valid" => true,
+        ];
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Servicelicense\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("checkLicenseDetails")
             ->will($this->returnValue($licenseResult));
 
         $this->api->setService($serviceMock);
@@ -48,4 +50,3 @@ class GuestTest extends \BBTestCase {
         $this->assertIsArray($result);
     }
 }
- 

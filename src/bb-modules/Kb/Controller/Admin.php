@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Kb\Controller;
 
 class Admin implements \Box\InjectionAwareInterface
@@ -35,51 +34,60 @@ class Admin implements \Box\InjectionAwareInterface
 
     public function fetchNavigation()
     {
-        return array(
-            'group'  =>  array(
-                'index' => 501,
-                'location' => 'kb',
-                'label' => 'Knowledge Base',
-                'uri' => $this->di['url']->adminLink('kb'),
-                'class' => 'support',
-            ),
-            'subpages'  =>  array(
-                array(
-                    'location'  => 'kb',
-                    'index'     => 800,
-                    'label' => 'Knowledge Base',
-                    'uri'   => $this->di['url']->adminLink('kb'),
-                    'class' => '',
-                ),
-            ),
-        );
+        return [
+            "group" => [
+                "index" => 501,
+                "location" => "kb",
+                "label" => "Knowledge Base",
+                "uri" => $this->di["url"]->adminLink("kb"),
+                "class" => "support",
+            ],
+            "subpages" => [
+                [
+                    "location" => "kb",
+                    "index" => 800,
+                    "label" => "Knowledge Base",
+                    "uri" => $this->di["url"]->adminLink("kb"),
+                    "class" => "",
+                ],
+            ],
+        ];
     }
-    
+
     public function register(\Box_App &$app)
     {
-        $app->get('/kb',           'get_index', array(), get_class($this));
-        $app->get('/kb/article/:id',  'get_post', array('id'=>'[0-9]+'), get_class($this));
-        $app->get('/kb/category/:id',  'get_cat', array('id'=>'[0-9]+'), get_class($this));
+        $app->get("/kb", "get_index", [], get_class($this));
+        $app->get(
+            "/kb/article/:id",
+            "get_post",
+            ["id" => "[0-9]+"],
+            get_class($this)
+        );
+        $app->get(
+            "/kb/category/:id",
+            "get_cat",
+            ["id" => "[0-9]+"],
+            get_class($this)
+        );
     }
 
     public function get_index(\Box_App $app)
     {
-        $this->di['is_admin_logged'];
-        return $app->render('mod_kb_index');
+        $this->di["is_admin_logged"];
+        return $app->render("mod_kb_index");
     }
-    
+
     public function get_post(\Box_App $app, $id)
     {
-        $api = $this->di['api_admin'];
-        $post = $api->kb_article_get(array('id'=>$id));
-        return $app->render('mod_kb_article', array('post'=>$post));
+        $api = $this->di["api_admin"];
+        $post = $api->kb_article_get(["id" => $id]);
+        return $app->render("mod_kb_article", ["post" => $post]);
     }
 
     public function get_cat(\Box_App $app, $id)
     {
-        $api = $this->di['api_admin'];
-        $cat = $api->kb_category_get(array('id'=>$id));
-        return $app->render('mod_kb_category', array('category'=>$cat));
+        $api = $this->di["api_admin"];
+        $cat = $api->kb_category_get(["id" => $id]);
+        return $app->render("mod_kb_category", ["category" => $cat]);
     }
-
 }

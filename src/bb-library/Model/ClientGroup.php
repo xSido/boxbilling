@@ -10,8 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_ClientGroup extends RedBean_SimpleModel
 {
-
 }

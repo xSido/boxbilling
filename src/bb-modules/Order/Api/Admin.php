@@ -26,10 +26,14 @@ class Admin extends \Api_Abstract
      */
     public function get($data)
     {
-        $deep  = isset($data['deep']) ? (bool)$data['deep'] : true;
+        $deep = isset($data["deep"]) ? (bool) $data["deep"] : true;
         $order = $this->_getOrder($data);
 
-        return $this->getService()->toApiArray($order, $deep, $this->getIdentity());
+        return $this->getService()->toApiArray(
+            $order,
+            $deep,
+            $this->getIdentity()
+        );
     }
 
     /**
@@ -42,16 +46,31 @@ class Admin extends \Api_Abstract
      */
     public function get_list($data)
     {
-        $orderConfig         = $this->di['mod']('order')->getConfig();
-        $data['hide_addons'] = (isset($orderConfig['show_addons']) && $orderConfig['show_addons']) ? 0 : 1;
-        list($sql, $params) = $this->getService()->getSearchQuery($data);
-        $paginator = $this->di['pager'];
-        $per_page  = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
+        $orderConfig = $this->di["mod"]("order")->getConfig();
+        $data["hide_addons"] =
+            isset($orderConfig["show_addons"]) && $orderConfig["show_addons"]
+                ? 0
+                : 1;
+        [$sql, $params] = $this->getService()->getSearchQuery($data);
+        $paginator = $this->di["pager"];
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
         $resultSet = $paginator->getAdvancedResultSet($sql, $params, $per_page);
 
-        foreach ($resultSet['list'] as $key => $result) {
-            $orderObj                = $this->di['db']->getExistingModelById('ClientOrder', $result['id'], 'Order not found');
-            $resultSet['list'][$key] = $this->getService()->toApiArray($orderObj, true, $this->getIdentity());
+        foreach ($resultSet["list"] as $key => $result) {
+            $orderObj = $this->di["db"]->getExistingModelById(
+                "ClientOrder",
+                $result["id"],
+                "Order not found"
+            );
+            $resultSet["list"][$key] = $this->getService()->toApiArray(
+                $orderObj,
+                true,
+                $this->getIdentity()
+            );
         }
 
         return $resultSet;
@@ -78,14 +97,22 @@ class Admin extends \Api_Abstract
      */
     public function create($data)
     {
-        $required = array(
-            'client_id' => 'Client id not passed',
-            'product_id' => 'Product id not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "client_id" => "Client id not passed",
+            "product_id" => "Product id not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $client  = $this->di['db']->getExistingModelById('Client', $data['client_id'], 'Client not found');
-        $product = $this->di['db']->getExistingModelById('Product', $data['product_id'], 'Product not found');
+        $client = $this->di["db"]->getExistingModelById(
+            "Client",
+            $data["client_id"],
+            "Client not found"
+        );
+        $product = $this->di["db"]->getExistingModelById(
+            "Product",
+            $data["product_id"],
+            "Product not found"
+        );
 
         return $this->getService()->createOrder($client, $product, $data);
     }
@@ -140,7 +167,10 @@ class Admin extends \Api_Abstract
     {
         $order = $this->_getOrder($data);
 
-        if ($order->status == \Model_ClientOrder::STATUS_PENDING_SETUP || $order->status == \Model_ClientOrder::STATUS_FAILED_SETUP) {
+        if (
+            $order->status == \Model_ClientOrder::STATUS_PENDING_SETUP ||
+            $order->status == \Model_ClientOrder::STATUS_FAILED_SETUP
+        ) {
             return $this->activate($data);
         }
 
@@ -159,12 +189,18 @@ class Admin extends \Api_Abstract
      */
     public function suspend($data)
     {
-        $order      = $this->_getOrder($data);
-        $skip_event = isset($data['skip_event']) ? (bool)$data['skip_event'] : false;
+        $order = $this->_getOrder($data);
+        $skip_event = isset($data["skip_event"])
+            ? (bool) $data["skip_event"]
+            : false;
 
-        $reason = $this->di['array_get']($data, 'reason', NULL);
+        $reason = $this->di["array_get"]($data, "reason", null);
 
-        return $this->getService()->suspendFromOrder($order, $reason, $skip_event);
+        return $this->getService()->suspendFromOrder(
+            $order,
+            $reason,
+            $skip_event
+        );
     }
 
     /**
@@ -178,7 +214,9 @@ class Admin extends \Api_Abstract
     {
         $order = $this->_getOrder($data);
         if ($order->status != \Model_ClientOrder::STATUS_SUSPENDED) {
-            throw new \Box_Exception('Only suspended orders can be unsuspended');
+            throw new \Box_Exception(
+                "Only suspended orders can be unsuspended"
+            );
         }
 
         return $this->getService()->unsuspendFromOrder($order);
@@ -195,12 +233,18 @@ class Admin extends \Api_Abstract
      */
     public function cancel($data)
     {
-        $order      = $this->_getOrder($data);
-        $skip_event = isset($data['skip_event']) ? (bool)$data['skip_event'] : false;
+        $order = $this->_getOrder($data);
+        $skip_event = isset($data["skip_event"])
+            ? (bool) $data["skip_event"]
+            : false;
 
-        $reason = $this->di['array_get']($data, 'reason', NULL);
+        $reason = $this->di["array_get"]($data, "reason", null);
 
-        return $this->getService()->cancelFromOrder($order, $reason, $skip_event);
+        return $this->getService()->cancelFromOrder(
+            $order,
+            $reason,
+            $skip_event
+        );
     }
 
     /**
@@ -214,7 +258,7 @@ class Admin extends \Api_Abstract
     {
         $order = $this->_getOrder($data);
         if ($order->status != \Model_ClientOrder::STATUS_CANCELED) {
-            throw new \Box_Exception('Only canceled orders can be uncanceled');
+            throw new \Box_Exception("Only canceled orders can be uncanceled");
         }
 
         return $this->getService()->uncancelFromOrder($order);
@@ -231,8 +275,10 @@ class Admin extends \Api_Abstract
      */
     public function delete($data)
     {
-        $order         = $this->_getOrder($data);
-        $delete_addons = isset($data['delete_addons']) ? (bool)$data['delete_addons'] : false;
+        $order = $this->_getOrder($data);
+        $delete_addons = isset($data["delete_addons"])
+            ? (bool) $data["delete_addons"]
+            : false;
 
         if ($delete_addons) {
             $list = $this->getService()->getOrderAddonsList($order);
@@ -277,11 +323,11 @@ class Admin extends \Api_Abstract
     {
         $order = $this->_getOrder($data);
 
-        if (!isset($data['config']) || !is_array($data['config'])) {
-            throw new \Box_Exception('Order config not passed');
+        if (!isset($data["config"]) || !is_array($data["config"])) {
+            throw new \Box_Exception("Order config not passed");
         }
 
-        $config = $data['config'];
+        $config = $data["config"];
 
         return $this->getService()->updateOrderConfig($order, $config);
     }
@@ -297,7 +343,10 @@ class Admin extends \Api_Abstract
     {
         $order = $this->_getOrder($data);
 
-        return $this->getService()->getOrderServiceData($order, $this->getIdentity());
+        return $this->getService()->getOrderServiceData(
+            $order,
+            $this->getIdentity()
+        );
     }
 
     /**
@@ -311,13 +360,22 @@ class Admin extends \Api_Abstract
     {
         $order = $this->_getOrder($data);
 
-        $data['client_order_id'] = $order->id;
+        $data["client_order_id"] = $order->id;
 
-        list($sql, $bindings) = $this->getService()->getOrderStatusSearchQuery($data);
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        return $this->di['pager']->getSimpleResultSet($sql, $bindings, $per_page);
+        [$sql, $bindings] = $this->getService()->getOrderStatusSearchQuery(
+            $data
+        );
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        return $this->di["pager"]->getSimpleResultSet(
+            $sql,
+            $bindings,
+            $per_page
+        );
     }
-
 
     /**
      * Add order status history change
@@ -331,14 +389,18 @@ class Admin extends \Api_Abstract
     {
         $order = $this->_getOrder($data);
 
-        $required = array(
-            'status' => 'Order status was not passed',
+        $required = [
+            "status" => "Order status was not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
+
+        $notes = $this->di["array_get"]($data, "notes", null);
+
+        return $this->getService()->orderStatusAdd(
+            $order,
+            $data["status"],
+            $notes
         );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
-
-        $notes = $this->di['array_get']($data, 'notes', null);
-
-        return $this->getService()->orderStatusAdd($order, $data['status'], $notes);
     }
 
     /**
@@ -350,12 +412,12 @@ class Admin extends \Api_Abstract
      */
     public function status_history_delete($data)
     {
-        $required = array(
-            'id' => 'Order history line id not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Order history line id not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        return $this->getService()->orderStatusRm($data['id']);
+        return $this->getService()->orderStatusRm($data["id"]);
     }
 
     /**
@@ -375,10 +437,10 @@ class Admin extends \Api_Abstract
      */
     public function get_invoice_options($data)
     {
-        return array(
-            'issue-invoice' => __('Automatically issue renewal invoices'),
-            'no-invoice'    => __('Issue invoices manually'),
-        );
+        return [
+            "issue-invoice" => __("Automatically issue renewal invoices"),
+            "no-invoice" => __("Issue invoices manually"),
+        ];
     }
 
     /**
@@ -388,13 +450,13 @@ class Admin extends \Api_Abstract
      */
     public function get_status_pairs($data)
     {
-        return array(
-            \Model_ClientOrder::STATUS_PENDING_SETUP => 'Pending setup',
-            \Model_ClientOrder::STATUS_FAILED_SETUP  => 'Setup failed',
-            \Model_ClientOrder::STATUS_ACTIVE        => 'Active',
-            \Model_ClientOrder::STATUS_SUSPENDED     => 'Suspended',
-            \Model_ClientOrder::STATUS_CANCELED      => 'Canceled',
-        );
+        return [
+            \Model_ClientOrder::STATUS_PENDING_SETUP => "Pending setup",
+            \Model_ClientOrder::STATUS_FAILED_SETUP => "Setup failed",
+            \Model_ClientOrder::STATUS_ACTIVE => "Active",
+            \Model_ClientOrder::STATUS_SUSPENDED => "Suspended",
+            \Model_ClientOrder::STATUS_CANCELED => "Canceled",
+        ];
     }
 
     /**
@@ -406,9 +468,9 @@ class Admin extends \Api_Abstract
      */
     public function addons($data)
     {
-        $model  = $this->_getOrder($data);
-        $list   = $this->getService()->getOrderAddonsList($model);
-        $result = array();
+        $model = $this->_getOrder($data);
+        $list = $this->getService()->getOrderAddonsList($model);
+        $result = [];
         foreach ($list as $order) {
             $result[] = $this->getService()->toApiArray($order);
         }
@@ -418,12 +480,16 @@ class Admin extends \Api_Abstract
 
     protected function _getOrder($data)
     {
-        $required = array(
-            'id' => 'Order id not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "id" => "Order id not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        return $this->di['db']->getExistingModelById('ClientOrder', $data['id'], 'Order not found');
+        return $this->di["db"]->getExistingModelById(
+            "ClientOrder",
+            $data["id"],
+            "Order not found"
+        );
     }
 
     /**
@@ -437,15 +503,17 @@ class Admin extends \Api_Abstract
      */
     public function batch_delete($data)
     {
-        $required = array(
-            'ids' => 'Orders ids not passed',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "ids" => "Orders ids not passed",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        $delete_addons = isset($data['delete_addons']) ? (bool)$data['delete_addons'] : false;
+        $delete_addons = isset($data["delete_addons"])
+            ? (bool) $data["delete_addons"]
+            : false;
 
-        foreach ($data['ids'] as $id) {
-            $this->delete(array('id' => $id, 'delete_addons' => $delete_addons));
+        foreach ($data["ids"] as $id) {
+            $this->delete(["id" => $id, "delete_addons" => $delete_addons]);
         }
 
         return true;

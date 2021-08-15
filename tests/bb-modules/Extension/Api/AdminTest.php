@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Box\Mod\Extension\Api;
 
-
-class AdminTest extends \BBTestCase {
+class AdminTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Extension\Service
      */
@@ -15,13 +14,11 @@ class AdminTest extends \BBTestCase {
      */
     protected $api = null;
 
-
     public function setup(): void
     {
         $this->service = new \Box\Mod\Extension\Service();
         $this->api = new \Box\Mod\Extension\Api\Admin();
     }
-
 
     public function testgetDi()
     {
@@ -33,19 +30,22 @@ class AdminTest extends \BBTestCase {
 
     public function testget_list()
     {
-        $data = array();
+        $data = [];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getExtensionsList')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getExtensionsList")
+            ->will($this->returnValue([]));
 
         $this->api->setService($serviceMock);
 
         $result = $this->api->get_list($data);
         $this->assertIsArray($result);
     }
-/*
+    /*
  * @todo enable when extensions are available
     public function testget_latest()
     {
@@ -87,12 +87,15 @@ class AdminTest extends \BBTestCase {
 
     public function testget_navigation()
     {
-        $data = array('url' =>'billing');
+        $data = ["url" => "billing"];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getAdminNavigation')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getAdminNavigation")
+            ->will($this->returnValue([]));
 
         $this->api->setService($serviceMock);
         $this->api->setIdentity(new \Model_Admin());
@@ -104,13 +107,18 @@ class AdminTest extends \BBTestCase {
 
     public function testlanguages()
     {
-        $systemService = $this->getMockBuilder('\Box\Mod\System\Service')->getMock();
-        $systemService->expects($this->atLeastOnce())
-            ->method('getLanguages')
-            ->will($this->returnValue(array()));
+        $systemService = $this->getMockBuilder(
+            "\Box\Mod\System\Service"
+        )->getMock();
+        $systemService
+            ->expects($this->atLeastOnce())
+            ->method("getLanguages")
+            ->will($this->returnValue([]));
 
         $di = new \Box_Di();
-        $di['mod_service'] = $di->protect(function() use ($systemService) {return $systemService;});
+        $di["mod_service"] = $di->protect(function () use ($systemService) {
+            return $systemService;
+        });
 
         $this->api->setDi($di);
         $result = $this->api->languages();
@@ -120,69 +128,78 @@ class AdminTest extends \BBTestCase {
 
     public function testupdate_core()
     {
-        $updaterMock = $this->getMockBuilder('\Box_Update')->getMock();
-        $updaterMock->expects($this->atLeastOnce())
-            ->method('getCanUpdate')
+        $updaterMock = $this->getMockBuilder("\Box_Update")->getMock();
+        $updaterMock
+            ->expects($this->atLeastOnce())
+            ->method("getCanUpdate")
             ->will($this->returnValue(true));
 
-        $updaterMock->expects($this->atLeastOnce())
-            ->method('getLatestVersion')
-            ->will($this->returnValue('1.2.3'));
+        $updaterMock
+            ->expects($this->atLeastOnce())
+            ->method("getLatestVersion")
+            ->will($this->returnValue("1.2.3"));
 
-        $updaterMock->expects($this->atLeastOnce())
-            ->method('performUpdate');
-
-
+        $updaterMock->expects($this->atLeastOnce())->method("performUpdate");
 
         $di = new \Box_Di();
-        $di['updater'] = $updaterMock;
-        $di['logger'] = new \Box_Log();
+        $di["updater"] = $updaterMock;
+        $di["logger"] = new \Box_Log();
 
         $this->api->setDi($di);
 
-        $result = $this->api->update_core(array());
+        $result = $this->api->update_core([]);
         $this->assertTrue($result);
     }
 
     public function testupdate_coreNewestVerInstalledException()
     {
-        $updaterMock = $this->getMockBuilder('\Box_Update')->getMock();
-        $updaterMock->expects($this->atLeastOnce())
-            ->method('getCanUpdate')
+        $updaterMock = $this->getMockBuilder("\Box_Update")->getMock();
+        $updaterMock
+            ->expects($this->atLeastOnce())
+            ->method("getCanUpdate")
             ->will($this->returnValue(false));
 
-
         $di = new \Box_Di();
-        $di['updater'] = $updaterMock;
+        $di["updater"] = $updaterMock;
 
         $this->api->setDi($di);
 
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage('You have latest version of BoxBilling. You do not need to update', 930);
-        $result = $this->api->update_core(array());
+        $this->expectExceptionMessage(
+            "You have latest version of BoxBilling. You do not need to update",
+            930
+        );
+        $result = $this->api->update_core([]);
         $this->assertTrue($result);
     }
 
     public function testupdate()
     {
-        $data = array(
-            'id' => 'extensionId',
-            'type' => 'extensioTYpe',
-        );
+        $data = [
+            "id" => "extensionId",
+            "type" => "extensioTYpe",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('findExtension')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("findExtension")
             ->will($this->returnValue(new \Model_Extension()));
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('update')
-            ->will($this->returnValue(array()));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("update")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
 
         $this->api->setService($serviceMock);
@@ -191,48 +208,59 @@ class AdminTest extends \BBTestCase {
         $this->assertIsArray($result);
     }
 
-
     public function testupdateExtensionNotFound()
     {
-        $data = array(
-            'id' => 'extensionId',
-            'type' => 'extensioTYpe',
-        );
+        $data = [
+            "id" => "extensionId",
+            "type" => "extensioTYpe",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('findExtension')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("findExtension")
             ->will($this->returnValue(null));
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
 
         $this->api->setService($serviceMock);
         $this->expectException(\Box_Exception::class);
-        $this->expectExceptionMessage('Extension not found');
+        $this->expectExceptionMessage("Extension not found");
         $this->api->update($data);
     }
 
     public function testactivate()
     {
-        $data = array(
-            'id' => 'extensionId',
-            'type' => 'extensionType',
-        );
+        $data = [
+            "id" => "extensionId",
+            "type" => "extensionType",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('activateExistingExtension')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("activateExistingExtension")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
 
         $this->api->setService($serviceMock);
@@ -243,35 +271,41 @@ class AdminTest extends \BBTestCase {
 
     public function testdeactivate()
     {
-        $data = array(
-            'id' => 'extensionId',
-            'type' => 'extensionType',
-        );
+        $data = [
+            "id" => "extensionId",
+            "type" => "extensionType",
+        ];
 
         $model = new \Model_Extension();
         $model->loadBean(new \RedBeanPHP\OODBBean());
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('findExtension')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("findExtension")
             ->will($this->onConsecutiveCalls($model));
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('deactivate')
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("deactivate")
             ->will($this->returnValue(true));
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())->
-            method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
         $di = new \Box_Di();
-        $di['events_manager'] = $eventMock;
-        $di['logger'] = new \Box_Log();
+        $di["events_manager"] = $eventMock;
+        $di["logger"] = new \Box_Log();
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setService($serviceMock);
         $this->api->setDi($di);
@@ -282,34 +316,40 @@ class AdminTest extends \BBTestCase {
 
     public function testuninstall()
     {
-        $data = array(
-            'id' => 'extensionId',
-            'type' => 'extensionType',
-        );
+        $data = [
+            "id" => "extensionId",
+            "type" => "extensionType",
+        ];
 
         $model = new \Model_Extension();
         $model->loadBean(new \RedBeanPHP\OODBBean());
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('findExtension')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("findExtension")
             ->will($this->returnValue($model));
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('uninstall')
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("uninstall")
             ->will($this->returnValue(true));
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())->
-            method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
         $di = new \Box_Di();
-        $di['events_manager'] = $eventMock;
-        $di['logger'] = new \Box_Log();
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $di["events_manager"] = $eventMock;
+        $di["logger"] = new \Box_Log();
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setService($serviceMock);
         $this->api->setDi($di);
@@ -320,40 +360,46 @@ class AdminTest extends \BBTestCase {
 
     public function testinstall()
     {
-        $data = array(
-            'id' => 'extensionId',
-            'type' => 'extensionType',
-        );
+        $data = [
+            "id" => "extensionId",
+            "type" => "extensionType",
+        ];
 
-        $expected = array(
-            'success'   =>  true,
-            'id'        =>  $data['id'],
-            'type'      =>  $data['type'],
-        );
+        $expected = [
+            "success" => true,
+            "id" => $data["id"],
+            "type" => $data["type"],
+        ];
 
         $model = new \Model_Extension();
         $model->loadBean(new \RedBeanPHP\OODBBean());
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('activateExistingExtension')
-            ->will($this->returnValue(array()));
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('downloadAndExtract')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("activateExistingExtension")
+            ->will($this->returnValue([]));
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("downloadAndExtract")
             ->will($this->returnValue(true));
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())->
-            method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
         $di = new \Box_Di();
-        $di['events_manager'] = $eventMock;
-        $di['logger'] = new \Box_Log();
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $di["events_manager"] = $eventMock;
+        $di["logger"] = new \Box_Log();
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setService($serviceMock);
         $this->api->setDi($di);
@@ -365,44 +411,56 @@ class AdminTest extends \BBTestCase {
 
     public function testinstallExceptionActivate()
     {
-        $data = array(
-            'id' => 'extensionId',
-            'type' => 'extensionType',
-        );
+        $data = [
+            "id" => "extensionId",
+            "type" => "extensionType",
+        ];
 
-        $expected = array(
-            'success'   =>  true,
-            'id'        =>  $data['id'],
-            'type'      =>  $data['type'],
-        );
+        $expected = [
+            "success" => true,
+            "id" => $data["id"],
+            "type" => $data["type"],
+        ];
 
         $model = new \Model_Extension();
         $model->loadBean(new \RedBeanPHP\OODBBean());
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('activateExistingExtension')
-            ->will($this->returnValue(new \Exception('testinstallExceptionActivate() exception logged')));
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('downloadAndExtract')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("activateExistingExtension")
+            ->will(
+                $this->returnValue(
+                    new \Exception(
+                        "testinstallExceptionActivate() exception logged"
+                    )
+                )
+            );
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("downloadAndExtract")
             ->will($this->returnValue(true));
 
-        $eventMock = $this->getMockBuilder('\Box_EventManager')->getMock();
-        $eventMock->expects($this->atLeastOnce())->
-            method('fire');
+        $eventMock = $this->getMockBuilder("\Box_EventManager")->getMock();
+        $eventMock->expects($this->atLeastOnce())->method("fire");
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
 
         $di = new \Box_Di();
-        $di['events_manager'] = $eventMock;
-        $di['logger'] = new \Box_Log();
-        $di['db'] = $dbMock;
+        $di["events_manager"] = $eventMock;
+        $di["logger"] = new \Box_Log();
+        $di["db"] = $dbMock;
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $this->api->setService($serviceMock);
         $this->api->setDi($di);
@@ -414,20 +472,26 @@ class AdminTest extends \BBTestCase {
 
     public function testconfig_get()
     {
-        $data = array(
-            'ext' => 'extensionName',
-        );
+        $data = [
+            "ext" => "extensionName",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('getConfig')
-            ->will($this->returnValue(array()));
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("getConfig")
+            ->will($this->returnValue([]));
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
 
         $this->api->setService($serviceMock);
@@ -438,23 +502,28 @@ class AdminTest extends \BBTestCase {
 
     public function testconfig_save()
     {
-        $data = array(
-            'ext' => 'extensionName',
-        );
+        $data = [
+            "ext" => "extensionName",
+        ];
 
-        $serviceMock = $this->getMockBuilder('\Box\Mod\Extension\Service')->getMock();
-        $serviceMock->expects($this->atLeastOnce())
-            ->method('setConfig')
+        $serviceMock = $this->getMockBuilder(
+            "\Box\Mod\Extension\Service"
+        )->getMock();
+        $serviceMock
+            ->expects($this->atLeastOnce())
+            ->method("setConfig")
             ->will($this->returnValue(true));
 
-        $serviceMock->expects($this->never())
-            ->method('getConfig');
+        $serviceMock->expects($this->never())->method("getConfig");
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $this->api->setDi($di);
 
         $this->api->setService($serviceMock);
@@ -462,7 +531,4 @@ class AdminTest extends \BBTestCase {
 
         $this->assertTrue($result);
     }
-
-
 }
- 

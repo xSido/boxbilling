@@ -10,5 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
-class Box_Di extends Pimple\Container {}
+class Box_Di extends Pimple\Container
+{
+}

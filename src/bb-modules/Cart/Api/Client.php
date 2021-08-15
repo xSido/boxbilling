@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Cart\Api;
 
 /**
@@ -27,7 +26,7 @@ class Client extends \Api_Abstract
      */
     public function checkout($data)
     {
-        $gateway_id =  $this->di['array_get']($data, 'gateway_id');
+        $gateway_id = $this->di["array_get"]($data, "gateway_id");
         $cart = $this->getService()->getSessionCart();
         $client = $this->getIdentity();
         return $this->getService()->checkoutCart($cart, $client, $gateway_id);

@@ -10,20 +10,19 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_Session
 {
     public function __construct($handler)
     {
         session_set_save_handler(
-            array($handler, 'open'),
-            array($handler, 'close'),
-            array($handler, 'read'),
-            array($handler, 'write'),
-            array($handler, 'destroy'),
-            array($handler, 'gc')
+            [$handler, "open"],
+            [$handler, "close"],
+            [$handler, "read"],
+            [$handler, "write"],
+            [$handler, "destroy"],
+            [$handler, "gc"]
         );
-        if(php_sapi_name() !== 'cli'){
+        if (php_sapi_name() !== "cli") {
             $currentCookieParams = session_get_cookie_params();
             $currentCookieParams["httponly"] = true;
 
@@ -52,7 +51,7 @@ class Box_Session
     {
         return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
     }
-    
+
     public function set($key, $value)
     {
         $_SESSION[$key] = $value;

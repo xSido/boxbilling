@@ -4,14 +4,14 @@
  */
 class Api_Guest_ServiceDomainTest extends BBDbApiTestCase
 {
-    protected $_initialSeedFile = 'services.xml';
-    
+    protected $_initialSeedFile = "services.xml";
+
     public function testGuestServiceDomain()
     {
-        $data = array(
-            'sld'   =>  'phpunit',
-            'tld'   =>  '.com',
-        );
+        $data = [
+            "sld" => "phpunit",
+            "tld" => ".com",
+        ];
         $bool = $this->api_guest->servicedomain_check($data);
         $this->assertTrue($bool);
 

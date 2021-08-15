@@ -22,12 +22,12 @@
 /**
  * @see Zend_Reflection_Class
  */
-require_once 'Zend/Reflection/Class.php';
+require_once "Zend/Reflection/Class.php";
 
 /**
  * @see Zend_Reflection_Function
  */
-require_once 'Zend/Reflection/Function.php';
+require_once "Zend/Reflection/Function.php";
 
 /**
  * @category   Zend
@@ -43,15 +43,20 @@ class Zend_Reflection_Extension extends ReflectionExtension
      * @param  string $reflectionClass Name of reflection class to use
      * @return array Array of Zend_Reflection_Function objects
      */
-    public function getFunctions($reflectionClass = 'Zend_Reflection_Function')
+    public function getFunctions($reflectionClass = "Zend_Reflection_Function")
     {
-        $phpReflections  = parent::getFunctions();
-        $zendReflections = array();
-        while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
+        $phpReflections = parent::getFunctions();
+        $zendReflections = [];
+        while (
+            $phpReflections &&
+            ($phpReflection = array_shift($phpReflections))
+        ) {
             $instance = new $reflectionClass($phpReflection->getName());
             if (!$instance instanceof Zend_Reflection_Function) {
-                require_once 'Zend/Reflection/Exception.php';
-                throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Function');
+                require_once "Zend/Reflection/Exception.php";
+                throw new Zend_Reflection_Exception(
+                    "Invalid reflection class provided; must extend Zend_Reflection_Function"
+                );
             }
             $zendReflections[] = $instance;
             unset($phpReflection);
@@ -66,15 +71,20 @@ class Zend_Reflection_Extension extends ReflectionExtension
      * @param  string $reflectionClass Name of reflection class to use
      * @return array Array of Zend_Reflection_Class objects
      */
-    public function getClasses($reflectionClass = 'Zend_Reflection_Class')
+    public function getClasses($reflectionClass = "Zend_Reflection_Class")
     {
-        $phpReflections  = parent::getClasses();
-        $zendReflections = array();
-        while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
+        $phpReflections = parent::getClasses();
+        $zendReflections = [];
+        while (
+            $phpReflections &&
+            ($phpReflection = array_shift($phpReflections))
+        ) {
             $instance = new $reflectionClass($phpReflection->getName());
             if (!$instance instanceof Zend_Reflection_Class) {
-                require_once 'Zend/Reflection/Exception.php';
-                throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Class');
+                require_once "Zend/Reflection/Exception.php";
+                throw new Zend_Reflection_Exception(
+                    "Invalid reflection class provided; must extend Zend_Reflection_Class"
+                );
             }
             $zendReflections[] = $instance;
             unset($phpReflection);

@@ -11,28 +11,28 @@ https://github.rpi.edu/DotCIOweb/test-pantheon-starterkit/blob/107b23d9f231c392e
  */
 class FakeTemplateWrapper
 {
-/**
- * Body text to return from the render() method.
- *
- * @var string
- */
+    /**
+     * Body text to return from the render() method.
+     *
+     * @var string
+     */
     protected $body;
-/**
- * Constructor.
- *
- * @param string $body
- * Body text to return from the render() method.
- */
+    /**
+     * Constructor.
+     *
+     * @param string $body
+     * Body text to return from the render() method.
+     */
     public function __construct($body)
     {
         $this->body = $body;
     }
-/**
- * Mocks the \Twig_TemplateWrapper render() method.
- *
- * @param array $context
- * (optional) Render context.
- */
+    /**
+     * Mocks the \Twig_TemplateWrapper render() method.
+     *
+     * @param array $context
+     * (optional) Render context.
+     */
     public function render(array $context = [])
     {
         return $this->body;

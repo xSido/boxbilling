@@ -41,12 +41,17 @@ class Client implements \Box\InjectionAwareInterface
      */
     public function register(\Box_App &$app)
     {
-        $app->get('/embed/:what',             'get_object', array('what' => '[a-z0-9-]+'), get_class($this));
+        $app->get(
+            "/embed/:what",
+            "get_object",
+            ["what" => "[a-z0-9-]+"],
+            get_class($this)
+        );
     }
 
     public function get_object(\Box_App $app, $what)
     {
-        $tpl = 'mod_embed_'.$what;
+        $tpl = "mod_embed_" . $what;
         return $app->render($tpl);
     }
 }

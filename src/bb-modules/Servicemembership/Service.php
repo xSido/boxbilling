@@ -42,14 +42,14 @@ class Service implements \Box\InjectionAwareInterface
      */
     public function action_create(\Model_ClientOrder $order)
     {
-        $model = $this->di['db']->dispense('ServiceMembership');
+        $model = $this->di["db"]->dispense("ServiceMembership");
         $model->client_id = $order->client_id;
         $model->config = $order->config;
 
-        $model->created_at = date('Y-m-d H:i:s');
-        $model->updated_at = date('Y-m-d H:i:s');
+        $model->created_at = date("Y-m-d H:i:s");
+        $model->updated_at = date("Y-m-d H:i:s");
 
-        $this->di['db']->store($model);
+        $this->di["db"]->store($model);
 
         return $model;
     }
@@ -108,7 +108,7 @@ class Service implements \Box\InjectionAwareInterface
     }
 
     /**
-     * 
+     *
      * @param \Model_ClientOrder $order
      * @return boolean
      */
@@ -123,18 +123,20 @@ class Service implements \Box\InjectionAwareInterface
      */
     public function action_delete(\Model_ClientOrder $order)
     {
-        $orderService = $this->di['mod_service']('order');
+        $orderService = $this->di["mod_service"]("order");
         $service = $orderService->getOrderService($order);
 
-        if($service instanceof \Model_ServiceMembership) {
-            $this->di['db']->trash($service);
+        if ($service instanceof \Model_ServiceMembership) {
+            $this->di["db"]->trash($service);
         }
     }
 
-    public function toApiArray(\Model_ServiceMembership $model, $deep = false, $identity = null)
-    {
-        $result = $this->di['db']->toArray($model);
+    public function toApiArray(
+        \Model_ServiceMembership $model,
+        $deep = false,
+        $identity = null
+    ) {
+        $result = $this->di["db"]->toArray($model);
         return $result;
     }
-
 }

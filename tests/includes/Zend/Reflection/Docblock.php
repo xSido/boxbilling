@@ -22,7 +22,7 @@
 /**
  * @see Zend_Reflection_Docblock_Tag
  */
-require_once 'Zend/Reflection/Docblock/Tag.php';
+require_once "Zend/Reflection/Docblock/Tag.php";
 
 /**
  * @category   Zend
@@ -41,7 +41,7 @@ class Zend_Reflection_Docblock implements Reflector
      * @var int
      */
     protected $_startLine = null;
-    protected $_endLine   = null;
+    protected $_endLine = null;
     /**#@-*/
 
     /**
@@ -67,7 +67,7 @@ class Zend_Reflection_Docblock implements Reflector
     /**
      * @var array
      */
-    protected $_tags = array();
+    protected $_tags = [];
 
     /**
      * Export reflection
@@ -79,7 +79,6 @@ class Zend_Reflection_Docblock implements Reflector
      */
     public static function export()
     {
-
     }
 
     /**
@@ -92,15 +91,15 @@ class Zend_Reflection_Docblock implements Reflector
      */
     public function __toString()
     {
-        $str = "Docblock [ /* Docblock */ ] {".PHP_EOL.PHP_EOL;
-        $str .= "  - Tags [".count($this->_tags)."] {".PHP_EOL;
+        $str = "Docblock [ /* Docblock */ ] {" . PHP_EOL . PHP_EOL;
+        $str .= "  - Tags [" . count($this->_tags) . "] {" . PHP_EOL;
 
-        foreach($this->_tags AS $tag) {
-            $str .= "    ".$tag;
+        foreach ($this->_tags as $tag) {
+            $str .= "    " . $tag;
         }
 
-        $str .= "  }".PHP_EOL;
-        $str .= "}".PHP_EOL;
+        $str .= "  }" . PHP_EOL;
+        $str .= "}" . PHP_EOL;
 
         return $str;
     }
@@ -114,27 +113,32 @@ class Zend_Reflection_Docblock implements Reflector
     {
         if ($commentOrReflector instanceof Reflector) {
             $this->_reflector = $commentOrReflector;
-            if (!method_exists($commentOrReflector, 'getDocComment')) {
-                require_once 'Zend/Reflection/Exception.php';
-                throw new Zend_Reflection_Exception('Reflector must contain method "getDocComment"');
+            if (!method_exists($commentOrReflector, "getDocComment")) {
+                require_once "Zend/Reflection/Exception.php";
+                throw new Zend_Reflection_Exception(
+                    'Reflector must contain method "getDocComment"'
+                );
             }
             $docComment = $commentOrReflector->getDocComment();
 
             $lineCount = substr_count($docComment, "\n");
 
-            $this->_startLine = $this->_reflector->getStartLine() - $lineCount - 1;
-            $this->_endLine   = $this->_reflector->getStartLine() - 1;
-
+            $this->_startLine =
+                $this->_reflector->getStartLine() - $lineCount - 1;
+            $this->_endLine = $this->_reflector->getStartLine() - 1;
         } elseif (is_string($commentOrReflector)) {
             $docComment = $commentOrReflector;
         } else {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception(get_class($this) . ' must have a (string) DocComment or a Reflector in the constructor');
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                get_class($this) .
+                    " must have a (string) DocComment or a Reflector in the constructor"
+            );
         }
 
-        if ($docComment == '') {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('DocComment cannot be empty');
+        if ($docComment == "") {
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception("DocComment cannot be empty");
         }
 
         $this->_docComment = $docComment;
@@ -236,7 +240,7 @@ class Zend_Reflection_Docblock implements Reflector
             return $this->_tags;
         }
 
-        $returnTags = array();
+        $returnTags = [];
         foreach ($this->_tags as $tag) {
             if ($tag->getName() == $filter) {
                 $returnTags[] = $tag;
@@ -255,7 +259,11 @@ class Zend_Reflection_Docblock implements Reflector
         $docComment = $this->_docComment;
 
         // First remove doc block line starters
-        $docComment = preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ ]{0,1}(.*)?#', '$1', $docComment);
+        $docComment = preg_replace(
+            '#[ \t]*(?:\/\*\*|\*\/|\*)?[ ]{0,1}(.*)?#',
+            '$1',
+            $docComment
+        );
         $docComment = ltrim($docComment, "\r\n"); // @todo should be changed to remove first and last empty line
 
         $this->_cleanDocComment = $docComment;
@@ -267,11 +275,24 @@ class Zend_Reflection_Docblock implements Reflector
             $lineNumber++;
             $line = substr($parsedDocComment, 0, $newlinePos);
 
-            $matches = array();
+            $matches = [];
 
-            if ((strpos($line, '@') === 0) && (preg_match('#^(@\w+.*?)(\n)(?:@|\r?\n|$)#s', $parsedDocComment, $matches))) {
-                $this->_tags[] = Zend_Reflection_Docblock_Tag::factory($matches[1]);
-                $parsedDocComment = str_replace($matches[1] . $matches[2], '', $parsedDocComment);
+            if (
+                strpos($line, "@") === 0 &&
+                preg_match(
+                    '#^(@\w+.*?)(\n)(?:@|\r?\n|$)#s',
+                    $parsedDocComment,
+                    $matches
+                )
+            ) {
+                $this->_tags[] = Zend_Reflection_Docblock_Tag::factory(
+                    $matches[1]
+                );
+                $parsedDocComment = str_replace(
+                    $matches[1] . $matches[2],
+                    "",
+                    $parsedDocComment
+                );
             } else {
                 if ($lineNumber < 3 && !$firstBlandLineEncountered) {
                     $this->_shortDescription .= $line . "\n";
@@ -279,16 +300,15 @@ class Zend_Reflection_Docblock implements Reflector
                     $this->_longDescription .= $line . "\n";
                 }
 
-                if ($line == '') {
+                if ($line == "") {
                     $firstBlandLineEncountered = true;
                 }
 
                 $parsedDocComment = substr($parsedDocComment, $newlinePos + 1);
             }
-
         }
 
         $this->_shortDescription = rtrim($this->_shortDescription);
-        $this->_longDescription  = rtrim($this->_longDescription);
+        $this->_longDescription = rtrim($this->_longDescription);
     }
 }

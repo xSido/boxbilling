@@ -23,13 +23,17 @@ class Client extends \Api_Abstract
      */
     public function get()
     {
-        $clientService = $this->di['mod_service']('client');
-        return $clientService->toApiArray($this->getIdentity(), true, $this->getIdentity());
+        $clientService = $this->di["mod_service"]("client");
+        return $clientService->toApiArray(
+            $this->getIdentity(),
+            true,
+            $this->getIdentity()
+        );
     }
 
     /**
      * Update currencty logged in client details
-     * 
+     *
      * @optional string $email - new client email. Must not exist on system
      * @optional string $last_name - last name
      * @optional string $aid - Alternative id. Usually used by import tools.
@@ -61,15 +65,15 @@ class Client extends \Api_Abstract
      * @optional string $custom_8 - Custom field 8
      * @optional string $custom_9 - Custom field 9
      * @optional string $custom_10 - Custom field 10
-     * 
+     *
      * @return boolean
-     * @throws Exception 
+     * @throws Exception
      */
     public function update($data)
     {
         return $this->getService()->updateClient($this->getIdentity(), $data);
     }
-    
+
     /**
      * Retrieve current API key
      */
@@ -78,7 +82,7 @@ class Client extends \Api_Abstract
         $client = $this->getIdentity();
         return $client->api_token;
     }
-    
+
     /**
      * Generate new API key
      */
@@ -92,22 +96,25 @@ class Client extends \Api_Abstract
      */
     public function change_password($data)
     {
-        $required = array(
-            'password'         => 'Password required',
-            'password_confirm' => 'Password confirmation required',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "password" => "Password required",
+            "password_confirm" => "Password confirmation required",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        if ($data['password'] != $data['password_confirm']) {
-            throw new \Box_Exception('Passwords do not match.');
+        if ($data["password"] != $data["password_confirm"]) {
+            throw new \Box_Exception("Passwords do not match.");
         }
 
-        return $this->getService()->changeClientPassword($this->getIdentity(), $data['password']);
+        return $this->getService()->changeClientPassword(
+            $this->getIdentity(),
+            $data["password"]
+        );
     }
 
     /**
      * Clear session and logout
-     * @return boolean 
+     * @return boolean
      */
     public function logout()
     {

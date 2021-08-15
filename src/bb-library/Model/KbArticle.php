@@ -12,6 +12,6 @@
 
 class Model_KbArticle extends \RedBean_SimpleModel
 {
-    const ACTIVE    = 'active';
-    const DRAFT     = 'draft';
+    const ACTIVE = "active";
+    const DRAFT = "draft";
 }

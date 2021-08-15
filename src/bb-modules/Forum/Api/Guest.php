@@ -25,13 +25,25 @@ class Guest extends \Api_Abstract
      */
     public function get_list($data)
     {
-        $table = $this->di['table']('Forum');
-        list ($sql, $params) = $table->getSearchQuery($data);
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $pager = $this->di['pager']->getSimpleResultSet($sql, $params, $per_page);
-        foreach ($pager['list'] as $key => $item) {
-            $forum               = $this->di['db']->getExistingModelById('Forum', $item['id'], 'Forum not found');
-            $pager['list'][$key] = $table->toApiArray($forum);
+        $table = $this->di["table"]("Forum");
+        [$sql, $params] = $table->getSearchQuery($data);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $pager = $this->di["pager"]->getSimpleResultSet(
+            $sql,
+            $params,
+            $per_page
+        );
+        foreach ($pager["list"] as $key => $item) {
+            $forum = $this->di["db"]->getExistingModelById(
+                "Forum",
+                $item["id"],
+                "Forum not found"
+            );
+            $pager["list"][$key] = $table->toApiArray($forum);
         }
 
         return $pager;
@@ -44,11 +56,14 @@ class Guest extends \Api_Abstract
      */
     public function get_categories($data)
     {
-        $table = $this->di['table']('Forum');
+        $table = $this->di["table"]("Forum");
 
-        $list = $this->di['db']->find('Forum', 'ORDER BY priority ASC, category ASC');
+        $list = $this->di["db"]->find(
+            "Forum",
+            "ORDER BY priority ASC, category ASC"
+        );
 
-        $result = array();
+        $result = [];
         foreach ($list as $f) {
             $result[$f->category][] = $table->toApiArray($f);
         }
@@ -66,16 +81,16 @@ class Guest extends \Api_Abstract
      */
     public function get($data)
     {
-        if (!isset($data['id']) && !isset($data['slug'])) {
-            throw new \Box_Exception('ID or slug is missing');
+        if (!isset($data["id"]) && !isset($data["slug"])) {
+            throw new \Box_Exception("ID or slug is missing");
         }
 
-        $id   = $this->di['array_get']($data, 'id', NULL);
-        $slug = $this->di['array_get']($data, 'slug', NULL);
+        $id = $this->di["array_get"]($data, "id", null);
+        $slug = $this->di["array_get"]($data, "slug", null);
 
-        $table = $this->di['table']('Forum');
+        $table = $this->di["table"]("Forum");
 
-        $model = FALSE;
+        $model = false;
         if ($id) {
             $model = $table->findOneActiveById($id);
         } else {
@@ -83,7 +98,7 @@ class Guest extends \Api_Abstract
         }
 
         if (!$model instanceof \Model_Forum) {
-            throw new \Box_Exception('Forum not found');
+            throw new \Box_Exception("Forum not found");
         }
 
         return $table->toApiArray($model);
@@ -96,14 +111,26 @@ class Guest extends \Api_Abstract
      */
     public function get_topic_list($data)
     {
-        $table = $this->di['table']('ForumTopic');
-        list($sql, $params) = $table->getSearchQuery($data);
+        $table = $this->di["table"]("ForumTopic");
+        [$sql, $params] = $table->getSearchQuery($data);
 
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $pager = $this->di['pager']->getSimpleResultSet($sql, $params, $per_page);
-        foreach($pager['list'] as $key => $item){
-            $forum = $this->di['db']->getExistingModelById('ForumTopic', $item['id'], 'Forum topic not found');
-            $pager['list'][$key] = $table->toApiArray($forum);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $pager = $this->di["pager"]->getSimpleResultSet(
+            $sql,
+            $params,
+            $per_page
+        );
+        foreach ($pager["list"] as $key => $item) {
+            $forum = $this->di["db"]->getExistingModelById(
+                "ForumTopic",
+                $item["id"],
+                "Forum topic not found"
+            );
+            $pager["list"][$key] = $table->toApiArray($forum);
         }
 
         return $pager;
@@ -118,23 +145,29 @@ class Guest extends \Api_Abstract
      */
     public function get_topic($data)
     {
-        if (!isset($data['id']) && !isset($data['slug'])) {
-            throw new \Box_Exception('ID or slug is missing');
+        if (!isset($data["id"]) && !isset($data["slug"])) {
+            throw new \Box_Exception("ID or slug is missing");
         }
 
-        $id   = $this->di['array_get']($data, 'id', NULL);
-        $slug = $this->di['array_get']($data, 'slug', NULL);
+        $id = $this->di["array_get"]($data, "id", null);
+        $slug = $this->di["array_get"]($data, "slug", null);
 
-        $table = $this->di['table']('ForumTopic');
+        $table = $this->di["table"]("ForumTopic");
 
-        $model = FALSE;
+        $model = false;
         if ($id) {
-            $model = $this->di['db']->getExistingModelById('ForumTopic', $id, 'Forum topic not found');
+            $model = $this->di["db"]->getExistingModelById(
+                "ForumTopic",
+                $id,
+                "Forum topic not found"
+            );
         } else {
-            $model = $this->di['db']->findOne('ForumTopic', 'slug = :slug', array(':slug' => $slug));
+            $model = $this->di["db"]->findOne("ForumTopic", "slug = :slug", [
+                ":slug" => $slug,
+            ]);
         }
         if (!$model instanceof \Model_ForumTopic) {
-            throw new \Box_Exception('Forum Topic not found');
+            throw new \Box_Exception("Forum Topic not found");
         }
         $table->hitView($model);
 
@@ -150,17 +183,29 @@ class Guest extends \Api_Abstract
      */
     public function get_topic_message_list($data)
     {
-        if (!isset($data['forum_topic_id'])) {
-            throw new \Box_Exception('Forum Topic ID not passed');
+        if (!isset($data["forum_topic_id"])) {
+            throw new \Box_Exception("Forum Topic ID not passed");
         }
-        $table = $this->di['table']('ForumTopicMessage');
-        list($sql, $params) = $table->getSearchQuery($data);
+        $table = $this->di["table"]("ForumTopicMessage");
+        [$sql, $params] = $table->getSearchQuery($data);
 
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        $pager = $this->di['pager']->getSimpleResultSet($sql, $params, $per_page);
-        foreach($pager['list'] as $key => $item){
-            $forum = $this->di['db']->getExistingModelById('ForumTopicMessage', $item['id'], 'Forum topic message not found');
-            $pager['list'][$key] = $table->toApiArray($forum);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        $pager = $this->di["pager"]->getSimpleResultSet(
+            $sql,
+            $params,
+            $per_page
+        );
+        foreach ($pager["list"] as $key => $item) {
+            $forum = $this->di["db"]->getExistingModelById(
+                "ForumTopicMessage",
+                $item["id"],
+                "Forum topic message not found"
+            );
+            $pager["list"][$key] = $table->toApiArray($forum);
         }
 
         return $pager;
@@ -175,26 +220,40 @@ class Guest extends \Api_Abstract
      */
     public function search($data)
     {
-        $required = array(
-            'q' => 'Enter some keywords for search',
-        );
-        $this->di['validator']->checkRequiredParamsForArray($required, $data);
+        $required = [
+            "q" => "Enter some keywords for search",
+        ];
+        $this->di["validator"]->checkRequiredParamsForArray($required, $data);
 
-        if (strlen($data['q']) < 3) {
-            throw new \Box_Exception('Search keyword must be longer than 3 characters');
+        if (strlen($data["q"]) < 3) {
+            throw new \Box_Exception(
+                "Search keyword must be longer than 3 characters"
+            );
         }
 
-        $table = $this->di['table']('ForumTopicMessage');
-        list($sql, $params) = $table->getSearchQuery($data);
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        return $this->di['pager']->getSimpleResultSet($sql, $params, $per_page);
+        $table = $this->di["table"]("ForumTopicMessage");
+        [$sql, $params] = $table->getSearchQuery($data);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        return $this->di["pager"]->getSimpleResultSet($sql, $params, $per_page);
     }
 
     public function members_list($data)
     {
-        list($sql, $params) = $this->getService()->getMembersListQuery($data);
+        [$sql, $params] = $this->getService()->getMembersListQuery($data);
 
-        $per_page = $this->di['array_get']($data, 'per_page', $this->di['pager']->getPer_page());
-        return $this->di['pager']->getAdvancedResultSet($sql, $params, $per_page);
+        $per_page = $this->di["array_get"](
+            $data,
+            "per_page",
+            $this->di["pager"]->getPer_page()
+        );
+        return $this->di["pager"]->getAdvancedResultSet(
+            $sql,
+            $params,
+            $per_page
+        );
     }
 }

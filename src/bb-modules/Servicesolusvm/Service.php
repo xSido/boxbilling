@@ -64,59 +64,76 @@ class Service implements InjectionAwareInterface
             PRIMARY KEY (`id`),
             KEY `client_id_idx` (`client_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-        $this->di['db']->exec($sql);
+        $this->di["db"]->exec($sql);
     }
 
     public function uninstall()
     {
-        $this->di['db']->exec("DROP TABLE IF EXISTS `service_solusvm`");
+        $this->di["db"]->exec("DROP TABLE IF EXISTS `service_solusvm`");
     }
 
     public function getCartProductTitle($product, array $data)
     {
-        return __('Virtual private server :title',
-                  array(
-                      ':title'    => $product->title,
-                      ':template' => $data['template'],
-                      ':hostname' => $data['hostname']));
+        return __("Virtual private server :title", [
+            ":title" => $product->title,
+            ":template" => $data["template"],
+            ":hostname" => $data["hostname"],
+        ]);
     }
 
     public function validateOrderData(array $data)
     {
-        if (!isset($data['hostname']) || empty($data['hostname'])) {
-            throw new \Box_Exception('Please enter VPS hostname.', null, 7101);
+        if (!isset($data["hostname"]) || empty($data["hostname"])) {
+            throw new \Box_Exception("Please enter VPS hostname.", null, 7101);
         }
 
-        $ValidHostnameRegex = "/^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/";
-        if (!preg_match($ValidHostnameRegex, $data['hostname'])) {
-            throw new \Box_Exception('Hostname :hostname is not valid.', array(':hostname' => $data['hostname']), 7102);
+        $ValidHostnameRegex =
+            "/^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/";
+        if (!preg_match($ValidHostnameRegex, $data["hostname"])) {
+            throw new \Box_Exception(
+                "Hostname :hostname is not valid.",
+                [":hostname" => $data["hostname"]],
+                7102
+            );
         }
 
-        if (!isset($data['template']) || empty($data['template'])) {
-            throw new \Box_Exception('Please select VPS template.', null, 7103);
+        if (!isset($data["template"]) || empty($data["template"])) {
+            throw new \Box_Exception("Please select VPS template.", null, 7103);
         }
     }
 
     public function updateMasterConfig($cluster_id, $data)
     {
-        if (!isset($data['id'])) {
-            throw new \Box_Exception('SolusVM API ID is missing.', null, 7201);
+        if (!isset($data["id"])) {
+            throw new \Box_Exception("SolusVM API ID is missing.", null, 7201);
         }
 
-        if (!isset($data['key'])) {
-            throw new \Box_Exception('SolusVM API KEY is missing.', null, 7202);
+        if (!isset($data["key"])) {
+            throw new \Box_Exception("SolusVM API KEY is missing.", null, 7202);
         }
 
-        if (!isset($data['ipaddress'])) {
-            throw new \Box_Exception('SolusVM API ipaddress is missing.', null, 7203);
+        if (!isset($data["ipaddress"])) {
+            throw new \Box_Exception(
+                "SolusVM API ipaddress is missing.",
+                null,
+                7203
+            );
         }
 
-        if (!isset($data['secure'])) {
-            throw new \Box_Exception('SolusVM API secure is missing.', null, 7204);
+        if (!isset($data["secure"])) {
+            throw new \Box_Exception(
+                "SolusVM API secure is missing.",
+                null,
+                7204
+            );
         }
 
-        if (!isset($data['port'])) {
-            throw new \Box_Exception('SolusVM API port is missing.', null, 7204);
+        if (!isset($data["port"])) {
+            throw new \Box_Exception(
+                "SolusVM API port is missing.",
+                null,
+                7204
+            );
         }
 
         $sql = "
@@ -128,19 +145,19 @@ class Service implements InjectionAwareInterface
             AND meta_key = 'config'
         ";
 
-        $c      = array(
-            'id'        => $data['id'],
-            'key'       => $data['key'],
-            'ipaddress' => $data['ipaddress'],
-            'secure'    => $data['secure'],
-            'port'      => $data['port'],
-            'usertype'  => 'admin',
-        );
-        $params = array(
-            'config'     => json_encode($c),
-            'cluster_id' => $cluster_id,
-        );
-        $this->di['db']->exec($sql, $params);
+        $c = [
+            "id" => $data["id"],
+            "key" => $data["key"],
+            "ipaddress" => $data["ipaddress"],
+            "secure" => $data["secure"],
+            "port" => $data["port"],
+            "usertype" => "admin",
+        ];
+        $params = [
+            "config" => json_encode($c),
+            "cluster_id" => $cluster_id,
+        ];
+        $this->di["db"]->exec($sql, $params);
     }
 
     /**
@@ -148,7 +165,7 @@ class Service implements InjectionAwareInterface
      */
     public function getMasterConfig($cluster_id)
     {
-        $sql    = "
+        $sql = "
             SELECT meta_value 
             FROM extension_meta 
             WHERE extension = 'mod_servicesolusvm' 
@@ -156,26 +173,26 @@ class Service implements InjectionAwareInterface
             AND rel_id = :cluster_id
             AND meta_key = 'config'
         ";
-        $config = $this->di['db']->getCell($sql, array('cluster_id' => $cluster_id));
+        $config = $this->di["db"]->getCell($sql, ["cluster_id" => $cluster_id]);
         if (!$config) {
-            $config           = array();
-            $meta             = $this->di['db']->dispense('extension_meta');
-            $meta->extension  = 'mod_servicesolusvm';
-            $meta->rel_type   = 'cluster';
-            $meta->rel_id     = $cluster_id;
-            $meta->meta_key   = 'config';
+            $config = [];
+            $meta = $this->di["db"]->dispense("extension_meta");
+            $meta->extension = "mod_servicesolusvm";
+            $meta->rel_type = "cluster";
+            $meta->rel_id = $cluster_id;
+            $meta->meta_key = "config";
             $meta->meta_value = json_encode($config);
-            $meta->created_at = date('Y-m-d H:i:s');
-            $meta->updated_at = date('Y-m-d H:i:s');
-            $this->di['db']->store($meta);
+            $meta->created_at = date("Y-m-d H:i:s");
+            $meta->updated_at = date("Y-m-d H:i:s");
+            $this->di["db"]->store($meta);
         } else {
             $config = json_decode($config, 1);
         }
-        if (!isset($config['secure'])) {
-            $config['secure'] = null;
+        if (!isset($config["secure"])) {
+            $config["secure"] = null;
         }
-        if (!isset($config['port'])) {
-            $config['port'] = null;
+        if (!isset($config["port"])) {
+            $config["port"] = null;
         }
 
         return $config;
@@ -183,44 +200,50 @@ class Service implements InjectionAwareInterface
 
     public function setSolusUserPassword($client, $username, $password)
     {
-        $meta             = $this->di['db']->dispense('extension_meta');
-        $meta->extension  = 'mod_servicesolusvm';
-        $meta->client_id  = $client->id;
-        $meta->meta_key   = 'solusvm_username';
+        $meta = $this->di["db"]->dispense("extension_meta");
+        $meta->extension = "mod_servicesolusvm";
+        $meta->client_id = $client->id;
+        $meta->meta_key = "solusvm_username";
         $meta->meta_value = $username;
-        $meta->created_at = date('Y-m-d H:i:s');
-        $meta->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($meta);
+        $meta->created_at = date("Y-m-d H:i:s");
+        $meta->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($meta);
 
-        $meta             = $this->di['db']->dispense('extension_meta');
-        $meta->extension  = 'mod_servicesolusvm';
-        $meta->client_id  = $client->id;
-        $meta->meta_key   = 'solusvm_password';
+        $meta = $this->di["db"]->dispense("extension_meta");
+        $meta->extension = "mod_servicesolusvm";
+        $meta->client_id = $client->id;
+        $meta->meta_key = "solusvm_password";
         $meta->meta_value = $password;
-        $meta->created_at = date('Y-m-d H:i:s');
-        $meta->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($meta);
+        $meta->created_at = date("Y-m-d H:i:s");
+        $meta->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($meta);
     }
 
     public function getSolusUserPassword($client)
     {
-        $sql      = "
+        $sql = "
             SELECT meta_value 
             FROM extension_meta 
             WHERE client_id = :cid 
             AND extension = 'mod_servicesolusvm' 
             AND meta_key = :key
         ";
-        $username = $this->di['db']->getCell($sql, array('cid' => $client->id, 'key' => 'solusvm_username'));
-        $password = $this->di['db']->getCell($sql, array('cid' => $client->id, 'key' => 'solusvm_password'));
+        $username = $this->di["db"]->getCell($sql, [
+            "cid" => $client->id,
+            "key" => "solusvm_username",
+        ]);
+        $password = $this->di["db"]->getCell($sql, [
+            "cid" => $client->id,
+            "key" => "solusvm_password",
+        ]);
 
         if (!$username) {
             $username = $client->email;
-            $password = $this->di['tools']->generatePassword(8, 2);
+            $password = $this->di["tools"]->generatePassword(8, 2);
             $this->setSolusUserPassword($client, $username, $password);
         }
 
-        return array($username, $password);
+        return [$username, $password];
     }
 
     /**
@@ -231,13 +254,13 @@ class Service implements InjectionAwareInterface
     {
         $c = json_decode($order->config, 1);
         $this->validateOrderData($c);
-        $model             = $this->di['db']->dispense('service_solusvm');
-        $model->client_id  = $order->client_id;
-        $model->hostname   = strtolower($c['hostname']);
-        $model->template   = $c['template'];
-        $model->created_at = date('Y-m-d H:i:s');
-        $model->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($model);
+        $model = $this->di["db"]->dispense("service_solusvm");
+        $model->client_id = $order->client_id;
+        $model->hostname = strtolower($c["hostname"]);
+        $model->template = $c["template"];
+        $model->created_at = date("Y-m-d H:i:s");
+        $model->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($model);
 
         return $model;
     }
@@ -249,91 +272,155 @@ class Service implements InjectionAwareInterface
     public function activate($order, $model)
     {
         if (!is_object($model)) {
-            throw new \Box_Exception('Could not activate order. Service was not created', null, 7456);
+            throw new \Box_Exception(
+                "Could not activate order. Service was not created",
+                null,
+                7456
+            );
         }
 
-        $client  = $this->di['db']->load('client', $order->client_id);
-        $product = $this->di['db']->load('product', $order->product_id);
+        $client = $this->di["db"]->load("client", $order->client_id);
+        $product = $this->di["db"]->load("product", $order->product_id);
         if (!$product) {
-            throw new \Box_Exception('Could not activate order because ordered product does not exists', null, 7457);
+            throw new \Box_Exception(
+                "Could not activate order because ordered product does not exists",
+                null,
+                7457
+            );
         }
 
         $pconfig = json_decode($product->config, 1);
 
-        list($username, $password) = $this->getSolusUserPassword($client);
+        [$username, $password] = $this->getSolusUserPassword($client);
 
         try {
             $this->_getApi()->client_checkexists($username);
         } catch (\Exception $exc) {
-            $this->_getApi()->client_create($username, $password, $client->email, $client->first_name, $client->last_name, $client->company);
+            $this->_getApi()->client_create(
+                $username,
+                $password,
+                $client->email,
+                $client->first_name,
+                $client->last_name,
+                $client->company
+            );
         }
 
-        if (!isset($pconfig['node'])) {
-            throw new \Box_Exception('Could not activate order. Product :id configuration is missing node parameter', array(':id' => $product->id), 7458);
+        if (!isset($pconfig["node"])) {
+            throw new \Box_Exception(
+                "Could not activate order. Product :id configuration is missing node parameter",
+                [":id" => $product->id],
+                7458
+            );
         }
 
-        if (!isset($pconfig['plan'])) {
-            throw new \Box_Exception('Could not activate order. Product :id configuration is missing plan parameter', array(':id' => $product->id), 7459);
+        if (!isset($pconfig["plan"])) {
+            throw new \Box_Exception(
+                "Could not activate order. Product :id configuration is missing plan parameter",
+                [":id" => $product->id],
+                7459
+            );
         }
 
-        if (!isset($pconfig['vtype'])) {
-            throw new \Box_Exception('Could not activate order. Product :id configuration is missing virtualization type parameter', array(':id' => $product->id), 7460);
+        if (!isset($pconfig["vtype"])) {
+            throw new \Box_Exception(
+                "Could not activate order. Product :id configuration is missing virtualization type parameter",
+                [":id" => $product->id],
+                7460
+            );
         }
 
-        if (!isset($pconfig['ips'])) {
-            throw new \Box_Exception('Could not activate order. Product :id configuration is missing ips amount parameter', array(':id' => $product->id), 7461);
+        if (!isset($pconfig["ips"])) {
+            throw new \Box_Exception(
+                "Could not activate order. Product :id configuration is missing ips amount parameter",
+                [":id" => $product->id],
+                7461
+            );
         }
 
-        $type      = $pconfig['vtype'];
-        $node      = $pconfig['node'];
-        $nodegroup = $this->di['array_get']($pconfig, 'nodegroup', null);
+        $type = $pconfig["vtype"];
+        $node = $pconfig["node"];
+        $nodegroup = $this->di["array_get"]($pconfig, "nodegroup", null);
 
         $template = $model->template;
         $hostname = $model->hostname;
-        $plan     = $pconfig['plan'];
-        $ips      = $pconfig['ips'];
+        $plan = $pconfig["plan"];
+        $ips = $pconfig["ips"];
 
-        $hvmt            = $this->di['array_get']($pconfig, 'hvmt', null);
-        $custommemory    = $this->di['array_get']($pconfig, 'custommemory', null);
-        $customdiskspace = $this->di['array_get']($pconfig, 'customdiskspace', null);
-        $custombandwidth = $this->di['array_get']($pconfig, 'custombandwidth', null);
-        $customcpu       = $this->di['array_get']($pconfig, 'customcpu', null);
-        $customextraip   = $this->di['array_get']($pconfig, 'customextraip', null);
-        $issuelicense    = $this->di['array_get']($pconfig, 'issuelicense', null);
+        $hvmt = $this->di["array_get"]($pconfig, "hvmt", null);
+        $custommemory = $this->di["array_get"]($pconfig, "custommemory", null);
+        $customdiskspace = $this->di["array_get"](
+            $pconfig,
+            "customdiskspace",
+            null
+        );
+        $custombandwidth = $this->di["array_get"](
+            $pconfig,
+            "custombandwidth",
+            null
+        );
+        $customcpu = $this->di["array_get"]($pconfig, "customcpu", null);
+        $customextraip = $this->di["array_get"](
+            $pconfig,
+            "customextraip",
+            null
+        );
+        $issuelicense = $this->di["array_get"]($pconfig, "issuelicense", null);
 
-        $result = $this->_getApi()->vserver_create($type, $node, $nodegroup, $hostname, $password, $username, $plan, $template, $ips, $hvmt, $custommemory, $customdiskspace, $custombandwidth, $customcpu, $customextraip, $issuelicense);
+        $result = $this->_getApi()->vserver_create(
+            $type,
+            $node,
+            $nodegroup,
+            $hostname,
+            $password,
+            $username,
+            $plan,
+            $template,
+            $ips,
+            $hvmt,
+            $custommemory,
+            $customdiskspace,
+            $custombandwidth,
+            $customcpu,
+            $customextraip,
+            $issuelicense
+        );
 
-        $model->cluster_id      = 1; //for future if ever BoxBilling supports multiple master servers
-        $model->vserverid       = $result['vserverid'];
-        $model->virtid          = $result['virtid'];
-        $model->nodeid          = $result['nodeid'];
-        $model->type            = $type;
-        $model->plan            = $plan;
-        $model->node            = $node;
-        $model->nodegroup       = $nodegroup;
-        $model->hostname        = $result['hostname'];
-        $model->rootpassword    = ''; //$result['rootpassword'];
-        $model->username        = $username;
-        $model->ips             = $ips;
-        $model->hvmt            = $hvmt;
-        $model->consoleuser     = $result['consoleuser'];
-        $model->consolepassword = ''; //$result['consolepassword'];
-        $model->custommemory    = $custommemory;
+        $model->cluster_id = 1; //for future if ever BoxBilling supports multiple master servers
+        $model->vserverid = $result["vserverid"];
+        $model->virtid = $result["virtid"];
+        $model->nodeid = $result["nodeid"];
+        $model->type = $type;
+        $model->plan = $plan;
+        $model->node = $node;
+        $model->nodegroup = $nodegroup;
+        $model->hostname = $result["hostname"];
+        $model->rootpassword = ""; //$result['rootpassword'];
+        $model->username = $username;
+        $model->ips = $ips;
+        $model->hvmt = $hvmt;
+        $model->consoleuser = $result["consoleuser"];
+        $model->consolepassword = ""; //$result['consolepassword'];
+        $model->custommemory = $custommemory;
         $model->customdiskspace = $customdiskspace;
         $model->custombandwidth = $custombandwidth;
-        $model->customcpu       = $customcpu;
-        $model->customextraip   = $customextraip;
-        $model->issuelicense    = $issuelicense;
-        $model->mainipaddress   = $result['mainipaddress'];
-        $model->extraipaddress  = $this->di['array_get']($result, 'extraipaddress', null);
-        $model->updated_at      = date('Y-m-d H:i:s');
-        $this->di['db']->store($model);
+        $model->customcpu = $customcpu;
+        $model->customextraip = $customextraip;
+        $model->issuelicense = $issuelicense;
+        $model->mainipaddress = $result["mainipaddress"];
+        $model->extraipaddress = $this->di["array_get"](
+            $result,
+            "extraipaddress",
+            null
+        );
+        $model->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($model);
 
         //pass params to event hook
-        return array(
-            'rootpassword'    => $result['rootpassword'],
-            'consolepassword' => $result['consolepassword'],
-        );
+        return [
+            "rootpassword" => $result["rootpassword"],
+            "consolepassword" => $result["consolepassword"],
+        ];
     }
 
     /**
@@ -345,8 +432,8 @@ class Service implements InjectionAwareInterface
     public function suspend($order, $model)
     {
         $this->_getApi()->vserver_suspend($model->vserverid);
-        $model->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($model);
+        $model->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($model);
 
         return true;
     }
@@ -358,8 +445,8 @@ class Service implements InjectionAwareInterface
     public function unsuspend($order, $model)
     {
         $this->_getApi()->vserver_unsuspend($model->vserverid);
-        $model->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($model);
+        $model->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($model);
 
         return true;
     }
@@ -391,7 +478,7 @@ class Service implements InjectionAwareInterface
     {
         if (is_object($model)) {
             $this->_getApi()->vserver_terminate($model->vserverid);
-            $this->di['db']->trash($model);
+            $this->di["db"]->trash($model);
         }
 
         return true;
@@ -422,7 +509,7 @@ class Service implements InjectionAwareInterface
     {
         $result = $this->_getApi()->vserver_status($model->vserverid);
 
-        return $result['statusmsg'];
+        return $result["statusmsg"];
     }
 
     public function info($vserverid)
@@ -432,91 +519,101 @@ class Service implements InjectionAwareInterface
         return $result;
     }
 
-    public function set_root_password($order, $model, $params = array())
+    public function set_root_password($order, $model, $params = [])
     {
-        if (!isset($params['password']) || strlen($params['password']) < 4) {
-            throw new \Box_Exception('Root password must be longer than 4 symbols', null, 8789);
+        if (!isset($params["password"]) || strlen($params["password"]) < 4) {
+            throw new \Box_Exception(
+                "Root password must be longer than 4 symbols",
+                null,
+                8789
+            );
         }
-        $pass = $params['password'];
+        $pass = $params["password"];
         $this->_getApi()->vserver_rootpassword($model->vserverid, $pass);
 
-        $model->rootpassword = ''; //$pass;
-        $this->di['db']->store($model);
+        $model->rootpassword = ""; //$pass;
+        $this->di["db"]->store($model);
 
         return true;
     }
 
-    public function set_plan($order, $model, $params = array())
+    public function set_plan($order, $model, $params = [])
     {
-        if (!isset($params['plan']) || empty($params['plan'])) {
-            throw new \Box_Exception('Plan name must not be empty', null, 8790);
+        if (!isset($params["plan"]) || empty($params["plan"])) {
+            throw new \Box_Exception("Plan name must not be empty", null, 8790);
         }
-        $this->_getApi()->vserver_change($model->vserverid, $params['plan']);
-        $model->plan = $params['plan'];
-        $this->di['db']->store($model);
+        $this->_getApi()->vserver_change($model->vserverid, $params["plan"]);
+        $model->plan = $params["plan"];
+        $this->di["db"]->store($model);
 
         return true;
     }
 
-    public function set_hostname($order, $model, $params = array())
+    public function set_hostname($order, $model, $params = [])
     {
-        if (!isset($params['hostname']) || empty($params['hostname'])) {
-            throw new \Box_Exception('Hostname must not be empty', null, 8791);
+        if (!isset($params["hostname"]) || empty($params["hostname"])) {
+            throw new \Box_Exception("Hostname must not be empty", null, 8791);
         }
-        $this->_getApi()->vserver_hostname($model->vserverid, $params['hostname']);
-        $model->hostname = $params['hostname'];
-        $this->di['db']->store($model);
+        $this->_getApi()->vserver_hostname(
+            $model->vserverid,
+            $params["hostname"]
+        );
+        $model->hostname = $params["hostname"];
+        $this->di["db"]->store($model);
 
         return true;
     }
 
-    public function rebuild($order, $model, $params = array())
+    public function rebuild($order, $model, $params = [])
     {
-        if (!isset($params['template']) || empty($params['template'])) {
-            throw new \Box_Exception('Template must not be empty', null, 8792);
+        if (!isset($params["template"]) || empty($params["template"])) {
+            throw new \Box_Exception("Template must not be empty", null, 8792);
         }
-        $this->_getApi()->vserver_rebuild($model->vserverid, $params['template']);
-        $model->template = $params['template'];
-        $this->di['db']->store($model);
+        $this->_getApi()->vserver_rebuild(
+            $model->vserverid,
+            $params["template"]
+        );
+        $model->template = $params["template"];
+        $this->di["db"]->store($model);
 
         return true;
     }
 
-    public function addip($order, $model, $params = array())
+    public function addip($order, $model, $params = [])
     {
         $this->_getApi()->vserver_addip($model->vserverid);
 
         return true;
     }
 
-    public function network_disable($order, $model, $params = array())
+    public function network_disable($order, $model, $params = [])
     {
         return $this->_getApi()->vserver_network_disable($model->vserverid);
     }
 
-    public function network_enable($order, $model, $params = array())
+    public function network_enable($order, $model, $params = [])
     {
         return $this->_getApi()->vserver_network_enable($model->vserverid);
     }
 
-    public function tun_disable($order, $model, $params = array())
+    public function tun_disable($order, $model, $params = [])
     {
         return $this->_getApi()->vserver_tun_disable($model->vserverid);
     }
 
-    public function tun_enable($order, $model, $params = array())
+    public function tun_enable($order, $model, $params = [])
     {
         return $this->_getApi()->vserver_tun_enable($model->vserverid);
     }
 
-    public function pae_disable($order, $model, $params = array())
+    public function pae_disable($order, $model, $params = [])
     {
-        return $this->_getApi()->vserver_pae($model->vserverid, 'off');
+        return $this->_getApi()->vserver_pae($model->vserverid, "off");
     }
 
-    public function pae_enable($order, $model, $params = array())
+    public function pae_enable($order, $model, $params = [])
     {
-        return $this->_getApi()->vserver_pae($model->vserverid, 'on');
+        return $this->_getApi()->vserver_pae($model->vserverid, "on");
     }
 
     public function client_list()
@@ -529,12 +626,19 @@ class Service implements InjectionAwareInterface
         return $this->_getApi()->node_virtualservers($nodeid);
     }
 
-    public function client_change_password($order, $model, $params = array())
+    public function client_change_password($order, $model, $params = [])
     {
-        if (!isset($params['password']) || strlen($params['password']) < 4) {
-            throw new \Box_Exception('Password must be longer than 4 symbols', null, 8790);
+        if (!isset($params["password"]) || strlen($params["password"]) < 4) {
+            throw new \Box_Exception(
+                "Password must be longer than 4 symbols",
+                null,
+                8790
+            );
         }
-        $this->_getApi()->client_updatepassword($model->username, $params['password']);
+        $this->_getApi()->client_updatepassword(
+            $model->username,
+            $params["password"]
+        );
 
         $sql = "
             UPDATE extension_meta 
@@ -543,31 +647,35 @@ class Service implements InjectionAwareInterface
             AND extension = 'mod_servicesolusvm' 
             AND meta_key = :key
         ";
-        $this->di['db']->exec($sql, array('cid' => $model->client_id, 'key' => 'solusvm_password', 'pass' => $params['password']));
+        $this->di["db"]->exec($sql, [
+            "cid" => $model->client_id,
+            "key" => "solusvm_password",
+            "pass" => $params["password"],
+        ]);
 
         return true;
     }
 
     public function getVirtualizationTypes($data)
     {
-        return array(
-            "openvz"  => 'OpenVz',
-            "xen"     => 'Xen',
-            "xen hvm" => 'Xen HVM',
-            "kvm"     => 'KVM',
-        );
+        return [
+            "openvz" => "OpenVz",
+            "xen" => "Xen",
+            "xen hvm" => "Xen HVM",
+            "kvm" => "KVM",
+        ];
     }
 
     public function getNodes($type, $by)
     {
-        if ($by == 'id') {
+        if ($by == "id") {
             $result = $this->_getApi()->node_idlist($type);
         } else {
             $result = $this->_getApi()->listnodes($type);
         }
 
-        $list = explode(',', $result['nodes']);
-        $res  = array();
+        $list = explode(",", $result["nodes"]);
+        $res = [];
         foreach ($list as $p) {
             $res[$p] = $p;
         }
@@ -578,15 +686,15 @@ class Service implements InjectionAwareInterface
     public function getTemplates($type)
     {
         $templates = $this->_getApi()->listtemplates($type);
-        $list = explode(',', $templates['templates']);
-        if($type == 'kvm' && isset($templates['templateskvm'])) {
-            $list = explode(',', $templates['templateskvm']);
+        $list = explode(",", $templates["templates"]);
+        if ($type == "kvm" && isset($templates["templateskvm"])) {
+            $list = explode(",", $templates["templateskvm"]);
         }
-        if($type == 'xen hvm' && isset($templates['templateshvm'])) {
-            $list = explode(',', $templates['templateshvm']);
+        if ($type == "xen hvm" && isset($templates["templateshvm"])) {
+            $list = explode(",", $templates["templateshvm"]);
         }
 
-        $res = array();
+        $res = [];
         foreach ($list as $p) {
             $res[$p] = $p;
         }
@@ -594,11 +702,11 @@ class Service implements InjectionAwareInterface
         return $res;
     }
 
-    public function getPlans($type = 'openvz')
+    public function getPlans($type = "openvz")
     {
         $plans = $this->_getApi()->listplans($type);
-        $list  = explode(',', $plans['plans']);
-        $res   = array();
+        $list = explode(",", $plans["plans"]);
+        $res = [];
         foreach ($list as $p) {
             $res[$p] = $p;
         }
@@ -615,56 +723,55 @@ class Service implements InjectionAwareInterface
 
     private function _getApi()
     {
-        if (APPLICATION_ENV == 'testing') {
+        if (APPLICATION_ENV == "testing") {
             return new \Vps_SolusvmMock($this->getMasterConfig(1));
         }
 
-        return $this->di['solusvm']($this->getMasterConfig(1));
+        return $this->di["solusvm"]($this->getMasterConfig(1));
     }
 
     public function toApiArray($model, $deep = false, $identity = null)
     {
         $c = $this->getMasterConfig(1);
-        if ($c['secure']) {
+        if ($c["secure"]) {
             if ($c["port"]) {
                 $cport = $c["port"];
             } else {
                 $cport = "5656";
             }
-            $url = "https://" . $c['ipaddress'] . ":" . $cport;
+            $url = "https://" . $c["ipaddress"] . ":" . $cport;
         } else {
             if ($c["port"]) {
                 $cport = $c["port"];
             } else {
                 $cport = "5353";
             }
-            $url = "http://" . $c['ipaddress'] . ":" . $cport;
+            $url = "http://" . $c["ipaddress"] . ":" . $cport;
         }
 
-        $client = $this->di['db']->load('client', $model->client_id);
-        list($username, $password) = $this->getSolusUserPassword($client);
+        $client = $this->di["db"]->load("client", $model->client_id);
+        [$username, $password] = $this->getSolusUserPassword($client);
 
-        return array(
-            'id'              => $model->id,
-            'vserverid'       => $model->vserverid,
-            'virtid'          => $model->virtid,
-            'hostname'        => $model->hostname,
-            'plan'            => $model->plan,
-            'template'        => $model->template,
-            'mainipaddress'   => $model->mainipaddress,
-            'rootpassword'    => $model->rootpassword,
-            'consoleuser'     => $model->consoleuser,
-            'consolepassword' => $model->consolepassword,
+        return [
+            "id" => $model->id,
+            "vserverid" => $model->vserverid,
+            "virtid" => $model->virtid,
+            "hostname" => $model->hostname,
+            "plan" => $model->plan,
+            "template" => $model->template,
+            "mainipaddress" => $model->mainipaddress,
+            "rootpassword" => $model->rootpassword,
+            "consoleuser" => $model->consoleuser,
+            "consolepassword" => $model->consolepassword,
 
-            'custommemory'    => $model->custommemory,
-            'customdiskspace' => $model->customdiskspace,
-            'custombandwidth' => $model->custombandwidth,
-            'customcpu'       => $model->customcpu,
+            "custommemory" => $model->custommemory,
+            "customdiskspace" => $model->customdiskspace,
+            "custombandwidth" => $model->custombandwidth,
+            "customcpu" => $model->customcpu,
 
-            'master_url'      => $url,
-            'username'        => $username,
-            'password'        => $password,
-        );
+            "master_url" => $url,
+            "username" => $username,
+            "password" => $password,
+        ];
     }
 }
-

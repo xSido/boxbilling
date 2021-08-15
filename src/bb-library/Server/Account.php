@@ -12,28 +12,28 @@
 
 class Server_Account
 {
-    private $username   = NULL;
-    private $password   = NULL;
-    private $domain     = NULL;
-    private $ip         = NULL;
+    private $username = null;
+    private $password = null;
+    private $domain = null;
+    private $ip = null;
 
     /**
      * @var Server_Package
      */
-    private $package    = NULL;
+    private $package = null;
 
     /**
      * @var Server_Client
      */
-    private $client     = NULL;
-    private $reseller   = NULL;
-    private $suspended  = NULL;
-    private $ns_1       = NULL;
-    private $ns_2       = NULL;
-    private $ns_3       = NULL;
-    private $ns_4       = NULL;
-    private $note       = NULL;
-    
+    private $client = null;
+    private $reseller = null;
+    private $suspended = null;
+    private $ns_1 = null;
+    private $ns_2 = null;
+    private $ns_3 = null;
+    private $ns_4 = null;
+    private $note = null;
+
     public function setUsername($param)
     {
         $this->username = $param;
@@ -127,7 +127,7 @@ class Server_Account
 
     public function setReseller($param)
     {
-        $this->reseller = (bool)$param;
+        $this->reseller = (bool) $param;
         return $this;
     }
 
@@ -138,7 +138,7 @@ class Server_Account
 
     public function setSuspended($param)
     {
-        $this->suspended = (bool)$param;
+        $this->suspended = (bool) $param;
         return $this;
     }
 
@@ -146,7 +146,7 @@ class Server_Account
     {
         return $this->suspended;
     }
-    
+
     public function setNs1($param)
     {
         $this->ns_1 = $param;
@@ -157,7 +157,7 @@ class Server_Account
     {
         return $this->ns_1;
     }
-    
+
     public function setNs2($param)
     {
         $this->ns_2 = $param;

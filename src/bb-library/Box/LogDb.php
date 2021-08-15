@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_LogDb
 {
     /**
@@ -39,12 +38,11 @@ class Box_LogDb
     public function write($event)
     {
         try {
-            if(method_exists($this->service, 'logEvent')) {
+            if (method_exists($this->service, "logEvent")) {
                 $this->service->logEvent($event);
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             error_log($e);
         }
     }
-
 }

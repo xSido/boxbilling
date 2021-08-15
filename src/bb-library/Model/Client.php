@@ -10,15 +10,14 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_Client extends RedBean_SimpleModel
 {
-    const ACTIVE                    = 'active';
-    const SUSPENDED                 = 'suspended';
-    const CANCELED                  = 'canceled';
+    const ACTIVE = "active";
+    const SUSPENDED = "suspended";
+    const CANCELED = "canceled";
 
     public function getFullName()
     {
-        return $this->first_name .' '.$this->last_name;
+        return $this->first_name . " " . $this->last_name;
     }
 }

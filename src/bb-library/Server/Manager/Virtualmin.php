@@ -15,168 +15,193 @@
  */
 class Server_Manager_Virtualmin extends Server_Manager
 {
-	public function init()
-	{
-	    if (!extension_loaded('curl')) {
-            throw new Server_Exception('cURL extension is not enabled');
+    public function init()
+    {
+        if (!extension_loaded("curl")) {
+            throw new Server_Exception("cURL extension is not enabled");
         }
-        
-        $this->_config['port'] = 20000;
-	}
 
-	public static function getForm()
-	{
-		return array(
-            'label'     =>  'Virtualmin',
-        );
-	}
+        $this->_config["port"] = 20000;
+    }
 
-	public function getLoginUrl()
-	{
-		if ($this->_config['secure']) {
-        	return 'https://'.$this->_config['host'] . ':' . $this->_config['port'] . '/';
-		} else {
-			return 'http://'.$this->_config['host'] . ':' . $this->_config['port'] . '/';
-		}
-	}
+    public static function getForm()
+    {
+        return [
+            "label" => "Virtualmin",
+        ];
+    }
+
+    public function getLoginUrl()
+    {
+        if ($this->_config["secure"]) {
+            return "https://" .
+                $this->_config["host"] .
+                ":" .
+                $this->_config["port"] .
+                "/";
+        } else {
+            return "http://" .
+                $this->_config["host"] .
+                ":" .
+                $this->_config["port"] .
+                "/";
+        }
+    }
 
     public function getResellerLoginUrl()
     {
         return $this->getLoginUrl();
     }
-    
+
     public function testConnection()
     {
-    	$result = $this->_makeRequest('list-commands');
+        $result = $this->_makeRequest("list-commands");
 
-    	if (isset($result['status']) && $result['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Connection to server failed');
-    	}
+        if (isset($result["status"]) && $result["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception("Connection to server failed");
+        }
     }
-    
+
     public function synchronizeAccount(Server_Account $a)
     {
-        $this->getLog()->info('Synchronizing account with server '.$a->getUsername());
+        $this->getLog()->info(
+            "Synchronizing account with server " . $a->getUsername()
+        );
         return $a;
     }
 
     public function createAccount(Server_Account $a)
     {
-    	try {
-    		if ($a->getReseller()) {
-    			if (!$this->_createReseller($a)) {
-	    			return false;
-    			}
-	    	} else {
-    			if (!$this->_createUser($a)) {
-    				return false;
-	    		}
-    		}
-    	} catch (Exception $e) {
-    		if (strpos(strtolower($e->getMessage()), strtolower('You are already hosting this domain')) === false) {
-    			throw new Server_Exception($e->getMessage());
-    		} else {
-    			return true;
-    		}
-    	}
+        try {
+            if ($a->getReseller()) {
+                if (!$this->_createReseller($a)) {
+                    return false;
+                }
+            } else {
+                if (!$this->_createUser($a)) {
+                    return false;
+                }
+            }
+        } catch (Exception $e) {
+            if (
+                strpos(
+                    strtolower($e->getMessage()),
+                    strtolower("You are already hosting this domain")
+                ) === false
+            ) {
+                throw new Server_Exception($e->getMessage());
+            } else {
+                return true;
+            }
+        }
 
-    	return true;
+        return true;
     }
 
     public function suspendAccount(Server_Account $a)
     {
-    	if ($a->getReseller()) {
-    		throw new Server_Exception('Virtualmin can\'t suspend/unsuspend reseller\'s account');
-    	} else {
-    		if (!$this->_suspendUser($a)) {
-    			return false;
-    		}
-    	}
+        if ($a->getReseller()) {
+            throw new Server_Exception(
+                'Virtualmin can\'t suspend/unsuspend reseller\'s account'
+            );
+        } else {
+            if (!$this->_suspendUser($a)) {
+                return false;
+            }
+        }
 
-    	return true;
+        return true;
     }
 
     public function unsuspendAccount(Server_Account $a)
     {
-    	if ($a->getReseller()) {
-    		throw new Server_Exception('Virtualmin can\'t suspend/unsuspend reseller\'s account');
-    	} else {
-    		if (!$this->_unsuspendUser($a)) {
-    			return false;
-    		}
-    	}
+        if ($a->getReseller()) {
+            throw new Server_Exception(
+                'Virtualmin can\'t suspend/unsuspend reseller\'s account'
+            );
+        } else {
+            if (!$this->_unsuspendUser($a)) {
+                return false;
+            }
+        }
 
-    	return true;
+        return true;
     }
 
     public function cancelAccount(Server_Account $a)
     {
-    	if ($a->getReseller()) {
-    		if (!$this->_cancelReseller($a)) {
-    			return false;
-    		}
-    	} else {
-    		if (!$this->_cancelUser($a)) {
-    			return false;
-    		}
-    	}
+        if ($a->getReseller()) {
+            if (!$this->_cancelReseller($a)) {
+                return false;
+            }
+        } else {
+            if (!$this->_cancelUser($a)) {
+                return false;
+            }
+        }
 
-    	return true;
+        return true;
     }
 
     public function changeAccountPackage(Server_Account $a, Server_Package $p)
     {
-    	if ($a->getReseller()) {
-    		if (!$this->_modifyReseller($a)) {
-    			return false;
-    		}
-    	} else {
-    		if (!$this->_modifyDomain($a)) {
-    			return false;
-    		}
-    		if (!$this->_disableFeatures($a)) {
-    			return false;
-    		}
-    		if (!$this->_enableFeatures($a)) {
-    			return false;
-    		}
-    	}
+        if ($a->getReseller()) {
+            if (!$this->_modifyReseller($a)) {
+                return false;
+            }
+        } else {
+            if (!$this->_modifyDomain($a)) {
+                return false;
+            }
+            if (!$this->_disableFeatures($a)) {
+                return false;
+            }
+            if (!$this->_enableFeatures($a)) {
+                return false;
+            }
+        }
 
-    	return true;
+        return true;
     }
 
     public function changeAccountPassword(Server_Account $a, $new)
     {
-    	if ($a->getReseller()) {
-    		if (!$this->_changeResellerPassword($a)) {
-    			return false;
-    		}
-    	} else {
-    		if (!$this->_changeUserPassword($a)) {
-    			return false;
-    		}
-    	}
+        if ($a->getReseller()) {
+            if (!$this->_changeResellerPassword($a)) {
+                return false;
+            }
+        } else {
+            if (!$this->_changeUserPassword($a)) {
+                return false;
+            }
+        }
 
-    	return true;
+        return true;
     }
 
     public function changeAccountUsername(Server_Account $a, $new)
     {
-        throw new Server_Exception('Server manager does not support username changes');
+        throw new Server_Exception(
+            "Server manager does not support username changes"
+        );
     }
-    
+
     public function changeAccountDomain(Server_Account $a, $new)
     {
-        throw new Server_Exception('Server manager does not support domain changes');
+        throw new Server_Exception(
+            "Server manager does not support domain changes"
+        );
     }
 
     public function changeAccountIp(Server_Account $a, $new)
     {
-        throw new Server_Exception('Server manager does not support ip changes');
+        throw new Server_Exception(
+            "Server manager does not support ip changes"
+        );
     }
-    
+
     /**
      *
      * Makes request to virtualmin server
@@ -185,33 +210,37 @@ class Server_Manager_Virtualmin extends Server_Manager
      * @param string $format
      * @return array
      */
-    private function _makeRequest($command, $params = array(), $format = 'json')
+    private function _makeRequest($command, $params = [], $format = "json")
     {
-    	$url = $this->_getUrl() . '?program=' . $command . '&' . $format . '=1';
+        $url = $this->_getUrl() . "?program=" . $command . "&" . $format . "=1";
 
-    	$numbers = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-    	foreach ($params as $key => $param) {
-    		$key = str_replace($numbers, '', $key);
-    		$url .= '&' . $key . '=' . $param;
-    	}
+        $numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        foreach ($params as $key => $param) {
+            $key = str_replace($numbers, "", $key);
+            $url .= "&" . $key . "=" . $param;
+        }
 
-    	$ch = curl_init ();
-    	curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    	curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false);
-    	curl_setopt ($ch, CURLOPT_URL, $url);
-    	curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-    	curl_setopt ($ch, CURLOPT_TIMEOUT, 60);
-    	curl_setopt ($ch, CURLOPT_USERPWD, $this->_config['username'] . ':' . $this->_config['password']);
-    	//debug
-    	//curl_setopt($ch, CURLOPT_VERBOSE, true);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt(
+            $ch,
+            CURLOPT_USERPWD,
+            $this->_config["username"] . ":" . $this->_config["password"]
+        );
+        //debug
+        //curl_setopt($ch, CURLOPT_VERBOSE, true);
 
-		$result = curl_exec($ch);
+        $result = curl_exec($ch);
 
         $json = json_decode($result, 1);
-    	if (isset($json['full_error'])) {
-    		throw new Server_Exception($json['full_error']);
-    	}
-    	return $json;
+        if (isset($json["full_error"])) {
+            throw new Server_Exception($json["full_error"]);
+        }
+        return $json;
     }
 
     /**
@@ -221,10 +250,17 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _getUrl()
     {
-    	$url = (isset($this->_config['ssl']) && $this->_config['ssl'])  ? 'https://' : 'http://';
-    	$url .= $this->_config['host'] . ' : ' . $this->_config['port'] . '/virtual-server/remote.cgi';
+        $url =
+            isset($this->_config["ssl"]) && $this->_config["ssl"]
+                ? "https://"
+                : "http://";
+        $url .=
+            $this->_config["host"] .
+            " : " .
+            $this->_config["port"] .
+            "/virtual-server/remote.cgi";
 
-    	return $url;
+        return $url;
     }
 
     /**
@@ -235,32 +271,30 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _extractError($result)
     {
-    	$html = new DOMDocument();
-    	try {
-    		$html->loadHTML($result);
-    	} catch (Exception $e) {
-    		return $result;
-    	}
+        $html = new DOMDocument();
+        try {
+            $html->loadHTML($result);
+        } catch (Exception $e) {
+            return $result;
+        }
 
-    	$h1 = $html->getElementsByTagName('h1')
-    			   ->item(0);
+        $h1 = $html->getElementsByTagName("h1")->item(0);
 
-		if (!isset($h1->nodeValue)) {
-			return $result;
-		}
+        if (!isset($h1->nodeValue)) {
+            return $result;
+        }
 
-    	$error = $h1->nodeValue;
+        $error = $h1->nodeValue;
 
-    	$body = $html->getElementsByTagName('body')
-    				 ->item(0);
+        $body = $html->getElementsByTagName("body")->item(0);
 
-		$body->removeChild($h1);
+        $body->removeChild($h1);
 
-		if (!empty($body->nodeValue)) {
-			$error .= ' - ' . $body->nodeValue;
-		}
+        if (!empty($body->nodeValue)) {
+            $error .= " - " . $body->nodeValue;
+        }
 
-    	return $error;
+        return $error;
     }
 
     /**
@@ -272,67 +306,90 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _createReseller(Server_Account $a)
     {
-    	if (!$this->_checkCommand('create-reseller')) {
-    		throw new Server_Exception('Create reseller command is only available in Virtualmin PRO version');
-    	}
+        if (!$this->_checkCommand("create-reseller")) {
+            throw new Server_Exception(
+                "Create reseller command is only available in Virtualmin PRO version"
+            );
+        }
 
-    	$p = $a->getPackage();
+        $p = $a->getPackage();
         $client = $a->getClient();
-    	$params = array(
-    		'name'			=>	$a->getUsername(),
-    		'pass'			=>	$a->getPassword(),
-    		'email'			=>	$client->getEmail(),
-    		'max-doms'		=>	($p->getMaxDomains() == 'unlimited') ? 'UNLIMITED' : (int)$p->getMaxDomains(),
-    		'max-aliasdoms'	=>	($p->getMaxDomains() == 'unlimited') ? 'UNLIMITED' : (int)$p->getMaxDomains(),
-    		'max-realdoms'	=>	($p->getMaxDomains() == 'unlimited') ? 'UNLIMITED' : (int)$p->getMaxDomains(),
-    		'max-quota'		=>	($p->getQuota() == 'unlimited') ? 'UNLIMITED' : (int)$p->getQuota() * 1024,
-    		'max-mailboxes'	=>	(int)$p->getMaxPop(),
-    		'max-aliases'	=>	(int)$p->getMaxDomains() ? $p->getMaxDomains() : 1,
-    		'max-dbs'		=>	($p->getMaxSql() == 'unlimited') ? 'UNLIMITED' : (int)$p->getMaxSql(),
-    		'max-bw'		=>	($p->getBandwidth() == 'unlimited') ? 'UNLIMITED' : (int)$p->getBandwidth() * 1024 * 1024,
-    		'allow1'		=>	'dns',		//BIND DNS domain
-    		'allow2'		=>	'web',		//Apache website
-    		'allow3'		=>	'webmin',	//Webmin login
-    		'allow4'		=>	'dir',		//Home directory
-    		'allow5'		=>	'virt',		//Virtual IP address
-    		'nameserver1'	=>	$a->getNs1(),
-    		'nameserver2'	=>	$a->getNs2(),
-    		'nameserver3'	=>	$a->getNs3(),
-    		'nameserver4'	=>	$a->getNs4(),
-    	);
+        $params = [
+            "name" => $a->getUsername(),
+            "pass" => $a->getPassword(),
+            "email" => $client->getEmail(),
+            "max-doms" =>
+                $p->getMaxDomains() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getMaxDomains(),
+            "max-aliasdoms" =>
+                $p->getMaxDomains() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getMaxDomains(),
+            "max-realdoms" =>
+                $p->getMaxDomains() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getMaxDomains(),
+            "max-quota" =>
+                $p->getQuota() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getQuota() * 1024,
+            "max-mailboxes" => (int) $p->getMaxPop(),
+            "max-aliases" => (int) $p->getMaxDomains()
+                ? $p->getMaxDomains()
+                : 1,
+            "max-dbs" =>
+                $p->getMaxSql() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getMaxSql(),
+            "max-bw" =>
+                $p->getBandwidth() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getBandwidth() * 1024 * 1024,
+            "allow1" => "dns", //BIND DNS domain
+            "allow2" => "web", //Apache website
+            "allow3" => "webmin", //Webmin login
+            "allow4" => "dir", //Home directory
+            "allow5" => "virt", //Virtual IP address
+            "nameserver1" => $a->getNs1(),
+            "nameserver2" => $a->getNs2(),
+            "nameserver3" => $a->getNs3(),
+            "nameserver4" => $a->getNs4(),
+        ];
         if ($p->getMaxPop()) {
-    		$params['allow6'] = 'mail';
-    	}
-    	if ($p->getHasSsl()) {
-    		$params['allow7'] = 'ssl';
-    	}
-    	if ($p->getMaxFtp() > 0) {
-    		$params['allow8'] = 'ftp';
-    	}
-    	if ($p->getHasSpamFilter()) {
-    		$params['allow9'] = 'spam';
-    	}
-    	if ($p->getMaxSql() > 0) {
-    		$params['allow10'] = 'mysql';
-    	}
+            $params["allow6"] = "mail";
+        }
+        if ($p->getHasSsl()) {
+            $params["allow7"] = "ssl";
+        }
+        if ($p->getMaxFtp() > 0) {
+            $params["allow8"] = "ftp";
+        }
+        if ($p->getHasSpamFilter()) {
+            $params["allow9"] = "spam";
+        }
+        if ($p->getMaxSql() > 0) {
+            $params["allow10"] = "mysql";
+        }
 
-    	$response = $this->_makeRequest('create-reseller', $params);
+        $response = $this->_makeRequest("create-reseller", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to create reseller\'s account');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception('Failed to create reseller\'s account');
+        }
     }
 
     /**
      *
      * Get available commands list
      */
-    private function _getCommands() {
-    	$response = $this->_makeRequest('list-commands');
+    private function _getCommands()
+    {
+        $response = $this->_makeRequest("list-commands");
 
-    	return $response['output'];
+        return $response["output"];
     }
 
     /**
@@ -341,14 +398,15 @@ class Server_Manager_Virtualmin extends Server_Manager
      * @param string $command
      * @return boolean
      */
-    private function _checkCommand($command) {
-    	$commands = $this->_getCommands();
+    private function _checkCommand($command)
+    {
+        $commands = $this->_getCommands();
 
-    	if (strpos($commands, $command) === false) {
-    		return false;
-    	} else {
-    		return true;
-    	}
+        if (strpos($commands, $command) === false) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -360,78 +418,91 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _createUser(Server_Account $a)
     {
-    	$p = $a->getPackage();
+        $p = $a->getPackage();
         $client = $a->getClient();
-    	$params = array(
-    		'domain'			=>	$a->getDomain(),
-    		'pass'				=>	$a->getPassword(),
-    		'email'				=>	$client->getEmail(),
-    		'user'				=>	$a->getUsername(),
-    		'dns'				=>	'',
-    		'web'				=>	'',
-    		'webmin'			=>	'',
-    		'max-doms'			=>	(int)$p->getMaxDomains() ? $p->getMaxDomains() : 1,
-    		'max-aliasdoms' 	=>	(int)$p->getMaxDomains() ? $p->getMaxDomains() : 1,
-    		'max-realdoms' 		=>	(int)$p->getMaxDomains() ? $p->getMaxDomains() : 1,
-    		'max-mailboxes'		=>	(int)$p->getMaxPop() ? $p->getMaxPop() : 1,
-    		'unix'				=>	'',
-    		'dir'				=>	'',
-    		'quota'				=>	($p->getQuota() == 'unlimited') ? 'UNLIMITED' : (int)$p->getMaxQuota(),
-    		'uquota'			=>	($p->getQuota() == 'unlimited') ? 'UNLIMITED' : (int)$p->getMaxQuota(),
-    		'bandwidth'			=>	($p->getBandwidth() == 'unlimited') ? 'UNLIMITED' : (int)$p->getBandwidth() * 1024 * 1024,
-    		'mysql-pass'		=>	$a->getPassword(),
-    	);
-    	if ($p->getMaxPop()) {
-    		$params['mail'] = '';
-    	}
-    	if ($p->getHasSsl()) {
-    		$params['ssl'] = '';
-    	}
-    	if ($p->getMaxFtp() > 0) {
-    		$params['ftp'] = '';
-    	}
-    	if ($p->getHasSpamFilter()) {
-    		$params['spam'] = '';
-    	}
-    	if ($p->getMaxSql() > 0) {
-    		$params['mysql'] = '';
-    	}
-    	if (!$a->getIp()) {
-    		$params['alocate-ip'] = '';
-    	} else {
-    		$params['ip'] = $a->getIp();
-    		$params['ip-already'] = '';
-    	}
+        $params = [
+            "domain" => $a->getDomain(),
+            "pass" => $a->getPassword(),
+            "email" => $client->getEmail(),
+            "user" => $a->getUsername(),
+            "dns" => "",
+            "web" => "",
+            "webmin" => "",
+            "max-doms" => (int) $p->getMaxDomains() ? $p->getMaxDomains() : 1,
+            "max-aliasdoms" => (int) $p->getMaxDomains()
+                ? $p->getMaxDomains()
+                : 1,
+            "max-realdoms" => (int) $p->getMaxDomains()
+                ? $p->getMaxDomains()
+                : 1,
+            "max-mailboxes" => (int) $p->getMaxPop() ? $p->getMaxPop() : 1,
+            "unix" => "",
+            "dir" => "",
+            "quota" =>
+                $p->getQuota() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getMaxQuota(),
+            "uquota" =>
+                $p->getQuota() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getMaxQuota(),
+            "bandwidth" =>
+                $p->getBandwidth() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getBandwidth() * 1024 * 1024,
+            "mysql-pass" => $a->getPassword(),
+        ];
+        if ($p->getMaxPop()) {
+            $params["mail"] = "";
+        }
+        if ($p->getHasSsl()) {
+            $params["ssl"] = "";
+        }
+        if ($p->getMaxFtp() > 0) {
+            $params["ftp"] = "";
+        }
+        if ($p->getHasSpamFilter()) {
+            $params["spam"] = "";
+        }
+        if ($p->getMaxSql() > 0) {
+            $params["mysql"] = "";
+        }
+        if (!$a->getIp()) {
+            $params["alocate-ip"] = "";
+        } else {
+            $params["ip"] = $a->getIp();
+            $params["ip-already"] = "";
+        }
 
-    	$response = $this->_makeRequest('create-domain', $params);
+        $response = $this->_makeRequest("create-domain", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to create account');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception("Failed to create account");
+        }
     }
 
-	/**
-	 *
-	 * Suspends user's account
-	 * @param Server_Account $a
-	 * @throws Server_Exception
-	 * @return boolean
-	 */
+    /**
+     *
+     * Suspends user's account
+     * @param Server_Account $a
+     * @throws Server_Exception
+     * @return boolean
+     */
     private function _suspendUser(Server_Account $a)
     {
-    	$params = array(
-    		'domain'	=>	$a->getDomain(),
-    	);
+        $params = [
+            "domain" => $a->getDomain(),
+        ];
 
-    	$response = $this->_makeRequest('disable-domain', $params);
+        $response = $this->_makeRequest("disable-domain", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to suspend user\'s account');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception('Failed to suspend user\'s account');
+        }
     }
 
     /**
@@ -443,17 +514,17 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _unsuspendUser(Server_Account $a)
     {
-    	$params = array(
-    		'domain'	=>	$a->getDomain(),
-    	);
+        $params = [
+            "domain" => $a->getDomain(),
+        ];
 
-    	$response = $this->_makeRequest('enable-domain', $params);
+        $response = $this->_makeRequest("enable-domain", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to unsuspend user\'s account');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception('Failed to unsuspend user\'s account');
+        }
     }
 
     /**
@@ -465,18 +536,18 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _changeUserPassword(Server_Account $a)
     {
-    	$params = array(
-    		'domain'	=>	$a->getDomain(),
-    		'pass'		=>	$a->getPassword(),
-    	);
+        $params = [
+            "domain" => $a->getDomain(),
+            "pass" => $a->getPassword(),
+        ];
 
-    	$response = $this->_makeRequest('modify-domain', $params);
+        $response = $this->_makeRequest("modify-domain", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to change user\'s password');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception('Failed to change user\'s password');
+        }
     }
 
     /**
@@ -488,17 +559,17 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _cancelUser(Server_Account $a)
     {
-    	$params = array(
-    		'domain'	=>	$a->getDomain(),
-    	);
+        $params = [
+            "domain" => $a->getDomain(),
+        ];
 
-    	$response = $this->_makeRequest('delete-domain', $params);
+        $response = $this->_makeRequest("delete-domain", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to delete user\'s account');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception('Failed to delete user\'s account');
+        }
     }
 
     /**
@@ -510,24 +581,33 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _modifyDomain(Server_Account $a)
     {
-    	$p = $a->getPackage();
+        $p = $a->getPackage();
         $client = $a->getClient();
-    	$params = array(
-    		'domain'	=>	$a->getDomain(),
-    		'pass'		=>	$a->getPassword(),
-    		'email'		=>	$client->getEmail(),
-    	    'quota'		=>	($p->getQuota() == 'unlimited') ? 'UNLIMITED' : (int)$p->getMaxQuota(),
-    		'uquota'	=>	($p->getQuota() == 'unlimited') ? 'UNLIMITED' : (int)$p->getMaxQuota(),
-    		'bw'		=>	($p->getBandwidth() == 'unlimited') ? 'UNLIMITED' : (int)$p->getBandwidth(),
-    	);
+        $params = [
+            "domain" => $a->getDomain(),
+            "pass" => $a->getPassword(),
+            "email" => $client->getEmail(),
+            "quota" =>
+                $p->getQuota() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getMaxQuota(),
+            "uquota" =>
+                $p->getQuota() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getMaxQuota(),
+            "bw" =>
+                $p->getBandwidth() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getBandwidth(),
+        ];
 
-    	$response = $this->_makeRequest('modify-domain', $params);
+        $response = $this->_makeRequest("modify-domain", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to modify domain details');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception("Failed to modify domain details");
+        }
     }
 
     /**
@@ -539,24 +619,34 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _enableFeatures(Server_Account $a)
     {
-    	$p = $a->getPackage();
-    	$params = array(
-    		'domain'	=>	$a->getDomain(),
-    	);
+        $p = $a->getPackage();
+        $params = [
+            "domain" => $a->getDomain(),
+        ];
 
-    	if ($p->getMaxPop() > 0) $params['mail'] = '';
-    	if ($p->getHasSsl()) $params['ssl'] = '';
-    	if ($p->getMaxSql() > 0) $params['mysql'] = '';
-    	if ($p->getMaxFtp() > 0) $params['ftp'] = '';
-    	if ($p->getHasSpamFilter()) $params['spam'] = '';
+        if ($p->getMaxPop() > 0) {
+            $params["mail"] = "";
+        }
+        if ($p->getHasSsl()) {
+            $params["ssl"] = "";
+        }
+        if ($p->getMaxSql() > 0) {
+            $params["mysql"] = "";
+        }
+        if ($p->getMaxFtp() > 0) {
+            $params["ftp"] = "";
+        }
+        if ($p->getHasSpamFilter()) {
+            $params["spam"] = "";
+        }
 
-    	$response = $this->_makeRequest('enable-feature', $params);
+        $response = $this->_makeRequest("enable-feature", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to enable features');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception("Failed to enable features");
+        }
     }
 
     /**
@@ -568,116 +658,152 @@ class Server_Manager_Virtualmin extends Server_Manager
      */
     private function _disableFeatures(Server_Account $a)
     {
-    	$p = $a->getPackage();
-    	$params = array(
-    		'domain'	=>	$a->getDomain(),
-    	);
+        $p = $a->getPackage();
+        $params = [
+            "domain" => $a->getDomain(),
+        ];
 
-    	if (!$p->getMaxPop() == 0) $params['mail'] = '';
-    	if (!$p->getHasSsl()) $params['ssl'] = '';
-    	if ($p->getMaxSql() == 0) $params['mysql'] = '';
-    	if ($p->getMaxFtp() == 0) $params['ftp'] = '';
-    	if (!$p->getHasSpamFilter()) $params['spam'] = '';
+        if (!$p->getMaxPop() == 0) {
+            $params["mail"] = "";
+        }
+        if (!$p->getHasSsl()) {
+            $params["ssl"] = "";
+        }
+        if ($p->getMaxSql() == 0) {
+            $params["mysql"] = "";
+        }
+        if ($p->getMaxFtp() == 0) {
+            $params["ftp"] = "";
+        }
+        if (!$p->getHasSpamFilter()) {
+            $params["spam"] = "";
+        }
 
-    	$response = $this->_makeRequest('disable-feature', $params);
+        $response = $this->_makeRequest("disable-feature", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to disable features');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception("Failed to disable features");
+        }
     }
 
     private function _cancelReseller(Server_Account $a)
     {
-        if (!$this->_checkCommand('create-reseller')) {
-    		throw new Server_Exception('Cancel reseller command only available in Virtualmin PRO version');
-    	}
-    	$params = array(
-    		'name'	=>	$a->getUsername(),
-    	);
+        if (!$this->_checkCommand("create-reseller")) {
+            throw new Server_Exception(
+                "Cancel reseller command only available in Virtualmin PRO version"
+            );
+        }
+        $params = [
+            "name" => $a->getUsername(),
+        ];
 
-    	$response = $this->_makeRequest('delete-reseller', $params);
+        $response = $this->_makeRequest("delete-reseller", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to delete reseller');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception("Failed to delete reseller");
+        }
     }
 
     private function _changeResellerPassword(Server_Account $a)
     {
-    	if (!$this->_checkCommand('modify-reseller')) {
-    		throw new Server_Exception('Modify reseller comand is only available in Virtualmin PRO version');
-    	}
+        if (!$this->_checkCommand("modify-reseller")) {
+            throw new Server_Exception(
+                "Modify reseller comand is only available in Virtualmin PRO version"
+            );
+        }
 
-    	$params = array(
-    		'name'	=>	$a->getUsername(),
-    		'pass'	=>	$a->getPassword(),
-    	);
+        $params = [
+            "name" => $a->getUsername(),
+            "pass" => $a->getPassword(),
+        ];
 
-    	$response = $this->_makeRequest('modify-reseller', $params);
+        $response = $this->_makeRequest("modify-reseller", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to change reseller\'s password');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception('Failed to change reseller\'s password');
+        }
     }
 
     private function _modifyReseller(Server_Account $a)
     {
-    	if (!$this->_checkCommand('modify-reseller')) {
-    		throw new Server_Exception('Modify reseller command is only available in Virtualmin PRO version');
-    	}
+        if (!$this->_checkCommand("modify-reseller")) {
+            throw new Server_Exception(
+                "Modify reseller command is only available in Virtualmin PRO version"
+            );
+        }
 
-		$p = $a->getPackage();
+        $p = $a->getPackage();
         $client = $a->getClient();
-    	$params = array(
-    		'name'			=>	$a->getUsername(),
-    		'pass'			=>	$a->getPassword(),
-    		'email'			=>	$client->getEmail(),
-    		'max-doms'		=>	($p->getMaxDomains() == 'unlimited') ? 'UNLIMITED' : $p->getMaxDomains(),
-    		'max-aliasdoms'	=>	($p->getMaxDomains() == 'unlimited') ? 'UNLIMITED' : $p->getMaxDomains(),
-    		'max-realdoms'	=>	($p->getMaxDomains() == 'unlimited') ? 'UNLIMITED' : $p->getMaxDomains(),
-    		'max-quota'		=>	($p->getQuota() == 'unlimited') ? 'UNLIMITED' : (int)$p->getQuota() * 1024,
-    		'max-mailboxes'	=>	(int)$p->getMaxPop(),
-    		'max-aliases'	=>	(int)$p->getMaxDomains() ? $p->getMaxDomains() : 1,
-    		'max-dbs'		=>	($p->getMaxSql() == 'unlimited') ? 'UNLIMITED' : (int)$p->getMaxSql(),
-    		'max-bw'		=>	($p->getBandwidth() == 'unlimited') ? 'UNLIMITED' : (int)$p->getBandwidth() * 1024 * 1024,
-    		'allow1'		=>	'dns',		//BIND DNS domain
-    		'allow2'		=>	'web',		//Apache website
-    		'allow3'		=>	'webmin',	//Webmin login
-    		'allow4'		=>	'dir',		//Home directory
-    		'allow5'		=>	'virt',		//Virtual IP address
-    		'nameserver1'	=>	$a->getNs1(),
-    		'nameserver2'	=>	$a->getNs2(),
-    		'nameserver3'	=>	$a->getNs3(),
-    		'nameserver4'	=>	$a->getNs4(),
-    	);
+        $params = [
+            "name" => $a->getUsername(),
+            "pass" => $a->getPassword(),
+            "email" => $client->getEmail(),
+            "max-doms" =>
+                $p->getMaxDomains() == "unlimited"
+                    ? "UNLIMITED"
+                    : $p->getMaxDomains(),
+            "max-aliasdoms" =>
+                $p->getMaxDomains() == "unlimited"
+                    ? "UNLIMITED"
+                    : $p->getMaxDomains(),
+            "max-realdoms" =>
+                $p->getMaxDomains() == "unlimited"
+                    ? "UNLIMITED"
+                    : $p->getMaxDomains(),
+            "max-quota" =>
+                $p->getQuota() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getQuota() * 1024,
+            "max-mailboxes" => (int) $p->getMaxPop(),
+            "max-aliases" => (int) $p->getMaxDomains()
+                ? $p->getMaxDomains()
+                : 1,
+            "max-dbs" =>
+                $p->getMaxSql() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getMaxSql(),
+            "max-bw" =>
+                $p->getBandwidth() == "unlimited"
+                    ? "UNLIMITED"
+                    : (int) $p->getBandwidth() * 1024 * 1024,
+            "allow1" => "dns", //BIND DNS domain
+            "allow2" => "web", //Apache website
+            "allow3" => "webmin", //Webmin login
+            "allow4" => "dir", //Home directory
+            "allow5" => "virt", //Virtual IP address
+            "nameserver1" => $a->getNs1(),
+            "nameserver2" => $a->getNs2(),
+            "nameserver3" => $a->getNs3(),
+            "nameserver4" => $a->getNs4(),
+        ];
         if ($p->getMaxPop()) {
-    		$params['allow6'] = 'mail';
-    	}
-    	if ($p->getHasSsl()) {
-    		$params['allow7'] = 'ssl';
-    	}
-    	if ($p->getMaxFtp() > 0) {
-    		$params['allow8'] = 'ftp';
-    	}
-    	if ($p->getHasSpamFilter()) {
-    		$params['allow9'] = 'spam';
-    	}
-    	if ($p->getMaxSql() > 0) {
-    		$params['allow10'] = 'mysql';
-    	}
+            $params["allow6"] = "mail";
+        }
+        if ($p->getHasSsl()) {
+            $params["allow7"] = "ssl";
+        }
+        if ($p->getMaxFtp() > 0) {
+            $params["allow8"] = "ftp";
+        }
+        if ($p->getHasSpamFilter()) {
+            $params["allow9"] = "spam";
+        }
+        if ($p->getMaxSql() > 0) {
+            $params["allow10"] = "mysql";
+        }
 
-    	$response = $this->_makeRequest('modify-reseller', $params);
+        $response = $this->_makeRequest("modify-reseller", $params);
 
-    	if (isset($response['status']) && $response['status'] == 'success') {
-    		return true;
-    	} else {
-    		throw new Server_Exception('Failed to create reseller\'s account');
-    	}
+        if (isset($response["status"]) && $response["status"] == "success") {
+            return true;
+        } else {
+            throw new Server_Exception('Failed to create reseller\'s account');
+        }
     }
 }

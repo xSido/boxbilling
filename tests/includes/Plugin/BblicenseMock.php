@@ -5,22 +5,22 @@ class Plugin_BblicenseMock
     {
         return true;
     }
-    
+
     public function partner_order_create()
     {
         return true;
     }
-    
+
     public function partner_order_suspend()
     {
         return true;
     }
-    
+
     public function partner_order_unsuspend()
     {
         return true;
     }
-    
+
     public function partner_order_delete()
     {
         return true;

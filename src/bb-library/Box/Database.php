@@ -10,12 +10,10 @@
  * with this source code in the file LICENSE
  */
 
-
 use Box\InjectionAwareInterface;
 
 class Box_Database implements InjectionAwareInterface
 {
-
     protected $di = null;
     protected $orm = null;
 
@@ -38,13 +36,15 @@ class Box_Database implements InjectionAwareInterface
     {
         $type = $this->_getTypeFromModelName($modelName);
         $bean = $this->orm->dispense($type);
-        if($type == $modelName) return $bean;
+        if ($type == $modelName) {
+            return $bean;
+        }
         return $bean->box();
     }
 
     public function store($modelOrBean)
     {
-        if($modelOrBean instanceof \RedBean_SimpleModel) {
+        if ($modelOrBean instanceof \RedBean_SimpleModel) {
             $bean = $modelOrBean->unbox();
         } else {
             $bean = $modelOrBean;
@@ -52,42 +52,46 @@ class Box_Database implements InjectionAwareInterface
         return $this->orm->store($bean);
     }
 
-    public function getAll($sql, $values=array() )
+    public function getAll($sql, $values = [])
     {
         return $this->orm->getAll($sql, $values);
     }
 
-    public function getCell($sql, $values=array() )
+    public function getCell($sql, $values = [])
     {
         return $this->orm->getCell($sql, $values);
     }
 
-    public function getRow($sql, $values=array() )
+    public function getRow($sql, $values = [])
     {
         return $this->orm->getRow($sql, $values);
     }
 
-    public function getAssoc( $sql, $values = array())
+    public function getAssoc($sql, $values = [])
     {
         return $this->orm->getAssoc($sql, $values);
     }
 
-    public function findOne($modelName, $sql=null, $values=array())
+    public function findOne($modelName, $sql = null, $values = [])
     {
         $type = $this->_getTypeFromModelName($modelName);
         $bean = $this->orm->findOne($type, $sql, $values);
-        if($type == $modelName) return $bean;
-        if($bean && $bean->id) {
+        if ($type == $modelName) {
+            return $bean;
+        }
+        if ($bean && $bean->id) {
             return $bean->box();
         }
         return null;
     }
 
-    public function find($modelName, $sql = null, $values = array())
+    public function find($modelName, $sql = null, $values = [])
     {
         $type = $this->_getTypeFromModelName($modelName);
         $beans = $this->orm->find($type, $sql, $values);
-        if($type == $modelName) return $beans;
+        if ($type == $modelName) {
+            return $beans;
+        }
         foreach ($beans as &$bean) {
             $bean = $bean->box();
         }
@@ -110,7 +114,9 @@ class Box_Database implements InjectionAwareInterface
 
         $type = $this->_getTypeFromModelName($modelName);
         $bean = $this->orm->load($type, $id);
-        if ($type == $modelName) return $bean;
+        if ($type == $modelName) {
+            return $bean;
+        }
         if ($bean && $bean->id) {
             return $bean->box();
         }
@@ -123,14 +129,14 @@ class Box_Database implements InjectionAwareInterface
      * @param array $values
      * @return int - affected rows
      */
-    public function exec($sql, $values=array())
+    public function exec($sql, $values = [])
     {
         return $this->orm->exec($sql, $values);
     }
 
     public function trash($modelOrBean)
     {
-        if($modelOrBean instanceof \RedBean_SimpleModel) {
+        if ($modelOrBean instanceof \RedBean_SimpleModel) {
             $bean = $modelOrBean->unbox();
         } else {
             $bean = $modelOrBean;
@@ -140,7 +146,7 @@ class Box_Database implements InjectionAwareInterface
 
     public function getInsertID()
     {
-        return $this->di['pdo']->lastInsertId();
+        return $this->di["pdo"]->lastInsertId();
     }
 
     public function getColumns($table)
@@ -150,7 +156,7 @@ class Box_Database implements InjectionAwareInterface
 
     public function toArray($modelOrBean)
     {
-        if($modelOrBean instanceof \RedBean_SimpleModel) {
+        if ($modelOrBean instanceof \RedBean_SimpleModel) {
             $bean = $modelOrBean->unbox();
         } else {
             $bean = $modelOrBean;
@@ -165,9 +171,12 @@ class Box_Database implements InjectionAwareInterface
      * @return \RedBean_SimpleModel
      * @throws Box_Exception
      */
-    public function getExistingModelById($modelName, $id, $message = "Model not found")
-    {
-        $model = $this->load($modelName, (int)$id);
+    public function getExistingModelById(
+        $modelName,
+        $id,
+        $message = "Model not found"
+    ) {
+        $model = $this->load($modelName, (int) $id);
         if (null === $model) {
             throw new \Box_Exception($message);
         }
@@ -177,15 +186,22 @@ class Box_Database implements InjectionAwareInterface
 
     private function _getTypeFromModelName($modelName)
     {
-        if($modelName == strtolower($modelName)) {
+        if ($modelName == strtolower($modelName)) {
             return $modelName;
         }
 
-        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $modelName, $matches);
+        preg_match_all(
+            '!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!',
+            $modelName,
+            $matches
+        );
         $ret = $matches[0];
         foreach ($ret as &$match) {
-            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+            $match =
+                $match == strtoupper($match)
+                    ? strtolower($match)
+                    : lcfirst($match);
         }
-        return implode('_', $ret);
+        return implode("_", $ret);
     }
 }

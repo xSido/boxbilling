@@ -6,62 +6,74 @@ class Api_AdminTest extends \BBTestCase
     public function testArticle_get_list()
     {
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $adminApi = new \Box\Mod\Kb\Api\Admin();
         $adminApi->setDi($di);
 
-        $data = array(
-            'status' => 'status',
-            'search' => 'search',
-            'cat'    => 'category'
-        );
+        $data = [
+            "status" => "status",
+            "search" => "search",
+            "cat" => "category",
+        ];
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('searchArticles'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('searchArticles')
-            ->will($this->returnValue(array('list' => array())));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["searchArticles"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("searchArticles")
+            ->will($this->returnValue(["list" => []]));
 
         $adminApi->setService($kbService);
 
         $result = $adminApi->article_get_list($data);
         $this->assertIsArray($result);
-
     }
 
     public function testArticle_get()
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $data = array(
-            'id' => rand(1, 100),
-        );
+        $data = [
+            "id" => rand(1, 100),
+        ];
 
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(new \Model_KbArticle()));
 
-        $admin     = new \Model_Admin();
+        $admin = new \Model_Admin();
         $admin->loadBean(new \RedBeanPHP\OODBBean());
 
         $admin->id = 5;
 
-        $di                   = new \Box_Di();
-        $di['loggedin_admin'] = $admin;
-        $di['db']             = $db;
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $di = new \Box_Di();
+        $di["loggedin_admin"] = $admin;
+        $di["db"] = $db;
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('toApiArray'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('toApiArray')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["toApiArray"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("toApiArray")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
         $result = $adminApi->article_get($data);
@@ -72,22 +84,25 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $data = array(
-            'id' => rand(1, 100),
-        );
+        $data = [
+            "id" => rand(1, 100),
+        ];
 
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(false));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $di = new \Box_Di();
+        $di["db"] = $db;
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
         $this->expectException(\Box_Exception::class);
         $adminApi->article_get($data);
@@ -97,28 +112,38 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $data = array(
-            'kb_article_category_id' => rand(1, 100),
-            'title'                  => 'Title',
-        );
+        $data = [
+            "kb_article_category_id" => rand(1, 100),
+            "title" => "Title",
+        ];
 
         $id = rand(1, 100);
 
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('createArticle'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('createArticle')
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["createArticle"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("createArticle")
             ->will($this->returnValue($id));
         $adminApi->setService($kbService);
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
         $result = $adminApi->article_create($data);
@@ -130,30 +155,40 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $data = array(
-            "id"                     => rand(1, 100),
+        $data = [
+            "id" => rand(1, 100),
             "kb_article_category_id" => rand(1, 100),
-            "title"                  => "Title",
-            "slug"                   => "article-slug",
-            "status"                 => "active",
-            "content"                => "Content",
-            "views"                  => rand(1, 100),
-        );
+            "title" => "Title",
+            "slug" => "article-slug",
+            "status" => "active",
+            "content" => "Content",
+            "views" => rand(1, 100),
+        ];
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('updateArticle'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('updateArticle')
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["updateArticle"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("updateArticle")
             ->will($this->returnValue(true));
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $adminApi->setDi($di);
 
@@ -167,29 +202,35 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $data = array(
+        $data = [
             "id" => rand(1, 100),
-        );
+        ];
 
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(new \Model_KbArticle()));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
+        $di = new \Box_Di();
+        $di["db"] = $db;
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $adminApi->setDi($di);
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('rm'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('rm')
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["rm"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("rm")
             ->will($this->returnValue(true));
         $adminApi->setService($kbService);
 
@@ -201,29 +242,35 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(false));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
+        $di = new \Box_Di();
+        $di["db"] = $db;
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('rm'))->getMock();
-        $kbService->expects($this->never())
-            ->method('rm')
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["rm"])
+            ->getMock();
+        $kbService
+            ->expects($this->never())
+            ->method("rm")
             ->will($this->returnValue(true));
         $adminApi->setService($kbService);
 
         $this->expectException(\Box_Exception::class);
-        $result = $adminApi->article_delete(array('id' => rand(1, 100)));
+        $result = $adminApi->article_delete(["id" => rand(1, 100)]);
         $this->assertTrue($result);
     }
 
@@ -231,33 +278,41 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $willReturn = array(
-            "pages"    => 5,
-            "page"     => 2,
+        $willReturn = [
+            "pages" => 5,
+            "page" => 2,
             "per_page" => 2,
-            "total"    => 10,
-            "list"     => array(),
-        );
+            "total" => 10,
+            "list" => [],
+        ];
 
-        $pager = $this->getMockBuilder('Box_Pagination')->getMock();
-        $pager->expects($this->atLeastOnce())
-            ->method('getAdvancedResultSet')
+        $pager = $this->getMockBuilder("Box_Pagination")->getMock();
+        $pager
+            ->expects($this->atLeastOnce())
+            ->method("getAdvancedResultSet")
             ->will($this->returnValue($willReturn));
 
-        $di          = new \Box_Di();
-        $di['pager'] = $pager;
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di = new \Box_Di();
+        $di["pager"] = $pager;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $adminApi->setDi($di);
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('categoryGetSearchQuery'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('categoryGetSearchQuery')
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["categoryGetSearchQuery"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("categoryGetSearchQuery")
             ->will($this->returnValue(true));
         $adminApi->setService($kbService);
 
-        $result = $adminApi->category_get_list(array());
+        $result = $adminApi->category_get_list([]);
         $this->assertIsArray($result);
         $this->assertEquals($result, $willReturn);
     }
@@ -266,29 +321,35 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(new \Model_KbArticleCategory()));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $di = new \Box_Di();
+        $di["db"] = $db;
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('categoryToApiArray'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('categoryToApiArray')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["categoryToApiArray"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("categoryToApiArray")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-        $data   = array(
-            'id' => rand(1, 100)
-        );
+        $data = [
+            "id" => rand(1, 100),
+        ];
         $result = $adminApi->category_get($data);
         $this->assertIsArray($result);
     }
@@ -297,61 +358,73 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->never())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(new \Model_KbArticleCategory()));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
-            ->willThrowException(new \Box_Exception('Category ID not passed'));
-        $di['validator'] = $validatorMock;
+        $di = new \Box_Di();
+        $di["db"] = $db;
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
+            ->willThrowException(new \Box_Exception("Category ID not passed"));
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('categoryToApiArray'))->getMock();
-        $kbService->expects($this->never())
-            ->method('categoryToApiArray')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["categoryToApiArray"])
+            ->getMock();
+        $kbService
+            ->expects($this->never())
+            ->method("categoryToApiArray")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
         $this->expectException(\Box_Exception::class);
-        $result = $adminApi->category_get(array());
+        $result = $adminApi->category_get([]);
         $this->assertIsArray($result);
     }
-  
+
     public function testCategory_getNotFoundException()
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(false));
 
-        $di       = new \Box_Di();
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $di = new \Box_Di();
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
-        $di['db'] = $db;
+        $di["validator"] = $validatorMock;
+        $di["db"] = $db;
         $adminApi->setDi($di);
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('categoryToApiArray'))->getMock();
-        $kbService->expects($this->never())
-            ->method('categoryToApiArray')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["categoryToApiArray"])
+            ->getMock();
+        $kbService
+            ->expects($this->never())
+            ->method("categoryToApiArray")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-        $data = array(
-            'id' => rand(1, 100)
-        );
+        $data = [
+            "id" => rand(1, 100),
+        ];
 
         $this->expectException(\Box_Exception::class);
-        $result = $adminApi->category_get($data);;
+        $result = $adminApi->category_get($data);
         $this->assertIsArray($result);
     }
 
@@ -359,26 +432,36 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('createCategory'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('createCategory')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["createCategory"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("createCategory")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-        $data = array(
-            'title'       => 'Title',
-            'description' => 'Description',
-        );
+        $data = [
+            "title" => "Title",
+            "description" => "Description",
+        ];
 
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
         $result = $adminApi->category_create($data);
@@ -389,39 +472,47 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('updateCategory'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('updateCategory')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["updateCategory"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("updateCategory")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(new \Model_KbArticleCategory()));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di = new \Box_Di();
+        $di["db"] = $db;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
 
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
 
         $adminApi->setDi($di);
 
-
-        $data = array(
-            'id'          => rand(1, 100),
-            'title'       => 'Title',
-            'slug'        => 'category-slug',
-            'description' => 'Description',
-        );
+        $data = [
+            "id" => rand(1, 100),
+            "title" => "Title",
+            "slug" => "category-slug",
+            "description" => "Description",
+        ];
 
         $result = $adminApi->category_update($data);
         $this->assertIsArray($result);
@@ -431,29 +522,33 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('updateCategory'))->getMock();
-        $kbService->expects($this->never())
-            ->method('updateCategory')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["updateCategory"])
+            ->getMock();
+        $kbService
+            ->expects($this->never())
+            ->method("updateCategory")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->never())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(new \Model_KbArticleCategory()));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
-            ->willThrowException(new \Box_Exception('Category ID not passed'));
-        $di['validator'] = $validatorMock;
+        $di = new \Box_Di();
+        $di["db"] = $db;
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
+            ->willThrowException(new \Box_Exception("Category ID not passed"));
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
-
-        $data = array();
+        $data = [];
 
         $this->expectException(\Box_Exception::class);
         $result = $adminApi->category_update($data);
@@ -464,34 +559,38 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('updateCategory'))->getMock();
-        $kbService->expects($this->never())
-            ->method('updateCategory')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["updateCategory"])
+            ->getMock();
+        $kbService
+            ->expects($this->never())
+            ->method("updateCategory")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(false));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $di = new \Box_Di();
+        $di["db"] = $db;
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
-
-        $data = array(
-            'id'          => rand(1, 100),
-            'title'       => 'Title',
-            'slug'        => 'category-slug',
-            'description' => 'Description',
-        );
+        $data = [
+            "id" => rand(1, 100),
+            "title" => "Title",
+            "slug" => "category-slug",
+            "description" => "Description",
+        ];
 
         $this->expectException(\Box_Exception::class);
         $result = $adminApi->category_update($data);
@@ -502,30 +601,35 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('categoryRm'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('categoryRm')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["categoryRm"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("categoryRm")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(new \Model_KbArticleCategory()));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $di = new \Box_Di();
+        $di["db"] = $db;
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
-        $data   = array(
-            'id' => rand(1, 100),
-        );
+        $data = [
+            "id" => rand(1, 100),
+        ];
         $result = $adminApi->category_delete($data);
         $this->assertIsArray($result);
     }
@@ -534,28 +638,33 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('categoryRm'))->getMock();
-        $kbService->expects($this->never())
-            ->method('categoryRm')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["categoryRm"])
+            ->getMock();
+        $kbService
+            ->expects($this->never())
+            ->method("categoryRm")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->never())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(new \Model_KbArticleCategory()));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
-            ->willThrowException(new \Box_Exception('Category ID not passed'));
-        $di['validator'] = $validatorMock;
+        $di = new \Box_Di();
+        $di["db"] = $db;
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
+            ->willThrowException(new \Box_Exception("Category ID not passed"));
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
-        $data   = array();
+        $data = [];
         $this->expectException(\Box_Exception::class);
         $result = $adminApi->category_delete($data);
         $this->assertIsArray($result);
@@ -565,30 +674,35 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('categoryRm'))->getMock();
-        $kbService->expects($this->never())
-            ->method('categoryRm')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["categoryRm"])
+            ->getMock();
+        $kbService
+            ->expects($this->never())
+            ->method("categoryRm")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-
-        $db = $this->getMockBuilder('Box_Database')->getMock();
+        $db = $this->getMockBuilder("Box_Database")->getMock();
         $db->expects($this->atLeastOnce())
-            ->method('findOne')
+            ->method("findOne")
             ->will($this->returnValue(false));
 
-        $di       = new \Box_Di();
-        $di['db'] = $db;
-        $validatorMock = $this->getMockBuilder('\Box_Validate')->disableOriginalConstructor()->getMock();
-        $validatorMock->expects($this->atLeastOnce())
-            ->method('checkRequiredParamsForArray')
+        $di = new \Box_Di();
+        $di["db"] = $db;
+        $validatorMock = $this->getMockBuilder("\Box_Validate")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validatorMock
+            ->expects($this->atLeastOnce())
+            ->method("checkRequiredParamsForArray")
             ->will($this->returnValue(null));
-        $di['validator'] = $validatorMock;
+        $di["validator"] = $validatorMock;
         $adminApi->setDi($di);
 
-        $data   = array(
-            'id' => rand(1, 100)
-        );
+        $data = [
+            "id" => rand(1, 100),
+        ];
 
         $this->expectException(\Box_Exception::class);
         $result = $adminApi->category_delete($data);
@@ -599,15 +713,16 @@ class Api_AdminTest extends \BBTestCase
     {
         $adminApi = new \Box\Mod\Kb\Api\Admin();
 
-        $kbService = $this->getMockBuilder('Box\Mod\Kb\Service')->setMethods(array('categoryGetPairs'))->getMock();
-        $kbService->expects($this->atLeastOnce())
-            ->method('categoryGetPairs')
-            ->will($this->returnValue(array()));
+        $kbService = $this->getMockBuilder("Box\Mod\Kb\Service")
+            ->setMethods(["categoryGetPairs"])
+            ->getMock();
+        $kbService
+            ->expects($this->atLeastOnce())
+            ->method("categoryGetPairs")
+            ->will($this->returnValue([]));
         $adminApi->setService($kbService);
 
-        $result = $adminApi->category_get_pairs(array());
+        $result = $adminApi->category_get_pairs([]);
         $this->assertIsArray($result);
     }
-
-
 }

@@ -23,45 +23,45 @@ class Payment_Adapter_ClientBalance implements \Box\InjectionAwareInterface
     {
         return $this->di;
     }
-    
+
     public function __construct()
     {
-
     }
 
     public static function getConfig()
     {
-        return array();
+        return [];
     }
 
     public function enoughInBalanceToCoverInvoice(\Model_Invoice $invoice)
     {
-        $clientModel = $this->di['db']->load('Client', $invoice->client_id);
-        $clientBalanceService = $this->di['mod_service']('Client', 'Balance');
+        $clientModel = $this->di["db"]->load("Client", $invoice->client_id);
+        $clientBalanceService = $this->di["mod_service"]("Client", "Balance");
         $sumInBalance = $clientBalanceService->getClientBalance($clientModel);
 
-        $invoiceService = $this->di['mod_service']('Invoice');
+        $invoiceService = $this->di["mod_service"]("Invoice");
         $totalSumWithTaxes = $invoiceService->getTotalWithTax($invoice);
-        if ($totalSumWithTaxes > $sumInBalance)
+        if ($totalSumWithTaxes > $sumInBalance) {
             return false;
+        }
         return true;
     }
 
     public function getHtml($api_admin, $invoice_id, $subscription)
     {
-        $invoiceModel = $this->di['db']->load('Invoice', $invoice_id);
+        $invoiceModel = $this->di["db"]->load("Invoice", $invoice_id);
 
-        if (!$this->enoughInBalanceToCoverInvoice($invoiceModel)){
-            return __('Not enough in balance');
+        if (!$this->enoughInBalanceToCoverInvoice($invoiceModel)) {
+            return __("Not enough in balance");
         }
 
-        $invoiceService = $this->di['mod_service']('Invoice');
-        if ($invoiceService->isInvoiceTypeDeposit($invoiceModel)){
-            return __('Forbidden to pay deposit invoice with this gateway');
+        $invoiceService = $this->di["mod_service"]("Invoice");
+        if ($invoiceService->isInvoiceTypeDeposit($invoiceModel)) {
+            return __("Forbidden to pay deposit invoice with this gateway");
         }
 
         $ipnUrl = $this->getServiceUrl($invoice_id);
-        $invoiceUrl = $this->di['tools']->url('invoice/'.$invoiceModel->hash);
+        $invoiceUrl = $this->di["tools"]->url("invoice/" . $invoiceModel->hash);
 
         $out = "<script type='text/javascript'>
                 $(document).ready(function(){
@@ -70,35 +70,43 @@ class Payment_Adapter_ClientBalance implements \Box\InjectionAwareInterface
                     });
                 });
                 </script>";
-       return $out;
+        return $out;
     }
 
     public function processTransaction($api_admin, $id, $data, $gateway_id)
     {
-        if(!$this->isIpnValid($data)) {
-            throw new Payment_Exception('IPN is not valid');
+        if (!$this->isIpnValid($data)) {
+            throw new Payment_Exception("IPN is not valid");
         }
 
-        $tx = $this->di['db']->load('Transaction', $id);
+        $tx = $this->di["db"]->load("Transaction", $id);
 
-        $invoice_id = isset($data['get']['bb_invoice_id']) ? $data['get']['bb_invoice_id'] : 0;
-        $invoiceModel = $this->di['db']->load('Invoice', $invoice_id);
+        $invoice_id = isset($data["get"]["bb_invoice_id"])
+            ? $data["get"]["bb_invoice_id"]
+            : 0;
+        $invoiceModel = $this->di["db"]->load("Invoice", $invoice_id);
 
-        $invoiceService = $this->di['mod_service']('Invoice');
-        if ($invoiceService->isInvoiceTypeDeposit($invoiceModel)){
-            throw new Payment_Exception('Forbidden to pay deposit invoice with this gateway', array(), 303);
+        $invoiceService = $this->di["mod_service"]("Invoice");
+        if ($invoiceService->isInvoiceTypeDeposit($invoiceModel)) {
+            throw new Payment_Exception(
+                "Forbidden to pay deposit invoice with this gateway",
+                [],
+                303
+            );
         }
 
-        if($invoice_id) {
+        if ($invoice_id) {
             $invoiceService->payInvoiceWithCredits($invoiceModel);
         }
-        $invoiceService->doBatchPayWithCredits(array('client_id' => $invoiceModel->client_id));
+        $invoiceService->doBatchPayWithCredits([
+            "client_id" => $invoiceModel->client_id,
+        ]);
 
-        $tx->error = '';
-        $tx->error_code = '';
-        $tx->status = 'processed';
-        $tx->updated_at = date('Y-m-d H:i:s');
-        $this->di['db']->store($tx);
+        $tx->error = "";
+        $tx->error_code = "";
+        $tx->status = "processed";
+        $tx->updated_at = date("Y-m-d H:i:s");
+        $this->di["db"]->store($tx);
         return true;
     }
 
@@ -112,18 +120,30 @@ class Payment_Adapter_ClientBalance implements \Box\InjectionAwareInterface
 
     public function getServiceUrl($invoice_id = 0)
     {
-        $gatewayModel = $this->di['db']->findOne('PayGateway', 'gateway = ? and enabled = 1', array('ClientBalance'));
-        if (!$gatewayModel instanceof \Model_PayGateway){
-            throw new Payment_Exception('ClientBalance gateway is not enabled', null, 301);
+        $gatewayModel = $this->di["db"]->findOne(
+            "PayGateway",
+            "gateway = ? and enabled = 1",
+            ["ClientBalance"]
+        );
+        if (!$gatewayModel instanceof \Model_PayGateway) {
+            throw new Payment_Exception(
+                "ClientBalance gateway is not enabled",
+                null,
+                301
+            );
         }
 
-        $invoiceModel = $this->di['db']->load('Invoice', $invoice_id);
-        $invoiceService = $this->di['mod_service']('Invoice');
-        if ($invoiceService->isInvoiceTypeDeposit($invoiceModel)){
-            throw new Payment_Exception('Forbidden to pay deposit invoice with this gateway', null, 302);
+        $invoiceModel = $this->di["db"]->load("Invoice", $invoice_id);
+        $invoiceService = $this->di["mod_service"]("Invoice");
+        if ($invoiceService->isInvoiceTypeDeposit($invoiceModel)) {
+            throw new Payment_Exception(
+                "Forbidden to pay deposit invoice with this gateway",
+                null,
+                302
+            );
         }
 
-        $gatewayService = $this->di['mod_service']('Invoice', 'PayGateway');
+        $gatewayService = $this->di["mod_service"]("Invoice", "PayGateway");
         return $gatewayService->getCallbackUrl($gatewayModel, $invoiceModel);
     }
 }

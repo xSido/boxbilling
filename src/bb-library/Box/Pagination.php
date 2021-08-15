@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 use Box\InjectionAwareInterface;
 
 class Box_Pagination implements InjectionAwareInterface
@@ -36,51 +35,63 @@ class Box_Pagination implements InjectionAwareInterface
         return $this->per_page;
     }
 
-    public function getSimpleResultSet($q, $values, $per_page = 100, $page = null)
-    {
-        if (is_null($page)){
-            $page = $this->di['request']->getQuery('page', "int", 1);
+    public function getSimpleResultSet(
+        $q,
+        $values,
+        $per_page = 100,
+        $page = null
+    ) {
+        if (is_null($page)) {
+            $page = $this->di["request"]->getQuery("page", "int", 1);
         }
-        $per_page = $this->di['request']->getQuery('per_page', "int", $per_page);
+        $per_page = $this->di["request"]->getQuery(
+            "per_page",
+            "int",
+            $per_page
+        );
 
         $offset = ($page - 1) * $per_page;
 
         $sql = $q;
-        $sql .= sprintf(' LIMIT %s,%s', $offset, $per_page);
-        $result = $this->di['db']->getAll($sql, $values);
+        $sql .= sprintf(" LIMIT %s,%s", $offset, $per_page);
+        $result = $this->di["db"]->getAll($sql, $values);
 
-        $exploded = explode('FROM', $q);
-        $sql = 'SELECT count(1) FROM ' . $exploded[1];
-        $total = $this->di['db']->getCell($sql , $values);
+        $exploded = explode("FROM", $q);
+        $sql = "SELECT count(1) FROM " . $exploded[1];
+        $total = $this->di["db"]->getCell($sql, $values);
 
-        $pages = ($per_page > 1) ? (int)ceil($total / $per_page) : 1;
-        return array(
-            "pages"             => $pages,
-            "page"              => $page,
-            "per_page"          => $per_page,
-            "total"             => $total,
-            "list"              => $result,
-        );
+        $pages = $per_page > 1 ? (int) ceil($total / $per_page) : 1;
+        return [
+            "pages" => $pages,
+            "page" => $page,
+            "per_page" => $per_page,
+            "total" => $total,
+            "list" => $result,
+        ];
     }
 
     public function getAdvancedResultSet($q, $values, $per_page = 100)
     {
-        $page = $this->di['request']->getQuery('page', "int", 1);
-        $per_page = $this->di['request']->getQuery('per_page', "int", $per_page);
+        $page = $this->di["request"]->getQuery("page", "int", 1);
+        $per_page = $this->di["request"]->getQuery(
+            "per_page",
+            "int",
+            $per_page
+        );
 
         $offset = ($page - 1) * $per_page;
-        $q = str_replace('SELECT ', 'SELECT SQL_CALC_FOUND_ROWS ', $q);
-        $q .= sprintf(' LIMIT %s,%s', $offset, $per_page);
-        $result = $this->di['db']->getAll($q, $values);
-        $total = $this->di['db']->getCell('SELECT FOUND_ROWS();');
+        $q = str_replace("SELECT ", "SELECT SQL_CALC_FOUND_ROWS ", $q);
+        $q .= sprintf(" LIMIT %s,%s", $offset, $per_page);
+        $result = $this->di["db"]->getAll($q, $values);
+        $total = $this->di["db"]->getCell("SELECT FOUND_ROWS();");
 
-        $pages = ($per_page > 1) ? (int)ceil($total / $per_page) : 1;
-        return array(
-            "pages"             => $pages,
-            "page"              => $page,
-            "per_page"          => $per_page,
-            "total"             => $total,
-            "list"              => $result,
-        );
+        $pages = $per_page > 1 ? (int) ceil($total / $per_page) : 1;
+        return [
+            "pages" => $pages,
+            "page" => $page,
+            "per_page" => $per_page,
+            "total" => $total,
+            "list" => $result,
+        ];
     }
 }

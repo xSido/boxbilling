@@ -12,38 +12,45 @@
 
 class Server_Package
 {
-    private $name                   = 'BoxBilling';
-    private $quota                  = NULL;
-    private $bandwidth              = NULL;
-    
-    private $maxdomains             = NULL;
-    private $maxsubdomains          = NULL;
-    private $maxparkeddomains       = NULL;
-    private $maxftp                 = NULL;
-    private $maxsql                 = NULL;
-    private $maxpop                 = NULL;
-    
-    private $custom                 = array();
+    private $name = "BoxBilling";
+    private $quota = null;
+    private $bandwidth = null;
+
+    private $maxdomains = null;
+    private $maxsubdomains = null;
+    private $maxparkeddomains = null;
+    private $maxftp = null;
+    private $maxsql = null;
+    private $maxpop = null;
+
+    private $custom = [];
 
     public function __call($name, $arguments)
     {
-        if (version_compare(PHP_VERSION, '5.4.0') < 0) {
+        if (version_compare(PHP_VERSION, "5.4.0") < 0) {
             $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        }
-        else {
+        } else {
             // Get only the stack frames we need (PHP 5.4 only).
             $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         }
-        error_log(sprintf("Calling %s inaccessible method %s from %s::%d", get_class($this), $name, $backtrace[1]['file'], $backtrace[1]['line']));
-        return '';
+        error_log(
+            sprintf(
+                "Calling %s inaccessible method %s from %s::%d",
+                get_class($this),
+                $name,
+                $backtrace[1]["file"],
+                $backtrace[1]["line"]
+            )
+        );
+        return "";
     }
-    
+
     public function setCustomValues(array $param)
     {
         $this->custom = $param;
         return $this;
     }
-    
+
     public function setCustomValue($param, $value)
     {
         $this->custom[$param] = $value;
@@ -55,9 +62,9 @@ class Server_Package
      */
     public function getCustomValue($param)
     {
-        return isset($this->custom[$param]) ? $this->custom[$param] : NULL;
+        return isset($this->custom[$param]) ? $this->custom[$param] : null;
     }
-    
+
     public function setName($param)
     {
         $this->name = $param;
@@ -101,7 +108,7 @@ class Server_Package
     {
         return $this->maxdomains;
     }
-    
+
     public function setMaxSubdomains($param)
     {
         $this->maxsubdomains = $param;

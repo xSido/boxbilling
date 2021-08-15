@@ -10,10 +10,9 @@
  * with this source code in the file LICENSE
  */
 
-
 class Box_Response implements \Box\InjectionAwareInterface
 {
-    protected $content = '';
+    protected $content = "";
     protected $content_type;
     protected $json_content;
     protected $is_sent;
@@ -24,9 +23,8 @@ class Box_Response implements \Box\InjectionAwareInterface
     protected $cookies;
     protected $di;
 
-    public function __construct ($content = null, $code = null, $status = null)
+    public function __construct($content = null, $code = null, $status = null)
     {
-
     }
 
     /**
@@ -61,11 +59,13 @@ class Box_Response implements \Box\InjectionAwareInterface
         $this->content_type = $contentType;
     }
 
-    public function redirect($location, $externalRedirect = false, $statusCode = null)
-    {
-
+    public function redirect(
+        $location,
+        $externalRedirect = false,
+        $statusCode = null
+    ) {
     }
-    
+
     /**
      * @param mixed $content
      */
@@ -86,7 +86,7 @@ class Box_Response implements \Box\InjectionAwareInterface
     {
         $this->content .= $content;
     }
-    
+
     /**
      * @param mixed $json_content
      */
@@ -100,29 +100,23 @@ class Box_Response implements \Box\InjectionAwareInterface
      */
     public function isSent()
     {
-        return (bool)$this->is_sent;
+        return (bool) $this->is_sent;
     }
-
 
     public function sendHeaders()
     {
-
     }
-    
+
     public function sendCookies()
     {
-        
     }
-    
+
     public function send()
     {
-
         $this->is_sent = true;
     }
 
     public function setFileToSend($filePath, $attachmentName = null)
     {
-        
     }
-
 }

@@ -2,8 +2,8 @@
 
 namespace Box\Tests\Mod\Example;
 
-class ServiceTest extends \BBTestCase {
-
+class ServiceTest extends \BBTestCase
+{
     /**
      * @var \Box\Mod\Example\Service
      */
@@ -17,18 +17,22 @@ class ServiceTest extends \BBTestCase {
     public function testEvents()
     {
         $di = new \Box_Di();
-        $di['array_get'] = $di->protect(function (array $array, $key, $default = null) use ($di) {
-            return isset ($array[$key]) ? $array[$key] : $default;
+        $di["array_get"] = $di->protect(function (
+            array $array,
+            $key,
+            $default = null
+        ) use ($di) {
+            return isset($array[$key]) ? $array[$key] : $default;
         });
         $this->service->setDi($di);
-        $result = $this->service->getSearchQuery(array());
+        $result = $this->service->getSearchQuery([]);
         $this->assertIsArray($result);
     }
 
     public function testtoApiArray()
     {
-        $result = $this->service->toApiArray(array());
-        $this->assertEquals(array(), $result);
+        $result = $this->service->toApiArray([]);
+        $this->assertEquals([], $result);
     }
 
     public function testonAfterClientCalledExampleModule()
@@ -36,27 +40,32 @@ class ServiceTest extends \BBTestCase {
         $extensionMetaModel = new \Model_ExtensionMeta();
         $extensionMetaModel->loadBean(new \RedBeanPHP\OODBBean());
 
-        $dbMock = $this->getMockBuilder('\Box_Database')->getMock();
-        $dbMock->expects($this->atLeastOnce())
-            ->method('dispense')
-            ->with('extension_meta')
+        $dbMock = $this->getMockBuilder("\Box_Database")->getMock();
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("dispense")
+            ->with("extension_meta")
             ->willReturn($extensionMetaModel);
-        $dbMock->expects($this->atLeastOnce())
-            ->method('store')
+        $dbMock
+            ->expects($this->atLeastOnce())
+            ->method("store")
             ->with($extensionMetaModel);
 
         $di = new \Box_Di();
-        $di['db'] = $dbMock;
+        $di["db"] = $dbMock;
 
-        $eventMock = $this->getMockBuilder('\Box_Event')->disableOriginalConstructor()->getMock();
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getDi')
+        $eventMock = $this->getMockBuilder("\Box_Event")
+            ->disableOriginalConstructor()
+            ->getMock();
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getDi")
             ->willReturn($di);
-        $eventMock->expects($this->atLeastOnce())
-            ->method('getParameters')
-            ->willReturn(array());
+        $eventMock
+            ->expects($this->atLeastOnce())
+            ->method("getParameters")
+            ->willReturn([]);
 
         $this->service->onAfterClientCalledExampleModule($eventMock);
     }
 }
- 

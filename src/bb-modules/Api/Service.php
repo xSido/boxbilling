@@ -37,16 +37,16 @@ class Service implements \Box\InjectionAwareInterface
      */
     public function logRequest()
     {
-        $request = $this->di['request'];
-        $sql="
+        $request = $this->di["request"];
+        $sql = "
             INSERT INTO api_request (ip, request, created_at)
             VALUES(:ip, :request, NOW())
         ";
-        $values = array(
-            'ip'        =>  $request->getClientAddress(),
-            'request'   =>  $request->getURI(),
-        );
-        return $this->di['db']->exec($sql, $values);
+        $values = [
+            "ip" => $request->getClientAddress(),
+            "request" => $request->getURI(),
+        ];
+        return $this->di["db"]->exec($sql, $values);
     }
 
     /**
@@ -56,33 +56,33 @@ class Service implements \Box\InjectionAwareInterface
      */
     public function getRequestCount($since, $ip = null, $isLoginMethod = false)
     {
-        if (!is_numeric($since)){
+        if (!is_numeric($since)) {
             $since = strtotime($since);
         }
-        $sinceIso = date('Y-m-d H:i:s', $since);
-        $values = array(
-            'since' =>  $sinceIso,
-        );
-        if($isLoginMethod){
-        $sql="
+        $sinceIso = date("Y-m-d H:i:s", $since);
+        $values = [
+            "since" => $sinceIso,
+        ];
+        if ($isLoginMethod) {
+            $sql = "
         SELECT COUNT(id) as cclogin
         FROM api_request
         WHERE created_at > :since
         ";
         } else {
-        $sql="
+            $sql = "
         SELECT COUNT(id) as cc
         FROM api_request
         WHERE created_at > :since
         ";
         }
 
-        if(null != $ip) {
+        if (null != $ip) {
             $sql .= " AND ip = :ip";
-            $values['ip'] = $ip;
+            $values["ip"] = $ip;
         }
 
-        return (int)$this->di['db']->getCell($sql, $values);
+        return (int) $this->di["db"]->getCell($sql, $values);
     }
 
     /**
@@ -90,16 +90,15 @@ class Service implements \Box\InjectionAwareInterface
      */
     public function getApiGuest()
     {
-        return $this->di['api_guest'];
+        return $this->di["api_guest"];
     }
-
 
     /**
      * @deprecated use DI
      */
     public function getApiClient($id)
     {
-        return $this->di['api_client'];
+        return $this->di["api_client"];
     }
 
     /**
@@ -107,6 +106,6 @@ class Service implements \Box\InjectionAwareInterface
      */
     public function getApiAdmin($id = null)
     {
-        return $this->di['api_admin'];
+        return $this->di["api_admin"];
     }
 }

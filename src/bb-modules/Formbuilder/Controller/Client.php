@@ -10,7 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 namespace Box\Mod\Formbuilder\Controller;
 
 class Client implements \Box\InjectionAwareInterface
@@ -35,11 +34,16 @@ class Client implements \Box\InjectionAwareInterface
 
     public function register(\Box_App &$app)
     {
-        $app->get('/formbuilder/:id',             'get_form', array('id'=>'[0-9]+'), get_class($this));
+        $app->get(
+            "/formbuilder/:id",
+            "get_form",
+            ["id" => "[0-9]+"],
+            get_class($this)
+        );
     }
 
     public function get_form(\Box_App $app, $id)
     {
-        return $app->render('mod_formbuilder_build', array('id'=>$id));
+        return $app->render("mod_formbuilder_build", ["id" => $id]);
     }
 }

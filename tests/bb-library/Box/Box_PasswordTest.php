@@ -1,8 +1,7 @@
 <?php
 
-
-class Box_PasswordTest extends PHPUnit\Framework\TestCase {
-
+class Box_PasswordTest extends PHPUnit\Framework\TestCase
+{
     public function testsetAlgo()
     {
         $boxPassword = new Box_Password();
@@ -15,9 +14,9 @@ class Box_PasswordTest extends PHPUnit\Framework\TestCase {
     public function testSetOptions()
     {
         $boxPassword = new Box_Password();
-        $options = array(
-            'cost' => 12,
-        );
+        $options = [
+            "cost" => 12,
+        ];
         $boxPassword->setOptions($options);
         $result = $boxPassword->getOptions();
         $this->assertEquals($options, $result);
@@ -26,7 +25,7 @@ class Box_PasswordTest extends PHPUnit\Framework\TestCase {
     public function testHashing()
     {
         $boxPassword = new Box_Password();
-        $password = '123456';
+        $password = "123456";
         $hash = $boxPassword->hashIt($password);
         $this->assertIsString($hash);
         $this->assertNotEmpty($hash);
@@ -43,12 +42,12 @@ class Box_PasswordTest extends PHPUnit\Framework\TestCase {
     public function testNeedsRehashing()
     {
         $boxPassword = new Box_Password();
-        $password = '123456';
+        $password = "123456";
         $hash = $boxPassword->hashIt($password);
         $this->assertIsString($hash);
         $this->assertNotEmpty($hash);
 
-        $newOptions = array('cost' => 15);
+        $newOptions = ["cost" => 15];
         $boxPassword->setOptions($newOptions);
 
         $needRehashing = $boxPassword->needsRehash($hash);
@@ -56,4 +55,3 @@ class Box_PasswordTest extends PHPUnit\Framework\TestCase {
         $this->assertTrue($needRehashing);
     }
 }
- 

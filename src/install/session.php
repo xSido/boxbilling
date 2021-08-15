@@ -23,7 +23,7 @@ class Session
     {
         return $this->_handler->get($key);
     }
-    
+
     public function set($key, $value)
     {
         $this->_handler->set($key, $value);
@@ -37,8 +37,8 @@ class Session
 
 class Box_SessionFile
 {
-    const SESSION_STARTED       = TRUE;
-    const SESSION_NOT_STARTED   = FALSE;
+    const SESSION_STARTED = true;
+    const SESSION_NOT_STARTED = false;
 
     protected $sessionState = self::SESSION_NOT_STARTED;
 
@@ -46,11 +46,10 @@ class Box_SessionFile
 
     public static function getInstance()
     {
-        if ( !isset(self::$instance))
-        {
-            self::$instance = new self;
-            if(!self::$instance->sessionExists() && !headers_sent()) {
-                session_name('BOXSID');
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+            if (!self::$instance->sessionExists() && !headers_sent()) {
+                session_name("BOXSID");
                 self::$instance->sessionState = session_start();
             }
         }
@@ -64,26 +63,29 @@ class Box_SessionFile
 
     public function destroy()
     {
-        if(self::$instance->sessionExists()) {
+        if (self::$instance->sessionExists()) {
             session_destroy();
         }
     }
 
     public function delete($key)
     {
-        if(isset($_SESSION[$key])) {
+        if (isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
         }
-        return TRUE;
+        return true;
     }
 
     private function sessionExists()
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             return false;
         }
 
-        if (ini_get('session.use_cookies') == '1' && isset($_COOKIE[session_name()])) {
+        if (
+            ini_get("session.use_cookies") == "1" &&
+            isset($_COOKIE[session_name()])
+        ) {
             return true;
         } elseif ($this->sessionState) {
             return true;
@@ -104,7 +106,7 @@ class Box_SessionFile
 
     public function __get($key)
     {
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : NULL;
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
     }
 
     public function __set($key, $value)
@@ -112,13 +114,13 @@ class Box_SessionFile
         $_SESSION[$key] = $value;
     }
 
-    public function __isset( $name )
+    public function __isset($name)
     {
         return isset($_SESSION[$name]);
     }
 
-    public function __unset( $name )
+    public function __unset($name)
     {
-        unset( $_SESSION[$name] );
+        unset($_SESSION[$name]);
     }
 }

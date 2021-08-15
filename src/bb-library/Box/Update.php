@@ -33,11 +33,11 @@ class Box_Update
         return $this->di;
     }
 
-    private $_url = 'http://api.boxbilling.com/compare-version.php';
+    private $_url = "http://api.boxbilling.com/compare-version.php";
 
     public function __construct()
     {
-        if(defined('BB_VERSION_URL') && BB_VERSION_URL) {
+        if (defined("BB_VERSION_URL") && BB_VERSION_URL) {
             $this->_url = BB_VERSION_URL;
         }
     }
@@ -47,7 +47,11 @@ class Box_Update
      */
     private function _getLatestVersionInfo()
     {
-        return $this->di['tools']->cache_function(array($this, 'getJson'), array(), 86400);
+        return $this->di["tools"]->cache_function(
+            [$this, "getJson"],
+            [],
+            86400
+        );
     }
 
     /**
@@ -57,7 +61,7 @@ class Box_Update
     public function getLatestVersion()
     {
         $response = $this->_getLatestVersionInfo();
-        if(!is_object($response)) {
+        if (!is_object($response)) {
             return Box_Version::VERSION;
         }
         return $response->version;
@@ -70,7 +74,7 @@ class Box_Update
     public function getLatestVersionDownloadLink()
     {
         $response = $this->_getLatestVersionInfo();
-        if(isset($response->update)) {
+        if (isset($response->update)) {
             return $response->update;
         }
         return $response->link;
@@ -84,7 +88,7 @@ class Box_Update
     {
         $version = $this->getLatestVersion();
         $result = Box_Version::compareVersion($version);
-        return ($result > 0);
+        return $result > 0;
     }
 
     /**
@@ -94,18 +98,18 @@ class Box_Update
      */
     private function isHashValid($file)
     {
-        if(!file_exists($file)) {
+        if (!file_exists($file)) {
             return false;
         }
-        
+
         $response = $this->_getLatestVersionInfo();
-        $hash = md5($response->version.filesize($file));
-        return ($hash == $response->hash);
+        $hash = md5($response->version . filesize($file));
+        return $hash == $response->hash;
     }
 
     public function getJson()
     {
-        $url = $this->_url . '?current=' . Box_Version::VERSION;
+        $url = $this->_url . "?current=" . Box_Version::VERSION;
         $curl = new Box_Curl($url);
         $curl->request();
         $response = $curl->getBody();
@@ -119,18 +123,23 @@ class Box_Update
      */
     public function performUpdate()
     {
-        if(!$this->getCanUpdate()) {
-            throw new LogicException('You have latest version of BoxBilling. You do not need to update.');
+        if (!$this->getCanUpdate()) {
+            throw new LogicException(
+                "You have latest version of BoxBilling. You do not need to update."
+            );
         }
 
-        error_log('Started BoxBilling auto-update script');
+        error_log("Started BoxBilling auto-update script");
         $latest_version = $this->getLatestVersion();
-        $latest_version_archive = BB_PATH_CACHE.DIRECTORY_SEPARATOR.$latest_version.'.zip';
+        $latest_version_archive =
+            BB_PATH_CACHE . DIRECTORY_SEPARATOR . $latest_version . ".zip";
 
         // download latest archive from link
-        $content = $this->di['tools']->file_get_contents($this->getLatestVersionDownloadLink());
-        $f = fopen($latest_version_archive,'wb');
-        fwrite($f,$content,strlen($content));
+        $content = $this->di["tools"]->file_get_contents(
+            $this->getLatestVersionDownloadLink()
+        );
+        $f = fopen($latest_version_archive, "wb");
+        fwrite($f, $content, strlen($content));
         fclose($f);
 
         //@todo validate downloaded file hash
@@ -139,15 +148,15 @@ class Box_Update
         $ff = new Box_Zip($latest_version_archive);
         $ff->decompress(BB_PATH_ROOT);
 
-        if(file_exists(BB_PATH_ROOT.'/bb-update.php')) {
-            error_log('Calling bb-update.php script from auto-updater');
-            $this->di['tools']->file_get_contents(BB_URL.'bb-update.php');
+        if (file_exists(BB_PATH_ROOT . "/bb-update.php")) {
+            error_log("Calling bb-update.php script from auto-updater");
+            $this->di["tools"]->file_get_contents(BB_URL . "bb-update.php");
         }
-        
+
         // clean up things
-        $this->di['tools']->emptyFolder(BB_PATH_CACHE);
-        $this->di['tools']->emptyFolder(BB_PATH_ROOT.'/install');
-        rmdir(BB_PATH_ROOT.'/install');
+        $this->di["tools"]->emptyFolder(BB_PATH_CACHE);
+        $this->di["tools"]->emptyFolder(BB_PATH_ROOT . "/install");
+        rmdir(BB_PATH_ROOT . "/install");
         return true;
     }
 }

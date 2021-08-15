@@ -23,5 +23,5 @@ interface InjectionAwareInterface
     /**
      * @return \Box_Di
      */
-    public function getDi ();
+    public function getDi();
 }

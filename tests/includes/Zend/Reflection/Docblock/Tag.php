@@ -20,7 +20,7 @@
  */
 
 /** Zend_Loader */
-require_once 'Zend/Loader.php';
+require_once "Zend/Loader.php";
 
 /**
  * @category   Zend
@@ -33,11 +33,11 @@ class Zend_Reflection_Docblock_Tag implements Reflector
     /**
      * @var array Array of Class names
      */
-    protected static $_tagClasses = array(
-        'optional'  => 'TagOptional',
-        'param'  => 'Zend_Reflection_Docblock_Tag_Param',
-        'return' => 'Zend_Reflection_Docblock_Tag_Return',
-        );
+    protected static $_tagClasses = [
+        "optional" => "TagOptional",
+        "param" => "Zend_Reflection_Docblock_Tag_Param",
+        "return" => "Zend_Reflection_Docblock_Tag_Return",
+    ];
 
     /**
      * @var string
@@ -57,11 +57,13 @@ class Zend_Reflection_Docblock_Tag implements Reflector
      */
     public static function factory($tagDocblockLine)
     {
-        $matches = array();
+        $matches = [];
 
         if (!preg_match('#^@(\w+)(\s|$)#', $tagDocblockLine, $matches)) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('No valid tag name found within provided docblock line.');
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "No valid tag name found within provided docblock line."
+            );
         }
 
         $tagName = $matches[1];
@@ -97,7 +99,7 @@ class Zend_Reflection_Docblock_Tag implements Reflector
      */
     public function __toString()
     {
-        $str = "Docblock Tag [ * @".$this->_name." ]".PHP_EOL;
+        $str = "Docblock Tag [ * @" . $this->_name . " ]" . PHP_EOL;
 
         return $str;
     }
@@ -110,12 +112,20 @@ class Zend_Reflection_Docblock_Tag implements Reflector
      */
     public function __construct($tagDocblockLine)
     {
-        $matches = array();
+        $matches = [];
 
         // find the line
-        if (!preg_match('#^@(\w+)(?:\s+([^\s].*)|$)?#', $tagDocblockLine, $matches)) {
-            require_once 'Zend/Reflection/Exception.php';
-            throw new Zend_Reflection_Exception('Provided docblock line does not contain a valid tag');
+        if (
+            !preg_match(
+                '#^@(\w+)(?:\s+([^\s].*)|$)?#',
+                $tagDocblockLine,
+                $matches
+            )
+        ) {
+            require_once "Zend/Reflection/Exception.php";
+            throw new Zend_Reflection_Exception(
+                "Provided docblock line does not contain a valid tag"
+            );
         }
 
         $this->_name = $matches[1];

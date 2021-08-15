@@ -10,8 +10,6 @@
  * with this source code in the file LICENSE
  */
 
-
 class Model_Post extends \RedBean_SimpleModel
 {
-
 }
