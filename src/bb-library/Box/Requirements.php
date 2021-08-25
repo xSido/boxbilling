@@ -39,6 +39,7 @@ class Box_Requirements implements \Box\InjectionAwareInterface
                     'zlib',
                     'gettext',
                     'openssl',
+                    'intl'
                  ),
                 'version'       =>  PHP_VERSION,
                 'min_version'   =>  '7.4',
