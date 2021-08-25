@@ -70,7 +70,7 @@
     	<ul>
             {% if admin.system_is_allowed({"mod":"notification"}) and guest.extension_is_on({"mod":"notification"}) %}
             {% set count_notifications = admin.notification_get_list({"per_page":1}).total %}
-            <li class="iMegaphone"><a href="{{ 'notification'|alink }}" title=""><span>{% trans 'Notifications' %}</span></a>{% if count_notifications %}<span class="numberMiddle">{{ count_notifications }}</span>{% endif %}</li>
+            <li class="iMegaphone"><a href="{{ 'notification'|alink }}" title=""><span>{% trans %}Notifications{% endtrans %}</span></a>{% if count_notifications %}<span class="numberMiddle">{{ count_notifications }}</span>{% endif %}</li>
             {% endif %}
             
             {% if admin.system_is_allowed({"mod":"order"}) %}
@@ -80,14 +80,14 @@
             
             {% if admin.system_is_allowed({"mod":"invoice"}) %}
             {% set count_invoices = admin.invoice_get_statuses.unpaid %}
-            <li class="iInvoices"><a href="{{ 'invoice'|alink({'status' : 'unpaid'}) }}" title=""><span><i class="sprite-23 sprite-23-money"></i>{% trans 'Invoices' %}</span></a>{% if count_invoices %}<span class="numberMiddle">{{ count_invoices }}</span>{% endif %}</li>
+            <li class="iInvoices"><a href="{{ 'invoice'|alink({'status' : 'unpaid'}) }}" title=""><span><i class="sprite-23 sprite-23-money"></i>{% trans %}Invoices{% endtrans %}</span></a>{% if count_invoices %}<span class="numberMiddle">{{ count_invoices }}</span>{% endif %}</li>
             {% endif %}
             
             {% if admin.system_is_allowed({"mod":"support"}) %}
             {% set count_tickets = admin.support_ticket_get_statuses.open %}
             {% set count_ptickets = admin.support_public_ticket_get_statuses.open %}
-            <li class="iSpeech"><a href="{{ 'support/public-tickets'|alink({'status' : 'open'}) }}" title=""><span><i class="sprite-23 sprite-23-speech"></i>{% trans 'Inquiries' %}</span></a>{% if count_ptickets %}<span class="numberMiddle">{{ count_ptickets }}</span>{% endif %}</li>
-        	<li class="iMes"><a href="{{ 'support'|alink({'status' : 'open'}) }}" title=""><span><i class="sprite-23 sprite-23-dialog"></i>{% trans 'Tickets' %}</span></a>{% if count_tickets %}<span class="numberMiddle">{{ count_tickets }}</span>{% endif %}</li>
+            <li class="iSpeech"><a href="{{ 'support/public-tickets'|alink({'status' : 'open'}) }}" title=""><span><i class="sprite-23 sprite-23-speech"></i>{% trans %}Inquiries{% endtrans %}</span></a>{% if count_ptickets %}<span class="numberMiddle">{{ count_ptickets }}</span>{% endif %}</li>
+        	<li class="iMes"><a href="{{ 'support'|alink({'status' : 'open'}) }}" title=""><span><i class="sprite-23 sprite-23-dialog"></i>{% trans %}Tickets{% endtrans %}</span></a>{% if count_tickets %}<span class="numberMiddle">{{ count_tickets }}</span>{% endif %}</li>
             {% endif %}
             
             {% if admin.system_is_allowed({"mod":"client"}) %}
