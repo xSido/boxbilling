@@ -1,5 +1,5 @@
 {% macro q(bool) %}
-{% if bool %}{% trans 'Yes' %}{% else %}{% trans 'No' %}{% endif %}
+{% if bool %}{% trans %}Yes{% endtrans %}{% else %}{% trans %}No{% endtrans %}{% endif %}
 {% endmacro %}
 
 {% macro selectbox(name, options, selected, required, nullOption) %}

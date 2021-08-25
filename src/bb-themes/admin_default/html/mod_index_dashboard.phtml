@@ -1,36 +1,36 @@
 {% import "macro_functions.phtml" as mf %}
 {% extends "layout_default.phtml" %}
 
-{% block meta_title %}{% trans 'Dashboard' %}{% endblock %}
+{% block meta_title %}{% trans %}Dashboard{% endtrans %}{% endblock %}
 
 {% block content %}
 
 {% for msg in admin.system_messages({"type":"info"}) %}
 <div class="nNote nInformation hideit {% if loop.first %}first{% endif %}">
-    <p><strong>{% trans 'INFORMATION' %}: </strong>{{ msg }}</p>
+    <p><strong>{% trans %}INFORMATION{% endtrans %}: </strong>{{ msg }}</p>
 </div>
 {% endfor %}
 
 {% if admin.system_is_allowed({"mod":"stats"}) %}
 <div class="widget">
-    <div class="head"><h5><i class="dark-sprite-icon sprite-chart8" style="margin: 0 15px 0 -15px"></i>{{ guest.system_company.name }} {% trans 'Statistics' %}</h5></div>
+    <div class="head"><h5><i class="dark-sprite-icon sprite-chart8" style="margin: 0 15px 0 -15px"></i>{{ guest.system_company.name }} {% trans %}Statistics{% endtrans %}</h5></div>
     {% set stats = admin.stats_get_summary %}
     {% set income = admin.stats_get_summary_income %}
     <table cellpadding="0" cellspacing="0" width="100%" class="tableStatic">
         <thead>
             <tr>
-                <td width="10%">{% trans 'Metric' %}</td>
-                <td>{% trans 'Today' %}</td>
-                <td>{% trans 'Yesterday' %}</td>
-                <td>{% trans 'This month so far' %}</td>
-                <td>{% trans 'Last month' %}</td>
-                <td>{% trans 'Total' %}</td>
+                <td width="10%">{% trans %}Metric{% endtrans %}</td>
+                <td>{% trans %}Today{% endtrans %}</td>
+                <td>{% trans %}Yesterday{% endtrans %}</td>
+                <td>{% trans %}This month so far{% endtrans %}</td>
+                <td>{% trans %}Last month{% endtrans %}</td>
+                <td>{% trans %}Total{% endtrans %}</td>
             </tr>
         </thead>
 
         <tbody>
             <tr>
-                <td>{% trans 'Income' %}</td>
+                <td>{% trans %}Income{% endtrans %}</td>
                 <td align="center"><a href="{{ 'invoice'|alink({'paid_at' : "now"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ mf.currency_format(income.today) }}</a></td>
                 <td align="center"><a href="{{ 'invoice'|alink({'paid_at' : "yesterday"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ mf.currency_format(income.yesterday) }}</a></td>
                 <td align="center"><a href="{{ 'invoice'|alink }}" title="" class="webStatsLink">{{ mf.currency_format(income.this_month) }}</a></td>
@@ -38,7 +38,7 @@
                 <td align="center"><a href="{{ 'invoice'|alink }}" title="" class="webStatsLink">{{ mf.currency_format(income.total) }}</a></td>
             </tr>
             <tr>
-                <td>{% trans 'Clients' %}</td>
+                <td>{% trans %}Clients{% endtrans %}</td>
                 <td align="center"><a href="{{ 'client'|alink({'created_at' : "now"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ stats.clients_today }}</a></td>
                 <td align="center"><a href="{{ 'client'|alink({'created_at' : "yesterday"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ stats.clients_yesterday }}</a></td>
                 <td align="center"><a href="{{ 'client'|alink }}" title="" class="webStatsLink">{{ stats.clients_this_month }}</a></td>
@@ -46,7 +46,7 @@
                 <td align="center"><a href="{{ 'client'|alink }}" title="" class="webStatsLink">{{ stats.clients_total }}</a></td>
             </tr>
             <tr>
-                <td>{% trans 'Orders' %}</td>
+                <td>{% trans %}Orders{% endtrans %}</td>
                 <td align="center"><a href="{{ 'order'|alink({'created_at' : "now"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ stats.orders_today }}</a></td>
                 <td align="center"><a href="{{ 'order'|alink({'created_at' : "yesterday"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ stats.orders_yesterday }}</a></td>
                 <td align="center"><a href="{{ 'order'|alink }}" title="" class="webStatsLink">{{ stats.orders_this_month }}</a></td>
@@ -54,7 +54,7 @@
                 <td align="center"><a href="{{ 'order'|alink }}" title="" class="webStatsLink">{{ stats.orders_total }}</a></td>
             </tr>
             <tr>
-                <td>{% trans 'Invoices' %}</td>
+                <td>{% trans %}Invoices{% endtrans %}</td>
                 <td align="center"><a href="{{ 'invoice'|alink({'created_at' : "now"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ stats.invoices_today }}</a></td>
                 <td align="center"><a href="{{ 'invoice'|alink({'created_at' : "yesterday"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ stats.invoices_yesterday }}</a></td>
                 <td align="center"><a href="{{ 'invoice'|alink }}" title="" class="webStatsLink">{{ stats.invoices_this_month }}</a></td>
@@ -62,7 +62,7 @@
                 <td align="center"><a href="{{ 'invoice'|alink }}" title="" class="webStatsLink">{{ stats.invoices_total }}</a></td>
             </tr>
             <tr>
-                <td>{% trans 'Tickets' %}</td>
+                <td>{% trans %}Tickets{% endtrans %}</td>
                 <td align="center"><a href="{{ 'support'|alink({'created_at' : "now"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ stats.tickets_today }}</a></td>
                 <td align="center"><a href="{{ 'support'|alink({'created_at' : "yesterday"|date('Y-m-d')}) }}" title="" class="webStatsLink">{{ stats.tickets_yesterday }}</a></td>
                 <td align="center"><a href="{{ 'support'|alink }}" title="" class="webStatsLink">{{ stats.tickets_this_month }}</a></td>
@@ -80,15 +80,15 @@
     <div class="left">
         <div class="widget">
             <div class="head">
-                <h5 class="iMoney">{% trans 'Latest orders' %}</h5>
+                <h5 class="iMoney">{% trans %}Latest orders{% endtrans %}</h5>
                 <div class="num"><a href="{{ 'order'|alink }}" class="greenNum">+{{ orders.total }}</a></div>
             </div>
             <div style="height: 221px; overflow: auto;">
                 <table class="tableStatic wide">
                     <thead>
                         <tr>
-                            <td>{% trans 'Order' %}</td>
-                            <td>{% trans 'Client' %}</td>
+                            <td>{% trans %}Order{% endtrans %}</td>
+                            <td>{% trans %}Client{% endtrans %}</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -99,7 +99,7 @@
                         </tr>
                     {% else %}
                     <tr>
-                        <td colspan="2" align="center">{% trans 'The list is empty' %}</td>
+                        <td colspan="2" align="center">{% trans %}The list is empty{% endtrans %}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -111,14 +111,14 @@
     <div class="right">
         <div class="widget">
             <div class="head">
-                <h5 class="iGraph">{% trans 'Product sales' %}</h5>
+                <h5 class="iGraph">{% trans %}Product sales{% endtrans %}</h5>
             </div>
             <div style="height: 221px; overflow: auto;">
                 <table class="tableStatic wide">
                     <thead>
                         <tr>
-                            <td>{% trans 'Product/Service' %}</td>
-                            <td>{% trans 'Orders' %}</td>
+                            <td>{% trans %}Product/Service{% endtrans %}</td>
+                            <td>{% trans %}Orders{% endtrans %}</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,7 +129,7 @@
                         </tr>
                     {% else %}
                     <tr>
-                        <td colspan="2" align="center">{% trans 'No active orders available' %}</td>
+                        <td colspan="2" align="center">{% trans %}No active orders available{% endtrans %}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -144,7 +144,7 @@
 {% if admin.system_is_allowed({"mod":"stats"}) %}
 <div class="widget">
     <div class="head">
-        <h5><i class="dark-sprite-icon sprite-dropper" style="margin: 0 15px 0 -15px"></i>{% trans 'Define date interval for graphs' %}</h5>
+        <h5><i class="dark-sprite-icon sprite-dropper" style="margin: 0 15px 0 -15px"></i>{% trans %}Define date interval for graphs{% endtrans %}</h5>
     </div>
     <form method="get" action="" class="mainForm">
         <input type="hidden" name="_url" value="{{ request._url }}" />
@@ -155,7 +155,7 @@
                         <li style="width: 100px"><input type="text" name="date_from" value="{% if request.date_from %}{{ request.date_from|date('Y-m-d') }}{%endif%}" placeholder="{{ now|date('Y-m-d') }}" class="datepicker"/></li>
                         <li class="sep">-</li>
                         <li style="width: 100px"><input type="text" name="date_to" value="{% if request.date_to %}{{ request.date_to|date('Y-m-d') }}{%endif%}" placeholder="{{ now|date('Y-m-d') }}" class="datepicker"/></li>
-                        <li class="sep" style="padding-top: 0px"><input type="submit" value="{% trans 'Update graphs' %}" class="greyishBtn" /></li>
+                        <li class="sep" style="padding-top: 0px"><input type="submit" value="{% trans %}Update graphs{% endtrans %}" class="greyishBtn" /></li>
                     </ul>
                 </div>
                 <div class="fix"></div>
@@ -166,7 +166,7 @@
 
 <div class="widget">
     <div class="head">
-        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans 'Income' %}</h5>
+        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans %}Income{% endtrans %}</h5>
     </div>
     <div class="body">
         <div id="graph-income" style="width: 100%; height: 200px;"></div>
@@ -175,7 +175,7 @@
 
 <div class="widget">
     <div class="head">
-        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans 'Orders' %}</h5>
+        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans %}Orders{% endtrans %}</h5>
     </div>
     <div class="body">
         <div id="graph-orders" style="width: 100%; height: 200px;"></div>
@@ -184,7 +184,7 @@
 
 <div class="widget">
     <div class="head">
-        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans 'Invoices' %}</h5>
+        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans %}Invoices{% endtrans %}</h5>
     </div>
     <div class="body">
         <div id="graph-invoice" style="width: 100%; height: 200px;"></div>
@@ -193,7 +193,7 @@
 
 <div class="widget">
     <div class="head">
-        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans 'Clients' %}</h5>
+        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans %}Clients{% endtrans %}</h5>
     </div>
     <div class="body">
         <div id="graph-clients" style="width: 100%; height: 200px;"></div>
@@ -202,7 +202,7 @@
 
 <div class="widget">
     <div class="head">
-        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans 'Support tickets' %}</h5>
+        <h5><i class="dark-sprite-icon sprite-graph" style="margin: 0 15px 0 -15px"></i>{% trans %}Support tickets{% endtrans %}</h5>
     </div>
     <div class="body">
         <div id="graph-tickets" style="width: 100%; height: 200px;"></div>
@@ -213,8 +213,8 @@
 {% if admin.system_is_allowed({"mod":"activity"}) %}
 <div class="widget simpleTabs">
     <ul class="tabs">
-        <li><a href="#tab-index">{% trans 'Recent clients activity' %}</a></li>
-        <li><a href="#tab-staff">{% trans 'Recent staff activity' %}</a></li>
+        <li><a href="#tab-index">{% trans %}Recent clients activity{% endtrans %}</a></li>
+        <li><a href="#tab-staff">{% trans %}Recent staff activity{% endtrans %}</a></li>
     </ul>
 
     <div class="tabs_container">
@@ -237,7 +237,7 @@
                 <tbody>
                     <tr class="noborder">
                         <td colspan="4">
-                            {% trans 'The list is empty' %}
+                            {% trans %}The list is empty{% endtrans %}
                         </td>
                     </tr>
                 </tbody>
@@ -262,7 +262,7 @@
                 <tbody>
                     <tr class="noborder">
                         <td colspan="4">
-                            {% trans 'The list is empty' %}
+                            {% trans %}The list is empty{% endtrans %}
                         </td>
                     </tr>
                 </tbody>
