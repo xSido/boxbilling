@@ -67,6 +67,7 @@ class Box_TwigExtensions extends Twig\Extension\AbstractExtension implements \Bo
             'money_without_currency' => new Twig\TwigFilter('money_without_currency','twig_money_without_currency', array('needs_environment' => true, 'is_safe' => array('html'))),
             'money_convert' => new Twig\TwigFilter('money_convert', 'twig_money_convert', array('needs_environment' => true, 'is_safe' => array('html'))),
             'money_convert_without_currency' => new Twig\TwigFilter('money_convert_without_currency', array('needs_environment' => true, 'is_safe' => array('html'))),
+            'trans' => new \Twig\TwigFilter('trans', 'twig_trans'),
         );
     }
 
@@ -78,6 +79,12 @@ class Box_TwigExtensions extends Twig\Extension\AbstractExtension implements \Bo
     public function getName()
     {
         return 'bb';
+    }
+
+    public function twig_trans($msgid)
+    {
+        $tra = new Box_Translate();
+        return $tra->_i18n()->translate($msgid, "default", $locale);
     }
 
     public function twig_bb_date($time, $format = null)

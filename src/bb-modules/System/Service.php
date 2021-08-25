@@ -144,14 +144,14 @@ class Service
         );
     }
 
-    public function getLanguages($deep = false)
+    public function getLanguages($deep = true)
     {
         $path = BB_PATH_LANGS;
         $locales = array();
         if ($handle = opendir($path)) {
             while (false !== ($entry = readdir($handle))) {
-                if ($entry != ".svn" && $entry != "." && $entry != ".." && is_dir($path . DIRECTORY_SEPARATOR . $entry)) {
-                    $locales[] = $entry;
+                if ($entry != "." && $entry != "..") {
+                    $locales[] = str_replace(".php", "", $entry);
                 }
             }
             closedir($handle);
@@ -164,13 +164,13 @@ class Service
         $details = array();
 
         foreach ($locales as $locale) {
-            $file = $path . '/' . $locale . '/LC_MESSAGES/messages.po';
+            $file = $path . '/' . $locale . '.php';
 
             if (file_exists($file)) {
                 $lNames = $this->getLocales();
                 if (isset($lNames[$locale]) && !empty($lNames[$locale])) {
                     $title = $lNames[$locale];
-                }else{
+                } else {
                     $title = null;
                 }
                 $details[] = array(

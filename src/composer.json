@@ -30,7 +30,9 @@
         "docnet/tfpdf": "^2.2",
         "infinityfree/mofh-client": "^0.7.0",
         "nelexa/zip": "^4.0.0",
-        "laminas/laminas-i18n": "^2.11.2"
+        "laminas/laminas-i18n": "^2.11.2",
+        "laminas/laminas-eventmanager": "^3.3",
+        "laminas/laminas-servicemanager": "^3.7.0"
     },
     "config": {
         "vendor-dir": "bb-vendor"

@@ -16,11 +16,13 @@ class Box_Translate implements \Box\InjectionAwareInterface
     /**
      * @var \Box_Di
      */
-    protected $di = NULL;
+    protected $di = null;
 
-    protected $domain = 'messages';
+    protected $domain = 'default';
 
     protected $locale = 'en_US';
+
+    protected $tr = null;
 
     /**
      * @return string
@@ -56,38 +58,44 @@ class Box_Translate implements \Box\InjectionAwareInterface
         return $this->di;
     }
 
+    public function _i18n()
+    {
+        $i = new Laminas\I18n\Translator\Translator();
+
+        $i->addTranslationFilePattern("PhpArray", BB_PATH_LANGS, "%s.php", "default");
+        $i->setLocale($locale);
+
+        $i->enableEventManager();
+
+        // Attach listener
+        $i->getEventManager()->attach(
+            Laminas\I18n\Translator\Translator::EVENT_MISSING_TRANSLATION,
+            static function (Laminas\EventManager\EventInterface $event) {
+                var_dump($event->getName());
+                // 'missingTranslation' (Laminas\I18n\Translator\Translator::EVENT_MISSING_TRANSLATION)
+                var_dump($event->getParams());
+                // ['message' => 'car', 'locale' => 'de_DE', 'text_domain' => 'default']
+            }
+        );
+
+        return $i;
+    }
+
     public function setup()
     {
-        $locale = $this->getLocale();
-        $codeset = "UTF-8";
-        if(!function_exists('gettext')) {
-            require_once BB_PATH_LIBRARY . '/php-gettext/gettext.inc';
-            T_setlocale(LC_MESSAGES, $locale.'.'.$codeset);
-            T_setlocale(LC_TIME, $locale.'.'.$codeset);
-            T_bindtextdomain($this->domain, BB_PATH_LANGS);
-            T_bind_textdomain_codeset($this->domain, $codeset);
-            T_textdomain($this->domain);
-        } else {
-            @putenv('LANG='.$locale.'.'.$codeset);
-            @putenv('LANGUAGE='.$locale.'.'.$codeset);
-            // set locale
-            if (!defined('LC_MESSAGES')) define('LC_MESSAGES', 5);
-            if (!defined('LC_TIME')) define('LC_TIME', 2);
-            setlocale(LC_MESSAGES, $locale.'.'.$codeset);
-            setlocale(LC_TIME, $locale.'.'.$codeset);
-            bindtextdomain($this->domain, BB_PATH_LANGS);
-            if(function_exists('bind_textdomain_codeset')) bind_textdomain_codeset($this->domain, $codeset);
-            textdomain($this->domain);
-
-            if (!function_exists('__')) {
-                function __($msgid, array $values = NULL)
-                {
-                    if (empty($msgid)) return null;
-                    $string = gettext($msgid);
-                    return empty($values) ? $string : strtr($string, $values);
-                }
+        if (!function_exists('__')) {
+            function __($msgid, array $values = NULL)
+            {
+                if (empty($msgid)) return null;
+                
+                $tra = new Box_Translate();
+                $locale = $tra->getLocale();
+                $str = $tra->_i18n()->translate($msgid, "default", $locale);
+                
+                return empty($values) ? $str : strtr($str, $values);
             }
         }
+
     }
 
     /**
