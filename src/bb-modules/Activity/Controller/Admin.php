@@ -41,7 +41,7 @@ class Admin implements \Box\InjectionAwareInterface
                 'location'  =>  'activity',
                 'label' => 'Activity',
                 'class'     => 'graphs',
-                'sprite_class' => 'dark-sprite-icon sprite-graph',
+                'sprite_class' => 'fas fa-chart-line',
                 ),
             'subpages'=> array(
                 array(

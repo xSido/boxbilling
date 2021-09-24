@@ -42,7 +42,7 @@ class Admin implements \Box\InjectionAwareInterface
                 'label'    => 'Invoices',
                 'uri'      => 'invoice',
                 'class'    => 'invoices',
-                'sprite_class' => 'dark-sprite-icon sprite-money',
+                'sprite_class' => 'fas fa-receipt',
             ),
             'subpages' => array(
                 array(

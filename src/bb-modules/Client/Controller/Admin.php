@@ -42,7 +42,7 @@ class Admin implements \Box\InjectionAwareInterface
                 'label' => 'Clients',
                 'uri' => $this->di['url']->adminLink('client'),
                 'class'     => 'contacts',
-                'sprite_class' => 'dark-sprite-icon sprite-users',
+                'sprite_class' => 'fas fa-users',
             ),
             'subpages' => array(
                 array(

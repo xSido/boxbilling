@@ -41,7 +41,7 @@ class Admin implements \Box\InjectionAwareInterface
                 'index'     => 1000,
                 'label' => 'Extensions',
                 'class' => 'iPlugin',
-                'sprite_class' => 'dark-sprite-icon sprite-electroPlug',
+                'sprite_class' => 'fas fa-plug',
             ),
             'subpages' => array(
                 array(

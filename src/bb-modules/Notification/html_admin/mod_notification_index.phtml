@@ -32,7 +32,7 @@
                     <td>{{ admin.system_string_render({"_tpl": event.meta_value, "_try":true })|raw }}</td>
                     <td>{{ event.created_at|date('Y-m-d H:i') }}</td>
                     <td class="actions">
-                        <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="{% trans 'Are you sure?' %}" data-api-redirect="{{ 'activity'|alink }}" href="{{ 'api/admin/notification/delete'|link({'id' : event.id}) }}"><img src="images/icons/dark/trash.png" alt=""></a>
+                        <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="{% trans 'Are you sure?' %}" data-api-redirect="{{ 'activity'|alink }}" href="{{ 'api/admin/notification/delete'|link({'id' : event.id}) }}"><i class="fas fa-trash-alt icon"></i></a>
                     </td>
                 </tr>
                 {% else %}
@@ -48,7 +48,7 @@
             {% include "partial_pagination.phtml" with {'list': events, 'url':'notification'} %}
             
             <div class="body">
-                <a href="{{ 'api/admin/notification/delete_all'|link }}"  title="" class="btnIconLeft mr10 api-link" data-api-confirm="{% trans 'Are you sure?' %}" data-api-reload="1"><img src="images/icons/dark/trash.png" alt="" class="icon"><span>{% trans 'Delete all messages' %}</span></a>
+                <a href="{{ 'api/admin/notification/delete_all'|link }}"  title="" class="btnIconLeft mr10 api-link" data-api-confirm="{% trans 'Are you sure?' %}" data-api-reload="1"><i class="fas fa-trash-alt icon"></i><span>{% trans 'Delete all messages' %}</span></a>
             </div>
 
         </div>

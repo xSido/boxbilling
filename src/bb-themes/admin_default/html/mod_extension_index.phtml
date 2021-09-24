@@ -45,7 +45,7 @@
                             {% if ext.status == 'installed' %}
                             <a class="api-link bb-button btn14" href="{{ 'api/admin/extension/deactivate' |link({'type' : ext.type, 'id' : ext.id}) }}" data-api-confirm="Are you sure?" data-api-reload="Module was deactivated" title="{% trans 'Deactivate' %}"><img src="images/icons/dark/close.png" alt="" class="icon"></a>
                             {% else %}
-                            <a class="btnIconLeft mr10 api-link" href="{{ 'api/admin/extension/activate' |link({'type' : ext.type, 'id' : ext.id}) }}" data-api-confirm="Are you sure?" data-api-jsonp="onAfterModuleActivated"><img src="images/icons/dark/cog.png" alt="" class="icon"><span>Activate</span></a>
+                            <a class="btnIconLeft mr10 api-link" href="{{ 'api/admin/extension/activate' |link({'type' : ext.type, 'id' : ext.id}) }}" data-api-confirm="Are you sure?" data-api-jsonp="onAfterModuleActivated"><i class="fas fa-cog icon"></i><span>Activate</span></a>
                             {% endif %}
                         {% else %}
                         &nbsp;
