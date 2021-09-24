@@ -51,8 +51,8 @@
             </td>
             <td><a class="" href="{{ 'servicedomain/registrar'|alink }}/{{ tld.registrar.id }}">{{ tld.registrar.title }}</a></td>
             <td class="actions">
-                <a class="btn14 mr5" href="{{ 'servicedomain/tld'|alink }}/{{ tld.tld|slice(1) }}"><img src="images/icons/dark/pencil.png" alt=""></a>
-                <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="Are you sure?" data-api-reload="1" href="{{ 'api/admin/servicedomain/tld_delete'|link({'tld' : tld.tld}) }}"><img src="images/icons/dark/trash.png" alt=""></a>
+                <a class="btn14 mr5" href="{{ 'servicedomain/tld'|alink }}/{{ tld.tld|slice(1) }}"><i class="fas fa-edit"></i></a>
+                <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="Are you sure?" data-api-reload="1" href="{{ 'api/admin/servicedomain/tld_delete'|link({'tld' : tld.tld}) }}"><i class="fas fa-trash-alt"></i></a>
             </td>
         </tr>
         {% endfor %}
@@ -173,9 +173,9 @@
                 <tr>
                     <td>{{ registrar.title }}</td>
                     <td>
-                        <a class="btn14 mr5" href="{{ 'servicedomain/registrar/'|alink }}/{{ registrar.id }}"><img src="images/icons/dark/pencil.png" alt=""></a>
-                        <a class="bb-button btn14 api-link" href="{{ 'api/admin/servicedomain/registrar_copy'|link({'id' : registrar.id}) }}" data-api-reload="1" title="Install"><img src="images/icons/dark/baloons.png" alt=""></a>
-                        <a class="bb-button btn14 api-link" href="{{ 'api/admin/servicedomain/registrar_delete'|link({'id' : registrar.id}) }}" data-api-confirm="Are you sure?" data-api-reload="1"><img src="images/icons/dark/trash.png" alt=""></a>
+                        <a class="btn14 mr5" href="{{ 'servicedomain/registrar/'|alink }}/{{ registrar.id }}"><i class="fas fa-edit"></i></a>
+                        <a class="bb-button btn14 api-link" href="{{ 'api/admin/servicedomain/registrar_copy'|link({'id' : registrar.id}) }}" data-api-reload="1" title="Install"><i class="fas fa-clone"></i></a>
+                        <a class="bb-button btn14 api-link" href="{{ 'api/admin/servicedomain/registrar_delete'|link({'id' : registrar.id}) }}" data-api-confirm="Are you sure?" data-api-reload="1"><i class="fas fa-trash-alt"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -260,7 +260,7 @@
             <tr>
                 <td>{{ code }}</td>
                 <td class="actions">
-                    <a class="bb-button btn14 api-link" href="{{ 'api/admin/servicedomain/registrar_install'|link({'code' : code}) }}" data-api-msg="Domain registrar installed" title="Install"><img src="images/icons/dark/cog.png" alt=""></a>
+                    <a class="bb-button btn14 api-link" href="{{ 'api/admin/servicedomain/registrar_install'|link({'code' : code}) }}" data-api-msg="Domain registrar installed" title="Install"><i class="fas fa-cog"></i></a>
                 </td>
             </tr>
             </tbody>

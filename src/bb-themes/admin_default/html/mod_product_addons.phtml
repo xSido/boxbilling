@@ -30,8 +30,8 @@
                     <tr {% if loop.first %}class="noborder"{% endif %}>
                         <td><label for="addon_{{ addon_id }}">{{addon_title}}</label></td>
                         <td class="actions" style="width:13%">
-                            <a class="bb-button btn14" href="{{ '/product/addon'|alink }}/{{addon_id}}"><img src="images/icons/dark/pencil.png" alt=""></a>
-                            <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="Are you sure?" data-api-redirect="{{ 'product/addons'|alink }}" href="{{ 'api/admin/product/delete'|link({'id' : addon_id}) }}"><img src="images/icons/dark/trash.png" alt=""></a>
+                            <a class="bb-button btn14" href="{{ '/product/addon'|alink }}/{{addon_id}}"><i class="fas fa-edit"></i></a>
+                            <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="Are you sure?" data-api-redirect="{{ 'product/addons'|alink }}" href="{{ 'api/admin/product/delete'|link({'id' : addon_id}) }}"><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                     {% else %}

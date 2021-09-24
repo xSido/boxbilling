@@ -140,8 +140,8 @@
                         <td>{{ mf.status_name(client.status) }}</td>
                         <td>{{ client.created_at|date('Y-m-d') }}</td>
                         <td>
-                            <a class="btn14 bb-rm-tr api-link" href="{{ 'api/admin/client/delete'|link({'id' : client.id}) }}" data-api-confirm="Are you sure?" data-api-reload="1"><img src="images/icons/dark/trash.png" alt=""></a>
-                            <a class="btn14" href="{{ 'client/manage'|alink }}/{{ client.id }}"><img src="images/icons/dark/pencil.png" alt=""></a>
+                            <a class="btn14" href="{{ 'client/manage'|alink }}/{{ client.id }}"><i class="fas fa-edit"></i></a>
+                            <a class="btn14 bb-rm-tr api-link" href="{{ 'api/admin/client/delete'|link({'id' : client.id}) }}" data-api-confirm="Are you sure?" data-api-reload="1"><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                     {% else %}
@@ -292,8 +292,8 @@
                     <tr>
                         <td>{{ group }}</td>
                         <td>
-                            <a class="btn14" href="{{ 'client/group'|alink }}/{{ id }}"><img src="images/icons/dark/pencil.png" alt=""></a>
-                            <a class="btn14 api-link bb-rm-tr" data-api-reload="1" data-api-confirm="Are you sure?" href="{{ 'api/admin/client/group_delete'|link({'id' : id}) }}"><img src="images/icons/dark/trash.png" alt=""></a>
+                            <a class="btn14" href="{{ 'client/group'|alink }}/{{ id }}"><i class="fas fa-edit"></i></a>
+                            <a class="btn14 api-link bb-rm-tr" data-api-reload="1" data-api-confirm="Are you sure?" href="{{ 'api/admin/client/group_delete'|link({'id' : id}) }}"><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                     {% else %}

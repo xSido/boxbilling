@@ -148,8 +148,8 @@
                         <td>{% if invoice.paid_at %}{{ invoice.paid_at|date('Y-m-d') }}{% else %}-{% endif %}</td>
                         <td>{{ mf.status_name(invoice.status) }}</td>
                         <td class="actions">
-                            <a class="bb-button btn14" href="{{ '/invoice/manage'|alink }}/{{invoice.id}}"><img src="images/icons/dark/pencil.png" alt=""></a>
-                            <a class="btn14 bb-rm-tr api-link" href="{{ 'api/admin/invoice/delete'|link({'id' : invoice.id}) }}" data-api-confirm="Are you sure?" data-api-reload="1"><img src="images/icons/dark/trash.png" alt=""></a>
+                            <a class="bb-button btn14" href="{{ '/invoice/manage'|alink }}/{{invoice.id}}"><i class="fas fa-edit"></i></a>
+                            <a class="btn14 bb-rm-tr api-link" href="{{ 'api/admin/invoice/delete'|link({'id' : invoice.id}) }}" data-api-confirm="Are you sure?" data-api-reload="1"><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                     {% else %}

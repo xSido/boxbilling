@@ -39,8 +39,8 @@
                 <td>{{ mf.status_name(post.status) }}</td>
                 <td>{{ post.views }}</td>
                 <td class="actions">
-                    <a class="bb-button btn14" href="{{ '/kb/article'|alink }}/{{post.id}}"><img src="images/icons/dark/pencil.png" alt=""></a>
-                    <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="Are you sure?" data-api-redirect="{{'kb'|alink}}" href="{{ 'api/admin/kb/article_delete'|link({'id' : post.id}) }}"><img src="images/icons/dark/trash.png" alt=""></a>
+                    <a class="bb-button btn14" href="{{ '/kb/article'|alink }}/{{post.id}}"><i class="fas fa-edit"></i></a>
+                    <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="Are you sure?" data-api-redirect="{{'kb'|alink}}" href="{{ 'api/admin/kb/article_delete'|link({'id' : post.id}) }}"><i class="fas fa-trash-alt"></i></a>
                 </td>
             </tr>
             {% else %}
@@ -130,8 +130,8 @@
                     <tr {% if loop.first %}class="noborder"{% endif %}>
                         <td>{{cat_title}}</td>
                         <td class="actions" style="width:13%">
-                            <a class="bb-button btn14" href="{{ '/kb/category'|alink }}/{{cat_id}}"><img src="images/icons/dark/pencil.png" alt=""></a>
-                            <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="Are you sure?" href="{{ 'api/admin/kb/category_delete'|link({'id' : cat_id}) }}" data-api-redirect="{{'kb/new'|alink}}"><img src="images/icons/dark/trash.png" alt=""></a>
+                            <a class="bb-button btn14" href="{{ '/kb/category'|alink }}/{{cat_id}}"><i class="fas fa-edit"></i></a>
+                            <a class="bb-button btn14 bb-rm-tr api-link" data-api-confirm="Are you sure?" href="{{ 'api/admin/kb/category_delete'|link({'id' : cat_id}) }}" data-api-redirect="{{'kb/new'|alink}}"><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                     {% else %}

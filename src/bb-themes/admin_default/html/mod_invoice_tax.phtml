@@ -49,8 +49,8 @@
                     </td>
                     <td>{{ tax.taxrate }}%</td>
                     <td class="actions" style="width: 8%;">
-                        <a class="bb-button btn14" href="{{ 'invoice/tax'|alink}}/{{ tax.id }}"><img src="images/icons/dark/pencil.png" alt=""></a>
-                        <a class="bb-button btn14 bb-rm-tr api-link" data-api-reload="1" data-api-confirm="Are you sure?" href="{{ 'api/admin/invoice/tax_delete'|link({'id' : tax.id}) }}"><img src="images/icons/dark/trash.png" alt=""></a>
+                        <a class="bb-button btn14" href="{{ 'invoice/tax'|alink}}/{{ tax.id }}"><i class="fas fa-edit"></i></a>
+                        <a class="bb-button btn14 bb-rm-tr api-link" data-api-reload="1" data-api-confirm="Are you sure?" href="{{ 'api/admin/invoice/tax_delete'|link({'id' : tax.id}) }}"><i class="fas fa-trash-alt"></i></a>
                     </td>
 
                 </tr>
@@ -94,7 +94,7 @@
             </div>
             <br/>
             <div class="aligncenter">
-                <a href="{{ 'api/admin/invoice/tax_setup_eu'|link}}" title="" class="btn55 mr10 api-link" data-api-reload="1" data-api-confirm="It will overwrite your existing VAT rules. Are you sure?"><img src="images/icons/middlenav/power.png" alt=""><span>Generate VAT rates</span></a>
+                <a href="{{ 'api/admin/invoice/tax_setup_eu'|link}}" title="" class="btn55 mr10 api-link" data-api-reload="1" data-api-confirm="It will overwrite your existing VAT rules. Are you sure?"><i class="fas fa-bolt fa-2x"></i><span>Generate VAT rates</span></a>
             </div>
             <br/>
         </div>

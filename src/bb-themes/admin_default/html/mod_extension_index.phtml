@@ -43,7 +43,7 @@
                     <td>
                         {% if ext.type == 'mod' %}
                             {% if ext.status == 'installed' %}
-                            <a class="api-link bb-button btn14" href="{{ 'api/admin/extension/deactivate' |link({'type' : ext.type, 'id' : ext.id}) }}" data-api-confirm="Are you sure?" data-api-reload="Module was deactivated" title="{% trans 'Deactivate' %}"><img src="images/icons/dark/close.png" alt="" class="icon"></a>
+                            <a class="api-link bb-button btn14" href="{{ 'api/admin/extension/deactivate' |link({'type' : ext.type, 'id' : ext.id}) }}" data-api-confirm="Are you sure?" data-api-reload="Module was deactivated" title="{% trans 'Deactivate' %}"><i class="fas fa-times"></i></a>
                             {% else %}
                             <a class="btnIconLeft mr10 api-link" href="{{ 'api/admin/extension/activate' |link({'type' : ext.type, 'id' : ext.id}) }}" data-api-confirm="Are you sure?" data-api-jsonp="onAfterModuleActivated"><i class="fas fa-cog icon"></i><span>Activate</span></a>
                             {% endif %}
@@ -52,7 +52,7 @@
                         {% endif %}
 
                         {% if ext.has_settings %}
-                            <a class="bb-button btn14" href="{{ 'extension/settings'|alink }}/{{ext.id}}"><img src="images/icons/dark/pencil.png" alt="" class="icon" title="{% trans 'Module settings' %}"></a>
+                            <a class="bb-button btn14" href="{{ 'extension/settings'|alink }}/{{ext.id}}"><i class="fas fa-cog"></i></a>
                         {% endif %}
                     </td>
                 </tr>
@@ -108,7 +108,7 @@
             </div>
 
             <div class="body">
-                <a href="{{ 'api/admin/extension/update_core'|link }}" title="" class="btnIconLeft mr10 mt5 api-link" data-api-confirm="Make sure that you have made database and files backups before proceeding with automatic update. Click OK when you are ready to continue." data-api-msg="Update complete"><img src="images/icons/dark/cog.png" alt="" class="icon"><span>Update BoxBilling</span></a>
+                <a href="{{ 'api/admin/extension/update_core'|link }}" title="" class="btnIconLeft mr10 mt5 api-link" data-api-confirm="Make sure that you have made database and files backups before proceeding with automatic update. Click OK when you are ready to continue." data-api-msg="Update complete"><i class="fas fa-cog icon"></i><span>Update BoxBilling</span></a>
             </div>
 
             <div class="help">

@@ -41,7 +41,7 @@ class Admin implements \Box\InjectionAwareInterface
                 'index'     => 500,
                 'label' => 'Support',
                 'class' => 'support',
-                'sprite_class' => 'fas fa-headset',
+                'sprite_class' => 'fas fa-life-ring',
             ),
             'subpages' => array(
                 array(

@@ -100,17 +100,17 @@
                         <tr>
                             <td colspan="2">
                                 <div class="aligncenter">
-                                    <a href="{{ 'invoice'|link }}/{{ invoice.hash }}" title="" class="btn55 mr10" target="_blank"><img src="images/icons/middlenav/preview.png" alt=""><span>View as client</span></a>
-                                    <a href="{{ 'api/admin/invoice/delete'|link({'id' : invoice.id}) }}" data-api-confirm="Are you sure?"  title="" class="btn55 mr10 api-link" data-api-redirect="{{ 'invoice'|alink }}"><img src="images/icons/middlenav/trash.png" alt=""><span>Delete</span></a>
+                                    <a href="{{ 'invoice'|link }}/{{ invoice.hash }}" title="" class="btn55 mr10" target="_blank"><i class="fas fa-eye fa-2x"></i><span>View as client</span></a>
+                                    <a href="{{ 'api/admin/invoice/delete'|link({'id' : invoice.id}) }}" data-api-confirm="Are you sure?"  title="" class="btn55 mr10 api-link" data-api-redirect="{{ 'invoice'|alink }}"><i class="fas fa-trash-alt fa-2x"></i><span>Delete</span></a>
                                     {% if invoice.status == 'unpaid' %}
-                                    <a href="{{ 'api/admin/invoice/send_reminder' | link({'id' : invoice.id})}}" title="" class="btn55 mr10 api-link" data-api-msg="Payment reminder was sent"><img src="images/icons/middlenav/mail.png" alt=""><span>Send reminder</span></a>
-                                    <a href="{{ 'api/admin/invoice/mark_as_paid'|link({'id' : invoice.id, 'execute' : 1}) }}" title="" class="btn55 mr10 api-link" data-api-reload="Invoice marked as paid"><img src="images/icons/middlenav/play2.png" alt=""><span>Mark as paid</span></a>
+                                    <a href="{{ 'api/admin/invoice/send_reminder' | link({'id' : invoice.id})}}" title="" class="btn55 mr10 api-link" data-api-msg="Payment reminder was sent"><i class="fas fa-envelope-open-text fa-2x"></i><span>Send reminder</span></a>
+                                    <a href="{{ 'api/admin/invoice/mark_as_paid'|link({'id' : invoice.id, 'execute' : 1}) }}" title="" class="btn55 mr10 api-link" data-api-reload="Invoice marked as paid"><i class="fas fa-check fa-2x"></i><span>Mark as paid</span></a>
                                     {% endif %}
                                     
                                     {% if invoice.status == 'paid' %}
-                                    <a href="{{ 'api/admin/invoice/refund'|link({'id' : invoice.id}) }}" data-api-confirm="Are you sure?"  title="" class="btn55 mr10 api-link" data-api-redirect="{{ 'invoice'|alink }}"><img src="images/icons/middlenav/refresh4.png" alt=""><span>Refund</span></a>
+                                    <a href="{{ 'api/admin/invoice/refund'|link({'id' : invoice.id}) }}" data-api-confirm="Are you sure?"  title="" class="btn55 mr10 api-link" data-api-redirect="{{ 'invoice'|alink }}"><i class="fas fa-undo fa-2x"></i><span>Refund</span></a>
                                     {% endif %}
-                                    <a href="{{ 'invoice/pdf' | link }}/{{invoice.hash}}" target="_blank" class="btn55 mr10"><img src="images/icons/middlenav/incoming.png" alt=""><span>PDF</span></a>
+                                    <a href="{{ 'invoice/pdf' | link }}/{{invoice.hash}}" target="_blank" class="btn55 mr10"><i class="fas fa-download fa-2x"></i><span>PDF</span></a>
                                 </div>
                             </td>
                         </tr>
@@ -445,7 +445,7 @@
                         <input type="checkbox" name="items[{{ item.id }}][taxed]" value="1" {% if item.taxed %}checked="checked"{% endif %}/>
                     </td>
                     <td style="width: 5%;">
-                        <a class="bb-button btn14 api-link" data-api-confirm="Are you sure?" href="{{ 'api/admin/invoice/item_delete'|link({'id' : item.id}) }}" data-api-reload="1"><img src="images/icons/dark/trash.png" alt=""></a>
+                        <a class="bb-button btn14 api-link" data-api-confirm="Are you sure?" href="{{ 'api/admin/invoice/item_delete'|link({'id' : item.id}) }}" data-api-reload="1"><i class="fas fa-trash-alt"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -477,7 +477,7 @@
                 <tr>
                     <td colspan="4">
                         {% if not invoice.approved %}
-                        <a href="{{ 'api/admin/invoice/approve'|link({'id' : invoice.id}) }}"  title="" class="btnIconLeft mr10 api-link" data-api-reload="{{ 'invoices'|alink }}"><img src="images/icons/dark/check.png" alt="" class="icon"><span>Approve</span></a>
+                        <a href="{{ 'api/admin/invoice/approve'|link({'id' : invoice.id}) }}"  title="" class="btnIconLeft mr10 api-link" data-api-reload="{{ 'invoices'|alink }}"><i class="fas fa-check icon"></i><span>Approve</span></a>
                         {% endif %}
                         <input type="submit" value="{% trans 'Update' %}" class="greyishBtn submitForm" style="width:100px"/>
                     </td>
@@ -576,7 +576,7 @@
                 <td>{{ mf.status_name(tx.status) }}</td>
                 <td>{{tx.created_at|bb_datetime}}</td>
                 <td style="width: 5%">
-                    <a class="bb-button btn14" href="{{ '/invoice/transaction'|alink }}/{{tx.id}}"><img src="images/icons/dark/pencil.png" alt=""></a>
+                    <a class="bb-button btn14" href="{{ '/invoice/transaction'|alink }}/{{tx.id}}"><i class="fas fa-edit"></i></a>
                 </td>
             </tr>
             {% endfor %}
